@@ -8,6 +8,8 @@
 #include <iostream>
 #include <string>
 
+#include <stdio.h> 
+
 using namespace Oasis;
 using namespace std;
 

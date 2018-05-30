@@ -2,12 +2,13 @@
 .project
 .classpath
 hs_err*
-
+/Build/ 
 /bin/
 /Binaries/
 /obj/
 /Objects/
 /ThirdParty/
+/.vscode/
 glew32.dll
 SDL2.dll 
 *.cbp
