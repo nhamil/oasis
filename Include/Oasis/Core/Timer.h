@@ -25,13 +25,13 @@ public:
 
 private:
     #ifdef _WIN32
-    LARGE_INTEGER m_freq;
-    LARGE_INTEGER m_start;
-    LARGE_INTEGER m_stop;
-    bool m_running;
+    LARGE_INTEGER freq_;
+    LARGE_INTEGER start_;
+    LARGE_INTEGER stop_;
+    bool running_;
     #else // linux 
-    struct timespec m_start, m_stop; 
-    bool m_running; 
+    struct timespec start_, stop_; 
+    bool running_; 
     #endif // _WIN32
 };
 

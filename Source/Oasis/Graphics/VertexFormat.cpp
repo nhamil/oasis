@@ -23,25 +23,25 @@ int GetAttributeSize(Attribute attrib)
 }
 
 VertexFormat::VertexFormat()
-    : m_elements()
-    , m_size(0) {}
+    : elements_()
+    , size_(0) {}
 
 VertexFormat::VertexFormat(const VertexFormat& other)
-    : m_elements(other.m_elements)
-    , m_size(other.m_size) {}
+    : elements_(other.elements_)
+    , size_(other.size_) {}
 
 VertexFormat& VertexFormat::operator=(const VertexFormat& other)
 {
     if (this == &other) return *this;
 
-    m_elements = other.m_elements;
-    m_size = other.m_size;
+    elements_ = other.elements_;
+    size_ = other.size_;
     return *this;
 }
 
 bool VertexFormat::operator==(const VertexFormat& other) const
 {
-    return m_elements == other.m_elements;
+    return elements_ == other.elements_;
 }
 
 bool VertexFormat::operator!=(const VertexFormat& other) const
@@ -51,36 +51,36 @@ bool VertexFormat::operator!=(const VertexFormat& other) const
 
 VertexFormat& VertexFormat::AddAttribute(Attribute attrib)
 {
-    m_elements.push_back(attrib);
-    m_size += GetAttributeSize(attrib);
+    elements_.push_back(attrib);
+    size_ += GetAttributeSize(attrib);
 
     return *this;
 }
 
 Attribute VertexFormat::GetAttribute(int index) const
 {
-    return m_elements[index];
+    return elements_[index];
 }
 
 int VertexFormat::GetAttributeCount() const
 {
-    return m_elements.size();
+    return elements_.size();
 }
 
 int VertexFormat::GetSize() const
 {
-    return m_size;
+    return size_;
 }
 
 int VertexFormat::GetOffset(Attribute attrib) const
 {
     int off = 0;
 
-    for (unsigned i = 0; i < m_elements.size(); i++)
+    for (unsigned i = 0; i < elements_.size(); i++)
     {
-        if (m_elements[i] == attrib) return off;
+        if (elements_[i] == attrib) return off;
 
-        off += GetAttributeSize(m_elements[i]);
+        off += GetAttributeSize(elements_[i]);
     }
 
     return 0;

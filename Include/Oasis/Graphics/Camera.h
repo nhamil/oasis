@@ -14,7 +14,7 @@ public:
     ~Camera();
 
 private:
-    Transform m_transform;
+    Transform transform_;
 };
 
 }

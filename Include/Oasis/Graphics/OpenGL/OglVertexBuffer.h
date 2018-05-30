@@ -9,20 +9,20 @@
 namespace Oasis
 {
 
-class OASIS_API OglVertexBuffer : public VertexBuffer
+class OASIS_API OGLVertexBuffer : public VertexBuffer
 {
 public:
-    OglVertexBuffer(int elements, const VertexFormat& format, BufferUsage usage = BUFFER_USAGE_DYNAMIC);
-    ~OglVertexBuffer();
+    OGLVertexBuffer(int elements, const VertexFormat& format, BufferUsage usage = BUFFER_USAGE_DYNAMIC);
+    ~OGLVertexBuffer();
 
-    GLuint GetId() const { return m_id; };
+    GLuint GetId() const { return id_; };
 
 private:
     void UploadGpuData(int bytes, const void* data);
     void UploadGpuSubData(int offset, int bytes, const void* data);
     void ReleaseGpuData();
 
-    GLuint m_id;
+    GLuint id_;
 };
 
 }

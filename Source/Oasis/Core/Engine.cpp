@@ -3,9 +3,9 @@
 #include "Oasis/Core/Application.h"
 #include "Oasis/Core/Timer.h"
 
-#include "Oasis/Core/SDL/SdlWindow.h"
+#include "Oasis/Core/SDL/SDLWindow.h"
 
-#include "Oasis/Graphics/OpenGL/OglGraphics.h"
+#include "Oasis/Graphics/OpenGL/OGLGraphics.h"
 
 #include <iostream>
 
@@ -16,15 +16,15 @@ namespace Oasis
 
 namespace // private data
 {
-    bool m_running = false;
+    bool running_ = false;
 
-    Graphics* m_graphics = NULL;
-    Window* m_window = NULL;
+    Graphics* graphics_ = NULL;
+    Window* window_ = NULL;
 }
 
 bool Engine::IsRunning()
 {
-    return m_running;
+    return running_;
 }
 
 void Engine::Start(const Config& conf)
@@ -37,47 +37,47 @@ void Engine::Start(const Config& conf)
         return;
     }
 
-    m_running = true;
+    running_ = true;
 
-    m_window = new SdlWindow();
-    m_graphics = new OglGraphics();
+    window_ = new SDLWindow();
+    graphics_ = new OGLGraphics();
 
     return;
 }
 
 void Engine::Stop()
 {
-    if (!m_running)
+    if (!running_)
     {
         cerr << "Engine attempted to stop but is not running!" << endl;
     }
 
     cout << "Stopping application..." << endl;
 
-    //delete m_graphics;
-    m_graphics = NULL;
+    //delete graphics_;
+    graphics_ = NULL;
 
-    //delete m_window;
-    m_window = NULL;
+    //delete window_;
+    window_ = NULL;
 
     cout << "Done!" << endl;
 
-    m_running = false;
+    running_ = false;
 }
 
 Graphics* Engine::GetGraphics()
 {
-    return m_graphics;
+    return graphics_;
 }
 
 Window* Engine::GetWindow()
 {
-    return m_window;
+    return window_;
 }
 
 void Engine::PreUpdate(float dt)
 {
-    m_window->PollEvents();
+    window_->PollEvents();
 }
 
 void Engine::PostUpdate(float dt)
@@ -87,13 +87,13 @@ void Engine::PostUpdate(float dt)
 
 void Engine::PreRender()
 {
-    m_graphics->PreRender();
+    graphics_->PreRender();
 }
 
 void Engine::PostRender()
 {
-    m_graphics->PostRender();
-    m_window->SwapBuffers();
+    graphics_->PostRender();
+    window_->SwapBuffers();
 }
 
 }

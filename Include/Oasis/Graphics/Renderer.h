@@ -34,7 +34,7 @@ public:
     void DrawMesh(Mesh* mesh, int index, Material* mat, const Matrix4& modelMat, const Matrix3& normalMat);
 
 private:
-    std::vector<RenderMeshData> m_renderMeshData;
+    std::vector<RenderMeshData> renderMeshData_;
 };
 
 }

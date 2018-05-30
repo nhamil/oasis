@@ -10,24 +10,24 @@ namespace Oasis
 class OASIS_API Transform
 {
 public:
-    Transform() : m_position(0), m_rotation(Quaternion::AxisAngle({0, 1, }, 0)), m_scale(1) {}
+    Transform() : position_(0), rotation_(Quaternion::AxisAngle({0, 1, }, 0)), scale_(1) {}
     ~Transform() {}
 
-    const Vector3& GetPosition() const { return m_position; }
-    Vector3& GetPosition() { return m_position; }
+    const Vector3& GetPosition() const { return position_; }
+    Vector3& GetPosition() { return position_; }
 
-    const Quaternion& GetRotation() const { return m_rotation; }
-    Quaternion& GetRotation() { return m_rotation; }
+    const Quaternion& GetRotation() const { return rotation_; }
+    Quaternion& GetRotation() { return rotation_; }
 
-    const Vector3& GetScale() const { return m_scale; }
-    Vector3& GetScale() { return m_scale; }
+    const Vector3& GetScale() const { return scale_; }
+    Vector3& GetScale() { return scale_; }
 
-    Matrix4 GetMatrix() const { return Matrix4::Translation(m_position) * Matrix4::FromQuaternion(m_rotation) * Matrix4::Scale(m_scale); }
+    Matrix4 GetMatrix() const { return Matrix4::Translation(position_) * Matrix4::FromQuaternion(rotation_) * Matrix4::Scale(scale_); }
 
 private:
-    Vector3 m_position;
-    Quaternion m_rotation;
-    Vector3 m_scale;
+    Vector3 position_;
+    Quaternion rotation_;
+    Vector3 scale_;
 };
 
 }

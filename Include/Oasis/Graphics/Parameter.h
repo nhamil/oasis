@@ -81,7 +81,7 @@ public:
     bool operator!=(const Matrix3& value) const { return !(*this == value); }
     bool operator!=(const Matrix4& value) const { return !(*this == value); }
 
-    ParameterType GetType() const { return m_type; }
+    ParameterType GetType() const { return type_; }
 
     int GetInt() const;
     float GetFloat() const;
@@ -92,8 +92,8 @@ public:
     const Matrix4& GetMatrix4() const;
 
 private:
-    ParameterType m_type;
-    ParameterValue m_value;
+    ParameterType type_;
+    ParameterValue value_;
 };
 
 }

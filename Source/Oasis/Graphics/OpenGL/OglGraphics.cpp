@@ -1,8 +1,8 @@
-#include "Oasis/Graphics/OpenGL/OglGraphics.h"
+#include "Oasis/Graphics/OpenGL/OGLGraphics.h"
 
 #include "Oasis/Core/Window.h"
 
-#include "Oasis/Graphics/OpenGL/OglShader.h"
+#include "Oasis/Graphics/OpenGL/OGLShader.h"
 
 #include <GL/glew.h>
 
@@ -39,11 +39,11 @@ static const GLuint OGL_PRIMITIVE[PRIMITIVE_COUNT] =
     GL_TRIANGLE_STRIP
 };
 
-void OglGraphics::BindVertexArray()
+void OGLGraphics::BindVertexArray()
 {
-    if (!m_vertexArray) return;
+    if (!vertexArray_) return;
 
-    OglIndexBuffer* ib = (OglIndexBuffer*) m_vertexArray->GetIndexBuffer();
+    OGLIndexBuffer* ib = (OGLIndexBuffer*) vertexArray_->GetIndexBuffer();
 
     if (ib)
     {
@@ -59,9 +59,9 @@ void OglGraphics::BindVertexArray()
 
     for (int i = 0; i < ATTRIBUTE_COUNT; i++) attribs[i] = -1;
 
-    for (int i = 0; i < m_vertexArray->GetVertexBufferCount(); i++)
+    for (int i = 0; i < vertexArray_->GetVertexBufferCount(); i++)
     {
-        OglVertexBuffer* vb = (OglVertexBuffer*) m_vertexArray->GetVertexBuffer(i);
+        OGLVertexBuffer* vb = (OGLVertexBuffer*) vertexArray_->GetVertexBuffer(i);
         vb->Upload();
         const VertexFormat& format = vb->GetFormat();
 
@@ -80,17 +80,17 @@ void OglGraphics::BindVertexArray()
     {
         if (attribs[i] == -1)
         {
-            glDisableVertexAttribArray(OglShader::GetAttributeIndex((Attribute) i));
-            //cout << "Disabling " << OglShader::GetAttributeName((Attribute) i) << endl;
+            glDisableVertexAttribArray(OGLShader::GetAttributeIndex((Attribute) i));
+            //cout << "Disabling " << OGLShader::GetAttributeName((Attribute) i) << endl;
             continue;
         }
 
-        OglVertexBuffer* vb = (OglVertexBuffer*) m_vertexArray->GetVertexBuffer(attribs[i]);
+        OGLVertexBuffer* vb = (OGLVertexBuffer*) vertexArray_->GetVertexBuffer(attribs[i]);
         //cout << "Binding " << vb->GetId() << endl;
         glBindBuffer(GL_ARRAY_BUFFER, vb->GetId());
 
-        //cout << "Enabling " << OglShader::GetAttributeName((Attribute) i) << endl;
-        glEnableVertexAttribArray(OglShader::GetAttributeIndex((Attribute) i));
+        //cout << "Enabling " << OGLShader::GetAttributeName((Attribute) i) << endl;
+        glEnableVertexAttribArray(OGLShader::GetAttributeIndex((Attribute) i));
 
         /*cout << "attrib pointer "
             << i << " "
@@ -101,10 +101,10 @@ void OglGraphics::BindVertexArray()
     }
 }
 
-OglGraphics::OglGraphics()
-    : m_vertexArray(NULL)
+OGLGraphics::OGLGraphics()
+    : vertexArray_(NULL)
 {
-    m_shader = (OglShader*) CreateShader(OGL_VS, OGL_FS);
+    shader_ = (OGLShader*) CreateShader(OGL_VS, OGL_FS);
 
     /*GLuint shader, vert, frag;
 
@@ -135,58 +135,58 @@ OglGraphics::OglGraphics()
 
     glLinkProgram(shader);*/
 
-    glUseProgram(m_shader->GetId());
+    glUseProgram(shader_->GetId());
 }
 
-OglGraphics::~OglGraphics()
+OGLGraphics::~OGLGraphics()
 {
 
 }
 
-int OglGraphics::GetMaxTextureCount() const
+int OGLGraphics::GetMaxTextureCount() const
 {
     return 16;
 }
 
-void OglGraphics::PreRender()
+void OGLGraphics::PreRender()
 {
     SetViewport(0, 0, Engine::GetWindow()->GetWidth(), Engine::GetWindow()->GetHeight());
     SetClearColor(0);
     Clear();
 }
 
-void OglGraphics::PostRender()
+void OGLGraphics::PostRender()
 {
 
 }
 
-void OglGraphics::SetViewport(int x, int y, int w, int h)
+void OGLGraphics::SetViewport(int x, int y, int w, int h)
 {
     glViewport(x, y, w, h);
 }
 
-void OglGraphics::SetClearColor(const Vector4& color)
+void OGLGraphics::SetClearColor(const Vector4& color)
 {
     glClearColor(color.x, color.y, color.z, color.w);
 }
 
-void OglGraphics::Clear()
+void OGLGraphics::Clear()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
-void OglGraphics::SetVertexArray(VertexArray* geom)
+void OGLGraphics::SetVertexArray(VertexArray* geom)
 {
-    m_vertexArray = (OglVertexArray*) geom;
+    vertexArray_ = (OGLVertexArray*) geom;
 }
 
-void OglGraphics::SetShader(Shader* shader)
+void OGLGraphics::SetShader(Shader* shader)
 {
-    m_shader = (OglShader*) shader;
+    shader_ = (OGLShader*) shader;
 
-    if (m_shader)
+    if (shader_)
     {
-        glUseProgram(m_shader->GetId());
+        glUseProgram(shader_->GetId());
     }
     else
     {
@@ -194,14 +194,14 @@ void OglGraphics::SetShader(Shader* shader)
     }
 }
 
-void OglGraphics::SetTexture(int unit, Texture* tex)
+void OGLGraphics::SetTexture(int unit, Texture* tex)
 {
 
 }
 
-void OglGraphics::DrawArrays(Primitive prim, int start, int primCount)
+void OGLGraphics::DrawArrays(Primitive prim, int start, int primCount)
 {
-    if (!m_vertexArray) return;
+    if (!vertexArray_) return;
 
     BindVertexArray();
 
@@ -209,9 +209,9 @@ void OglGraphics::DrawArrays(Primitive prim, int start, int primCount)
     glDrawArrays(OGL_PRIMITIVE[prim], start, primCount * 3);
 }
 
-void OglGraphics::DrawIndexed(Primitive prim, int start, int primCount)
+void OGLGraphics::DrawIndexed(Primitive prim, int start, int primCount)
 {
-    if (!m_vertexArray) return;
+    if (!vertexArray_) return;
 
     BindVertexArray();
 
@@ -219,36 +219,36 @@ void OglGraphics::DrawIndexed(Primitive prim, int start, int primCount)
     glDrawElements(OGL_PRIMITIVE[prim], primCount * 3, GL_UNSIGNED_SHORT, (void*)(start * sizeof(short)));
 }
 
-IndexBuffer* OglGraphics::CreateIndexBuffer(int numElements, BufferUsage usage)
+IndexBuffer* OGLGraphics::CreateIndexBuffer(int numElements, BufferUsage usage)
 {
-    return new OglIndexBuffer(numElements, usage);
+    return new OGLIndexBuffer(numElements, usage);
 }
 
-VertexBuffer* OglGraphics::CreateVertexBuffer(int numElements, const VertexFormat& format, BufferUsage usage)
+VertexBuffer* OGLGraphics::CreateVertexBuffer(int numElements, const VertexFormat& format, BufferUsage usage)
 {
-    return new OglVertexBuffer(numElements, format, usage);
+    return new OGLVertexBuffer(numElements, format, usage);
 }
 
-VertexArray* OglGraphics::CreateVertexArray()
+VertexArray* OGLGraphics::CreateVertexArray()
 {
-    return new OglVertexArray();
+    return new OGLVertexArray();
 }
 
-Shader* OglGraphics::CreateShader(const std::string& vs, const std::string& fs)
+Shader* OGLGraphics::CreateShader(const std::string& vs, const std::string& fs)
 {
-    return new OglShader(vs, fs);
+    return new OGLShader(vs, fs);
 }
 
-Texture2D* OglGraphics::CreateTexture2D()
+Texture2D* OGLGraphics::CreateTexture2D()
 {
     return NULL;
 }
 
-Uniform OglGraphics::GetUniform(const std::string& name)
+Uniform OGLGraphics::GetUniform(const std::string& name)
 {
-    if (m_shader)
+    if (shader_)
     {
-        UniformValue* uv = m_shader->GetUniformValue(name);
+        UniformValue* uv = shader_->GetUniformValue(name);
 
         if (uv)
         {
@@ -265,16 +265,16 @@ Uniform OglGraphics::GetUniform(const std::string& name)
     }
 }
 
-bool OglGraphics::HasUniform(const std::string& name)
+bool OGLGraphics::HasUniform(const std::string& name)
 {
     return GetUniform(name) != UNIFORM_NONE;
 }
 
-bool OglGraphics::ClearUniform(const std::string& name)
+bool OGLGraphics::ClearUniform(const std::string& name)
 {
-    if (m_shader)
+    if (shader_)
     {
-        UniformValue* uv = m_shader->GetUniformValue(name);
+        UniformValue* uv = shader_->GetUniformValue(name);
 
         if (uv)
         {
@@ -295,11 +295,11 @@ bool OglGraphics::ClearUniform(const std::string& name)
     return false;
 }
 
-bool OglGraphics::SetUniform(const std::string& name, int value)
+bool OGLGraphics::SetUniform(const std::string& name, int value)
 {
-    if (m_shader)
+    if (shader_)
     {
-        UniformValue* uv = m_shader->GetUniformValue(name);
+        UniformValue* uv = shader_->GetUniformValue(name);
 
         if (uv)
         {
@@ -311,11 +311,11 @@ bool OglGraphics::SetUniform(const std::string& name, int value)
     return false;
 }
 
-bool OglGraphics::SetUniform(const std::string& name, float value)
+bool OGLGraphics::SetUniform(const std::string& name, float value)
 {
-    if (m_shader)
+    if (shader_)
     {
-        UniformValue* uv = m_shader->GetUniformValue(name);
+        UniformValue* uv = shader_->GetUniformValue(name);
 
         if (uv)
         {
@@ -327,11 +327,11 @@ bool OglGraphics::SetUniform(const std::string& name, float value)
     return false;
 }
 
-bool OglGraphics::SetUniform(const std::string& name, const Vector2& value)
+bool OGLGraphics::SetUniform(const std::string& name, const Vector2& value)
 {
-    if (m_shader)
+    if (shader_)
     {
-        UniformValue* uv = m_shader->GetUniformValue(name);
+        UniformValue* uv = shader_->GetUniformValue(name);
 
         if (uv)
         {
@@ -343,11 +343,11 @@ bool OglGraphics::SetUniform(const std::string& name, const Vector2& value)
     return false;
 }
 
-bool OglGraphics::SetUniform(const std::string& name, const Vector3& value)
+bool OGLGraphics::SetUniform(const std::string& name, const Vector3& value)
 {
-    if (m_shader)
+    if (shader_)
     {
-        UniformValue* uv = m_shader->GetUniformValue(name);
+        UniformValue* uv = shader_->GetUniformValue(name);
 
         if (uv)
         {
@@ -359,11 +359,11 @@ bool OglGraphics::SetUniform(const std::string& name, const Vector3& value)
     return false;
 }
 
-bool OglGraphics::SetUniform(const std::string& name, const Vector4& value)
+bool OGLGraphics::SetUniform(const std::string& name, const Vector4& value)
 {
-    if (m_shader)
+    if (shader_)
     {
-        UniformValue* uv = m_shader->GetUniformValue(name);
+        UniformValue* uv = shader_->GetUniformValue(name);
 
         if (uv)
         {
@@ -375,11 +375,11 @@ bool OglGraphics::SetUniform(const std::string& name, const Vector4& value)
     return false;
 }
 
-bool OglGraphics::SetUniform(const std::string& name, const Matrix3& value)
+bool OGLGraphics::SetUniform(const std::string& name, const Matrix3& value)
 {
-    if (m_shader)
+    if (shader_)
     {
-        UniformValue* uv = m_shader->GetUniformValue(name);
+        UniformValue* uv = shader_->GetUniformValue(name);
 
         if (uv)
         {
@@ -391,11 +391,11 @@ bool OglGraphics::SetUniform(const std::string& name, const Matrix3& value)
     return false;
 }
 
-bool OglGraphics::SetUniform(const std::string& name, const Matrix4& value)
+bool OGLGraphics::SetUniform(const std::string& name, const Matrix4& value)
 {
-    if (m_shader)
+    if (shader_)
     {
-        UniformValue* uv = m_shader->GetUniformValue(name);
+        UniformValue* uv = shader_->GetUniformValue(name);
 
         if (uv)
         {

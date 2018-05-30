@@ -45,8 +45,8 @@ public:
     int GetAttributeCount() const;
     int GetSize() const;
 private:
-    std::vector<Attribute> m_elements;
-    int m_size;
+    std::vector<Attribute> elements_;
+    int size_;
 };
 
 }

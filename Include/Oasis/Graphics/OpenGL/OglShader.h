@@ -12,7 +12,7 @@
 namespace Oasis
 {
 
-class OglShader;
+class OGLShader;
 
 struct OASIS_API UniformValue
 {
@@ -31,7 +31,7 @@ struct OASIS_API UniformValue
     Uniform type;
 };
 
-class OASIS_API OglShader : public Shader
+class OASIS_API OGLShader : public Shader
 {
 public:
     static int GetAttributeIndex(Attribute attrib);
@@ -39,8 +39,8 @@ public:
 
     static Uniform GetUniformType(GLenum type);
 
-    OglShader(const std::string& vs, const std::string& fs);
-    ~OglShader();
+    OGLShader(const std::string& vs, const std::string& fs);
+    ~OGLShader();
 
     void Release();
 
@@ -61,13 +61,13 @@ private:
 
     void FindUniforms();
 
-    GLuint m_id;
-    bool m_valid;
-    std::string m_errorMessage;
-    std::string m_vSource;
-    std::string m_fSource;
+    GLuint id_;
+    bool valid_;
+    std::string errorMessage_;
+    std::string vSource_;
+    std::string fSource_;
 
-    std::map<std::string, UniformValue> m_uniformValues;
+    std::map<std::string, UniformValue> uniformValues_;
 };
 
 }

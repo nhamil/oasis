@@ -12,15 +12,15 @@ namespace Oasis
 {
 
 Application::Application()
-    : m_running(false)
-    , m_fps(0)
-    , m_ups(0) {}
+    : running_(false)
+    , fps_(0)
+    , ups_(0) {}
 
 int Application::Start()
 {
-    if (m_running) return -1;
+    if (running_) return -1;
 
-    m_running = true;
+    running_ = true;
 
     Config conf = GetConfig();
 
@@ -42,7 +42,7 @@ int Application::Start()
     double tickTimer = 0;
     double skipTicks = 1.0 / conf.targetUps;
 
-    while (m_running)
+    while (running_)
     {
         int loop = 0;
 
@@ -69,8 +69,8 @@ int Application::Start()
         if (secondTimer.GetSeconds() >= 1)
         {
             cout << "FPS: " << frameCount << ", Ticks: " << tickCount << endl;
-            m_fps = frameCount;
-            m_ups = tickCount;
+            fps_ = frameCount;
+            ups_ = tickCount;
             tickCount = frameCount = 0;
 
             secondTimer.Reset();
@@ -91,7 +91,7 @@ int Application::Start()
 
 void Application::Stop()
 {
-    m_running = false;
+    running_ = false;
 }
 
 }

@@ -6,9 +6,9 @@ namespace Oasis
 {
 
 Timer::Timer()
-    : m_running(true)
+    : running_(true)
 {
-    QueryPerformanceFrequency(&m_freq);
+    QueryPerformanceFrequency(&freq_);
     Reset();
 }
 
@@ -16,32 +16,32 @@ Timer::~Timer() {}
 
 void Timer::Stop()
 {
-    if (m_running)
+    if (running_)
     {
-        QueryPerformanceCounter(&m_stop);
-        m_running = false;
+        QueryPerformanceCounter(&stop_);
+        running_ = false;
     }
 }
 
 void Timer::Start()
 {
-    m_running = true;
+    running_ = true;
 }
 
 void Timer::Reset()
 {
-    QueryPerformanceCounter(&m_start);
-    m_stop = m_start;
+    QueryPerformanceCounter(&start_);
+    stop_ = start_;
 }
 
 double Timer::GetSeconds()
 {
-    if (m_running)
+    if (running_)
     {
-        QueryPerformanceCounter(&m_stop);
+        QueryPerformanceCounter(&stop_);
     }
 
-    return static_cast<double>(m_stop.QuadPart - m_start.QuadPart) / m_freq.QuadPart;
+    return static_cast<double>(stop_.QuadPart - start_.QuadPart) / freq_.QuadPart;
 }
 
 }

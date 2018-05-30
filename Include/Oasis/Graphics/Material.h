@@ -32,7 +32,7 @@ public:
     void GetParameters(int start, int count, const Parameter* params) const;
 
 private:
-    std::unordered_map<std::string, Parameter> m_parameters;
+    std::unordered_map<std::string, Parameter> parameters_;
 };
 
 }

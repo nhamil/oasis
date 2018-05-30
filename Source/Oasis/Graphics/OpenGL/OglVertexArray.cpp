@@ -1,13 +1,13 @@
-#include "Oasis/Graphics/OpenGL/OglVertexArray.h"
+#include "Oasis/Graphics/OpenGL/OGLVertexArray.h"
 
 namespace Oasis
 {
 
-OglVertexArray::OglVertexArray()
+OGLVertexArray::OGLVertexArray()
     : VertexArray() {}
 
-OglVertexArray::~OglVertexArray() {}
+OGLVertexArray::~OGLVertexArray() {}
 
-void OglVertexArray::SetGpuBuffers(int count, VertexBuffer** vbs, IndexBuffer* ib) {}
+void OGLVertexArray::SetGpuBuffers(int count, VertexBuffer** vbs, IndexBuffer* ib) {}
 
 }

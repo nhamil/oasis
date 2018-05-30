@@ -11,18 +11,18 @@
 namespace Oasis
 {
 
-class OASIS_API OglVertexArray : public VertexArray
+class OASIS_API OGLVertexArray : public VertexArray
 {
 public:
-    OglVertexArray();
-    ~OglVertexArray();
+    OGLVertexArray();
+    ~OGLVertexArray();
 
 private:
     void SetGpuBuffers(int count, VertexBuffer** vbs, IndexBuffer* ib);
     void ReleaseGpuData() {}
 
-    IndexBuffer* m_indexBuffer;
-    std::vector<VertexBuffer*> m_vertexBuffers;
+    IndexBuffer* indexBuffer_;
+    std::vector<VertexBuffer*> vertexBuffers_;
 };
 
 }

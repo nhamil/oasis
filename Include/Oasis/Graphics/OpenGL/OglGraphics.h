@@ -2,19 +2,19 @@
 
 #include "Oasis/Graphics/Graphics.h"
 
-#include "Oasis/Graphics/OpenGL/OglIndexBuffer.h"
-#include "Oasis/Graphics/OpenGL/OglVertexArray.h"
-#include "Oasis/Graphics/OpenGL/OglShader.h"
-#include "Oasis/Graphics/OpenGL/OglVertexBuffer.h"
+#include "Oasis/Graphics/OpenGL/OGLIndexBuffer.h"
+#include "Oasis/Graphics/OpenGL/OGLVertexArray.h"
+#include "Oasis/Graphics/OpenGL/OGLShader.h"
+#include "Oasis/Graphics/OpenGL/OGLVertexBuffer.h"
 
 namespace Oasis
 {
 
-class OASIS_API OglGraphics : public Graphics
+class OASIS_API OGLGraphics : public Graphics
 {
 public:
-    OglGraphics();
-    ~OglGraphics();
+    OGLGraphics();
+    ~OGLGraphics();
 
     int GetMaxTextureCount() const;
 
@@ -54,8 +54,8 @@ public:
 private:
     void BindVertexArray();
 
-    OglVertexArray* m_vertexArray;
-    OglShader* m_shader;
+    OGLVertexArray* vertexArray_;
+    OGLShader* shader_;
 };
 
 }

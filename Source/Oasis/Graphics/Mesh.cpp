@@ -15,14 +15,14 @@ Submesh::Submesh()
     , indices() {}
 
 Mesh::Mesh()
-    : m_updateVertices(true)
-    , m_vertexCount(0)
-    , m_positions()
-    , m_normals()
-    , m_texCoords()
-    , m_tangents()
-    , m_vertexBuffer(NULL)
-    , m_submeshes()
+    : updateVertices_(true)
+    , vertexCount_(0)
+    , positions_()
+    , normals_()
+    , texCoords_()
+    , tangents_()
+    , vertexBuffer_(NULL)
+    , submeshes_()
 {
     SetSubmeshCount(1);
 }
@@ -34,46 +34,46 @@ Mesh::~Mesh()
 
 void Mesh::Release()
 {
-    m_updateVertices = true;
+    updateVertices_ = true;
 
-    for (unsigned i = 0; i < m_submeshes.size(); i++)
+    for (unsigned i = 0; i < submeshes_.size(); i++)
     {
-        Submesh& sm = m_submeshes[i];
+        Submesh& sm = submeshes_[i];
 
         if (sm.vertexArray) sm.vertexArray->Release();
         if (sm.indexBuffer) sm.indexBuffer->Release();
     }
 
-    m_submeshes.clear();
+    submeshes_.clear();
 
-    if (m_vertexBuffer)
+    if (vertexBuffer_)
     {
-        m_vertexBuffer->Release();
-        delete m_vertexBuffer;
-        m_vertexBuffer = NULL;
+        vertexBuffer_->Release();
+        delete vertexBuffer_;
+        vertexBuffer_ = NULL;
     }
 }
 
 void Mesh::Clear()
 {
     // clear vertices
-    m_vertexCount = 0;
-    m_positions.clear();
-    m_normals.clear();
-    m_texCoords.clear();
-    m_tangents.clear();
-    m_updateVertices = true;
+    vertexCount_ = 0;
+    positions_.clear();
+    normals_.clear();
+    texCoords_.clear();
+    tangents_.clear();
+    updateVertices_ = true;
 
     // clear and remove indices
-    for (unsigned i = 0; i < m_submeshes.size(); i++)
+    for (unsigned i = 0; i < submeshes_.size(); i++)
     {
-        Submesh& sm = m_submeshes[i];
+        Submesh& sm = submeshes_[i];
 
         if (sm.vertexArray) sm.vertexArray->Release();
         if (sm.indexBuffer) sm.indexBuffer->Release();
     }
 
-    m_submeshes.clear();
+    submeshes_.clear();
     SetSubmeshCount(1);
 }
 
@@ -82,82 +82,82 @@ void Mesh::Upload()
     Graphics* g = Engine::GetGraphics();
     // TODO finish
 
-    if (m_updateVertices)
+    if (updateVertices_)
     {
-        if (m_positions.size())
+        if (positions_.size())
         {
             int floatsPerElement = 3;
 
             VertexFormat format;
             format.AddAttribute(ATTRIBUTE_POSITION);
 
-            if (m_normals.size()) { floatsPerElement += 3; format.AddAttribute(ATTRIBUTE_NORMAL); }
-            if (m_texCoords.size()) { floatsPerElement += 2; format.AddAttribute(ATTRIBUTE_TEXTURE); }
-            if (m_tangents.size()) { floatsPerElement += 3; format.AddAttribute(ATTRIBUTE_TANGENT); }
+            if (normals_.size()) { floatsPerElement += 3; format.AddAttribute(ATTRIBUTE_NORMAL); }
+            if (texCoords_.size()) { floatsPerElement += 2; format.AddAttribute(ATTRIBUTE_TEXTURE); }
+            if (tangents_.size()) { floatsPerElement += 3; format.AddAttribute(ATTRIBUTE_TANGENT); }
 
-            if (!m_vertexBuffer)
+            if (!vertexBuffer_)
             {
-                m_vertexBuffer = g->CreateVertexBuffer(m_vertexCount, format);
+                vertexBuffer_ = g->CreateVertexBuffer(vertexCount_, format);
             }
             else
             {
-                m_vertexBuffer->SetElementCount(m_vertexCount);
+                vertexBuffer_->SetElementCount(vertexCount_);
             }
 
             float element[floatsPerElement];
 
-            for (int i = 0; i < m_vertexCount; i++)
+            for (int i = 0; i < vertexCount_; i++)
             {
                 int j = 0;
 
-                element[j++] = m_positions[i].x;
-                element[j++] = m_positions[i].y;
-                element[j++] = m_positions[i].z;
+                element[j++] = positions_[i].x;
+                element[j++] = positions_[i].y;
+                element[j++] = positions_[i].z;
 
-                if (m_normals.size())
+                if (normals_.size())
                 {
-                    element[j++] = m_normals[i].x;
-                    element[j++] = m_normals[i].y;
-                    element[j++] = m_normals[i].z;
+                    element[j++] = normals_[i].x;
+                    element[j++] = normals_[i].y;
+                    element[j++] = normals_[i].z;
                 }
 
-                if (m_texCoords.size())
+                if (texCoords_.size())
                 {
-                    element[j++] = m_texCoords[i].x;
-                    element[j++] = m_texCoords[i].y;
+                    element[j++] = texCoords_[i].x;
+                    element[j++] = texCoords_[i].y;
                 }
 
-                if (m_tangents.size())
+                if (tangents_.size())
                 {
-                    element[j++] = m_tangents[i].x;
-                    element[j++] = m_tangents[i].y;
-                    element[j++] = m_tangents[i].z;
+                    element[j++] = tangents_[i].x;
+                    element[j++] = tangents_[i].y;
+                    element[j++] = tangents_[i].z;
                 }
 
-                m_vertexBuffer->SetData(i, 1, element);
+                vertexBuffer_->SetData(i, 1, element);
             }
 
-            m_vertexBuffer->Upload();
+            vertexBuffer_->Upload();
         }
-        else if (m_vertexBuffer)
+        else if (vertexBuffer_)
         {
-            m_vertexBuffer->Release();
-            delete m_vertexBuffer;
-            m_vertexBuffer = NULL;
+            vertexBuffer_->Release();
+            delete vertexBuffer_;
+            vertexBuffer_ = NULL;
         }
     }
 
     // set buffers of all submeshes
-    for (unsigned i = 0; i < m_submeshes.size(); i++)
+    for (unsigned i = 0; i < submeshes_.size(); i++)
     {
-        Submesh& s = m_submeshes[i];
+        Submesh& s = submeshes_[i];
 
         if (!s.indexBuffer) s.indexBuffer = g->CreateIndexBuffer(s.indices.size());
         s.indexBuffer->SetData(0, s.indices.size(), &s.indices[0]);
         s.indexBuffer->Upload();
 
         if (!s.vertexArray) s.vertexArray = g->CreateVertexArray();
-        s.vertexArray->SetVertexBuffer(m_vertexBuffer);
+        s.vertexArray->SetVertexBuffer(vertexBuffer_);
         s.vertexArray->SetIndexBuffer(s.indexBuffer);
         s.vertexArray->Upload();
     }
@@ -177,60 +177,60 @@ bool Mesh::CalculateTangents()
 
 void Mesh::ClearAttributes()
 {
-    m_positions.clear();
-    m_normals.clear();
-    m_texCoords.clear();
-    m_tangents.clear();
+    positions_.clear();
+    normals_.clear();
+    texCoords_.clear();
+    tangents_.clear();
 }
 
 void Mesh::SetPositions(int count, const Vector3* positions)
 {
-    m_updateVertices = true;
+    updateVertices_ = true;
 
-    if (m_vertexCount != count)
+    if (vertexCount_ != count)
     {
-        m_vertexCount = count;
+        vertexCount_ = count;
         ClearAttributes();
     }
 
-    m_positions.clear();
-    for (int i = 0; i < count; i++) m_positions.push_back(positions[i]);
+    positions_.clear();
+    for (int i = 0; i < count; i++) positions_.push_back(positions[i]);
 }
 
 void Mesh::SetNormals(const Vector3* normals)
 {
-    m_updateVertices = true;
+    updateVertices_ = true;
 
-    m_normals.clear();
-    for (int i = 0; i < m_vertexCount; i++) m_normals.push_back(normals[i]);
+    normals_.clear();
+    for (int i = 0; i < vertexCount_; i++) normals_.push_back(normals[i]);
 }
 
 void Mesh::SetTexCoord(const Vector2* texCoords)
 {
-    m_updateVertices = true;
+    updateVertices_ = true;
 
-    m_texCoords.clear();
-    for (int i = 0; i < m_vertexCount; i++) m_texCoords.push_back(texCoords[i]);
+    texCoords_.clear();
+    for (int i = 0; i < vertexCount_; i++) texCoords_.push_back(texCoords[i]);
 }
 
 void Mesh::SetTangents(const Vector3* tangents)
 {
-    m_updateVertices = true;
+    updateVertices_ = true;
 
-    m_tangents.clear();
-    for (int i = 0; i < m_vertexCount; i++) m_tangents.push_back(tangents[i]);
+    tangents_.clear();
+    for (int i = 0; i < vertexCount_; i++) tangents_.push_back(tangents[i]);
 }
 
 int Mesh::GetVertexCount() const
 {
-    return m_vertexCount;
+    return vertexCount_;
 }
 
 void Mesh::GetPositions(int start, int count, Vector3* in) const
 {
     for (int i = 0; i < count; i++)
     {
-        in[i] = m_positions[i + start];
+        in[i] = positions_[i + start];
     }
 }
 
@@ -238,7 +238,7 @@ void Mesh::GetNormals(int start, int count, Vector3* in) const
 {
     for (int i = 0; i < count; i++)
     {
-        in[i] = m_normals[i + start];
+        in[i] = normals_[i + start];
     }
 }
 
@@ -246,7 +246,7 @@ void Mesh::GetTexCoords(int start, int count, Vector2* in) const
 {
     for (int i = 0; i < count; i++)
     {
-        in[i] = m_texCoords[i + start];
+        in[i] = texCoords_[i + start];
     }
 }
 
@@ -254,37 +254,37 @@ void Mesh::GetTangents(int start, int count, Vector3* in) const
 {
     for (int i = 0; i < count; i++)
     {
-        in[i] = m_tangents[i + start];
+        in[i] = tangents_[i + start];
     }
 }
 
 VertexBuffer* Mesh::GetVertexBuffer()
 {
-    return m_vertexBuffer;
+    return vertexBuffer_;
 }
 
 void Mesh::SetSubmeshCount(int count)
 {
-    int curSize = (int) m_submeshes.size();
+    int curSize = (int) submeshes_.size();
 
     for (int i = curSize; i > count; i--)
     {
         // remove more than count submeshes
-        m_submeshes.pop_back();
+        submeshes_.pop_back();
     }
 
-    curSize = (int) m_submeshes.size();
+    curSize = (int) submeshes_.size();
 
     for (int i = curSize; i < count; i++)
     {
         // add submeshes to make count correct
-        m_submeshes.push_back(Submesh());
+        submeshes_.push_back(Submesh());
     }
 }
 
 void Mesh::SetIndices(int submesh, int count, const short* indices)
 {
-    Submesh& s = m_submeshes[submesh];
+    Submesh& s = submeshes_[submesh];
     s.update = true;
 
     s.indices.clear();
@@ -297,17 +297,17 @@ void Mesh::SetIndices(int submesh, int count, const short* indices)
 
 int Mesh::GetSubmeshCount() const
 {
-    return m_submeshes.size();
+    return submeshes_.size();
 }
 
 int Mesh::GetIndexCount(int submesh) const
 {
-    return m_submeshes[submesh].indices.size();
+    return submeshes_[submesh].indices.size();
 }
 
 void Mesh::GetIndices(int submesh, int start, int count, short* in) const
 {
-    const Submesh& s = m_submeshes[submesh];
+    const Submesh& s = submeshes_[submesh];
     for (int i = 0; i < count; i++)
     {
         in[i] = s.indices[i + start];
@@ -316,12 +316,12 @@ void Mesh::GetIndices(int submesh, int start, int count, short* in) const
 
 VertexArray* Mesh::GetVertexArray(int submesh)
 {
-    return m_submeshes[submesh].vertexArray;
+    return submeshes_[submesh].vertexArray;
 }
 
 IndexBuffer* Mesh::GetIndexBuffer(int submesh)
 {
-    return m_submeshes[submesh].indexBuffer;
+    return submeshes_[submesh].indexBuffer;
 }
 
 }

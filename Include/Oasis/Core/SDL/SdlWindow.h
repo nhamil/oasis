@@ -7,17 +7,17 @@
 namespace Oasis
 {
 
-class OASIS_API SdlWindow : public Window
+class OASIS_API SDLWindow : public Window
 {
 public:
-    explicit SdlWindow(const std::string& title = "Oasis Engine");
-    virtual ~SdlWindow();
+    explicit SDLWindow(const std::string& title = "Oasis Engine");
+    virtual ~SDLWindow();
 
     virtual const std::string& GetTitle() const;
     virtual int GetWidth() const;
     virtual int GetHeight() const;
 
-    bool IsCloseRequested() const { return m_close; }
+    bool IsCloseRequested() const { return close_; }
 
     virtual void SetTitle(const std::string& title);
     virtual void SetSize(int width, int height);
@@ -28,12 +28,12 @@ public:
     virtual void SwapBuffers();
 
 private:
-    static bool m_sdlInit;
+    static bool sdlInit_;
 
-    std::string m_title;
-    SDL_Window* m_window;
-    SDL_GLContext m_context;
-    bool m_close;
+    std::string title_;
+    SDL_Window* window_;
+    SDL_GLContext context_;
+    bool close_;
 };
 
 }

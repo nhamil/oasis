@@ -14,34 +14,34 @@ Timer::~Timer() {}
 
 void Timer::Stop() 
 {
-    if (m_running) 
+    if (running_) 
     {
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &m_stop); 
-        m_running = false; 
+        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop_); 
+        running_ = false; 
     }
 } 
 
 void Timer::Start() 
 {
-    m_running = true; 
+    running_ = true; 
 } 
 
 void Timer::Reset() 
 {
-    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &m_start); 
-    m_stop = m_start; 
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_); 
+    stop_ = start_; 
 } 
 
 double Timer::GetSeconds() 
 {
-    if (m_running) 
+    if (running_) 
     {
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &m_stop); 
+        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop_); 
     }
 
     return static_cast<double>(
-        ((m_stop.tv_sec - m_start.tv_sec) * 1000000000L + 
-         (m_stop.tv_nsec - m_start.tv_nsec)) / 1e9 
+        ((stop_.tv_sec - start_.tv_sec) * 1000000000L + 
+         (stop_.tv_nsec - start_.tv_nsec)) / 1e9 
     ); 
 }
 

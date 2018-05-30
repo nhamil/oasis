@@ -21,7 +21,7 @@ set(SOURCES
     ${OASIS_SOURCE_FOLDER}/Core/TimeUtilLinux.cpp 
     
     # Core/SDL  
-    ${OASIS_SOURCE_FOLDER}/Core/SDL/SdlWindow.cpp 
+    ${OASIS_SOURCE_FOLDER}/Core/SDL/SDLWindow.cpp 
     
     # Graphics 
     ${OASIS_SOURCE_FOLDER}/Graphics/IndexBuffer.cpp 
@@ -31,11 +31,11 @@ set(SOURCES
     ${OASIS_SOURCE_FOLDER}/Graphics/VertexFormat.cpp 
     
     # Graphics/OpenGL 
-    ${OASIS_SOURCE_FOLDER}/Graphics/OpenGL/OglGraphics.cpp 
-    ${OASIS_SOURCE_FOLDER}/Graphics/OpenGL/OglIndexBuffer.cpp 
-    ${OASIS_SOURCE_FOLDER}/Graphics/OpenGL/OglShader.cpp 
-    ${OASIS_SOURCE_FOLDER}/Graphics/OpenGL/OglVertexArray.cpp 
-    ${OASIS_SOURCE_FOLDER}/Graphics/OpenGL/OglVertexBuffer.cpp 
+    ${OASIS_SOURCE_FOLDER}/Graphics/OpenGL/OGLGraphics.cpp 
+    ${OASIS_SOURCE_FOLDER}/Graphics/OpenGL/OGLIndexBuffer.cpp 
+    ${OASIS_SOURCE_FOLDER}/Graphics/OpenGL/OGLShader.cpp 
+    ${OASIS_SOURCE_FOLDER}/Graphics/OpenGL/OGLVertexArray.cpp 
+    ${OASIS_SOURCE_FOLDER}/Graphics/OpenGL/OGLVertexBuffer.cpp 
     
     # Math 
     ${OASIS_SOURCE_FOLDER}/Math/MathUtil.cpp 

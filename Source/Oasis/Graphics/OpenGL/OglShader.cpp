@@ -1,4 +1,4 @@
-#include "Oasis/Graphics/OpenGL/OglShader.h"
+#include "Oasis/Graphics/OpenGL/OGLShader.h"
 
 #include "Oasis/Graphics/VertexFormat.h"
 
@@ -23,7 +23,7 @@ static const string OGL_ATTRIBUTE_NAME[ATTRIBUTE_COUNT] =
     "a_Color"
 };
 
-Uniform OglShader::GetUniformType(GLenum type)
+Uniform OGLShader::GetUniformType(GLenum type)
 {
     switch (type)
     {
@@ -39,35 +39,35 @@ Uniform OglShader::GetUniformType(GLenum type)
     }
 }
 
-int OglShader::GetAttributeIndex(Attribute attrib)
+int OGLShader::GetAttributeIndex(Attribute attrib)
 {
     return OGL_ATTRIBUTE_INDEX[attrib];
 }
 
-const string& OglShader::GetAttributeName(Attribute attrib)
+const string& OGLShader::GetAttributeName(Attribute attrib)
 {
     return OGL_ATTRIBUTE_NAME[attrib];
 }
 
-OglShader::OglShader(const string& vs, const string& fs)
-    : m_id(0)
-    , m_valid(true)
-    , m_errorMessage()
-    , m_vSource(vs)
-    , m_fSource(fs)
+OGLShader::OGLShader(const string& vs, const string& fs)
+    : id_(0)
+    , valid_(true)
+    , errorMessage_()
+    , vSource_(vs)
+    , fSource_(fs)
 {
     //cout << "Vertex source: " << vs << endl;
     //cout << "Fragment source: " << fs << endl;
 
-    m_id = glCreateProgram();
+    id_ = glCreateProgram();
     GLuint vId = glCreateShader(GL_VERTEX_SHADER);
     GLuint fId = glCreateShader(GL_FRAGMENT_SHADER);
 
-    m_valid &= Compile(vId, GL_VERTEX_SHADER, "vertex shader", m_vSource);
-    m_valid &= Compile(fId, GL_FRAGMENT_SHADER, "fragment shader", m_fSource);
-    m_valid &= Link(vId, fId);
+    valid_ &= Compile(vId, GL_VERTEX_SHADER, "vertex shader", vSource_);
+    valid_ &= Compile(fId, GL_FRAGMENT_SHADER, "fragment shader", fSource_);
+    valid_ &= Link(vId, fId);
 
-    if (m_valid)
+    if (valid_)
     {
         FindUniforms();
     }
@@ -76,46 +76,46 @@ OglShader::OglShader(const string& vs, const string& fs)
     glDeleteShader(fId);
 }
 
-OglShader::~OglShader()
+OGLShader::~OGLShader()
 {
     Release();
 }
 
-void OglShader::Release()
+void OGLShader::Release()
 {
-    if (m_id)
+    if (id_)
     {
-        glDeleteProgram(m_id);
-        m_id = 0;
+        glDeleteProgram(id_);
+        id_ = 0;
     }
 }
 
-GLuint OglShader::GetId() const
+GLuint OGLShader::GetId() const
 {
-    return m_id;
+    return id_;
 }
 
-bool OglShader::IsValid() const
+bool OGLShader::IsValid() const
 {
-    return m_valid;
+    return valid_;
 }
 
-const string& OglShader::GetErrorMessage() const
+const string& OGLShader::GetErrorMessage() const
 {
-    return m_errorMessage;
+    return errorMessage_;
 }
 
-const string& OglShader::GetVertexSource() const
+const string& OGLShader::GetVertexSource() const
 {
-    return m_vSource;
+    return vSource_;
 }
 
-const string& OglShader::GetFragmentSource() const
+const string& OGLShader::GetFragmentSource() const
 {
-    return m_fSource;
+    return fSource_;
 }
 
-bool OglShader::Compile(GLuint id, GLuint type, const string& typeName, const string& source)
+bool OGLShader::Compile(GLuint id, GLuint type, const string& typeName, const string& source)
 {
     const char* src = source.c_str();
     int srcLength = source.length();
@@ -131,8 +131,8 @@ bool OglShader::Compile(GLuint id, GLuint type, const string& typeName, const st
         GLsizei length;
         glGetShaderInfoLog(id, 512, &length, text);
 
-        m_errorMessage += text;
-        m_errorMessage += "\n";
+        errorMessage_ += text;
+        errorMessage_ += "\n";
 
         cout << "Error compiling " << typeName << " : " << text << endl;
         return false;
@@ -142,35 +142,35 @@ bool OglShader::Compile(GLuint id, GLuint type, const string& typeName, const st
     return true;
 }
 
-bool OglShader::Link(GLuint vs, GLuint fs)
+bool OGLShader::Link(GLuint vs, GLuint fs)
 {
-    glAttachShader(m_id, vs);
-    glAttachShader(m_id, fs);
+    glAttachShader(id_, vs);
+    glAttachShader(id_, fs);
 
     // bind attribs
     for (int i = 0; i < ATTRIBUTE_COUNT; i++)
     {
-        glBindAttribLocation(m_id, OGL_ATTRIBUTE_INDEX[i], OGL_ATTRIBUTE_NAME[i].c_str());
+        glBindAttribLocation(id_, OGL_ATTRIBUTE_INDEX[i], OGL_ATTRIBUTE_NAME[i].c_str());
         cout << "Binding attrib location " << OGL_ATTRIBUTE_INDEX[i] << " " << OGL_ATTRIBUTE_NAME[i] << endl;
     }
 
-    glLinkProgram(m_id);
+    glLinkProgram(id_);
 
     GLint status;
-    glGetProgramiv(m_id, GL_LINK_STATUS, &status);
+    glGetProgramiv(id_, GL_LINK_STATUS, &status);
     if (status != GL_TRUE)
     {
         char text[512];
         GLsizei length;
-        glGetProgramInfoLog(m_id, 512, &length, text);
+        glGetProgramInfoLog(id_, 512, &length, text);
 
-        m_errorMessage += text;
-        m_errorMessage += "\n";
+        errorMessage_ += text;
+        errorMessage_ += "\n";
 
         cout << "Error linking shader : " << text << endl;
 
-        glDeleteShader(m_id);
-        m_id = 0;
+        glDeleteShader(id_);
+        id_ = 0;
 
         return false;
     }
@@ -179,11 +179,11 @@ bool OglShader::Link(GLuint vs, GLuint fs)
     return true;
 }
 
-void OglShader::FindUniforms()
+void OGLShader::FindUniforms()
 {
     int count;
 
-    glGetProgramiv(m_id, GL_ACTIVE_UNIFORMS, &count);
+    glGetProgramiv(id_, GL_ACTIVE_UNIFORMS, &count);
 
     char name[1024];
     GLsizei length;
@@ -192,17 +192,17 @@ void OglShader::FindUniforms()
 
     for (int i = 0; i < count; i++)
     {
-        glGetActiveUniform(m_id, i, 1024, &length, &size, &type, name);
+        glGetActiveUniform(id_, i, 1024, &length, &size, &type, name);
 
-        m_uniformValues[name] = UniformValue(i, GetUniformType(type));
+        uniformValues_[name] = UniformValue(i, GetUniformType(type));
     }
 }
 
-UniformValue* OglShader::GetUniformValue(const std::string& name)
+UniformValue* OGLShader::GetUniformValue(const std::string& name)
 {
-    map<string, UniformValue>::iterator it = m_uniformValues.find(name);
+    map<string, UniformValue>::iterator it = uniformValues_.find(name);
 
-    if (it == m_uniformValues.end())
+    if (it == uniformValues_.end())
     {
         return NULL;
     }

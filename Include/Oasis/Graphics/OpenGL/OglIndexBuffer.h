@@ -9,20 +9,20 @@
 namespace Oasis
 {
 
-class OASIS_API OglIndexBuffer : public IndexBuffer
+class OASIS_API OGLIndexBuffer : public IndexBuffer
 {
 public:
-    OglIndexBuffer(int elements, BufferUsage usage = BUFFER_USAGE_DYNAMIC);
-    ~OglIndexBuffer();
+    OGLIndexBuffer(int elements, BufferUsage usage = BUFFER_USAGE_DYNAMIC);
+    ~OGLIndexBuffer();
 
-    GLuint GetId() const { return m_id; }
+    GLuint GetId() const { return id_; }
 
 private:
     void UploadGpuData(int bytes, const void* data);
     void UploadGpuSubData(int offset, int bytes, const void* data);
     void ReleaseGpuData();
 
-    GLuint m_id;
+    GLuint id_;
 };
 
 }

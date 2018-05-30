@@ -1,4 +1,4 @@
-#include "Oasis/Graphics/OpenGL/OglIndexBuffer.h"
+#include "Oasis/Graphics/OpenGL/OGLIndexBuffer.h"
 
 #include <string.h>
 
@@ -7,35 +7,35 @@ using namespace std;
 namespace Oasis
 {
 
-OglIndexBuffer::OglIndexBuffer(int elements, BufferUsage usage)
+OGLIndexBuffer::OGLIndexBuffer(int elements, BufferUsage usage)
     : IndexBuffer(elements, usage)
-    , m_id(0)
+    , id_(0)
 {
-    glGenBuffers(1, &m_id);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id);
+    glGenBuffers(1, &id_);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements * sizeof (short), NULL, GL_DYNAMIC_DRAW);
 }
 
-OglIndexBuffer::~OglIndexBuffer() { ReleaseGpuData(); }
+OGLIndexBuffer::~OGLIndexBuffer() { ReleaseGpuData(); }
 
-void OglIndexBuffer::UploadGpuData(int bytes, const void* data)
+void OGLIndexBuffer::UploadGpuData(int bytes, const void* data)
 {
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, bytes, data, GL_DYNAMIC_DRAW);
 }
 
-void OglIndexBuffer::UploadGpuSubData(int offset, int bytes, const void* data)
+void OGLIndexBuffer::UploadGpuSubData(int offset, int bytes, const void* data)
 {
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_);
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, bytes, data);
 }
 
-void OglIndexBuffer::ReleaseGpuData()
+void OGLIndexBuffer::ReleaseGpuData()
 {
-    if (m_id)
+    if (id_)
     {
-        glDeleteBuffers(1, &m_id);
-        m_id = 0;
+        glDeleteBuffers(1, &id_);
+        id_ = 0;
     }
 }
 

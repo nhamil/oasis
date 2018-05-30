@@ -1,4 +1,4 @@
-#include "Oasis/Core/SDL/SdlWindow.h"
+#include "Oasis/Core/SDL/SDLWindow.h"
 
 #include <GL/glew.h>
 
@@ -9,18 +9,18 @@ using namespace std;
 namespace Oasis
 {
 
-bool SdlWindow::m_sdlInit = false;
+bool SDLWindow::sdlInit_ = false;
 
-SdlWindow::SdlWindow(const std::string& title)
-    : m_title(title)
-    , m_window(NULL)
-    , m_context(NULL)
-    , m_close(false)
+SDLWindow::SDLWindow(const std::string& title)
+    : title_(title)
+    , window_(NULL)
+    , context_(NULL)
+    , close_(false)
 {
     // init SDL if it has not already been
-    if (!m_sdlInit) SDL_Init(SDL_INIT_EVERYTHING);
+    if (!sdlInit_) SDL_Init(SDL_INIT_EVERYTHING);
 
-    m_window = SDL_CreateWindow
+    window_ = SDL_CreateWindow
     (
         title.c_str(),
         SDL_WINDOWPOS_CENTERED,
@@ -33,58 +33,58 @@ SdlWindow::SdlWindow(const std::string& title)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
-    m_context = SDL_GL_CreateContext(m_window);
-    SDL_GL_MakeCurrent(m_window, m_context);
+    context_ = SDL_GL_CreateContext(window_);
+    SDL_GL_MakeCurrent(window_, context_);
 
     glewExperimental = GL_TRUE;
     glewInit();
 }
 
-SdlWindow::~SdlWindow()
+SDLWindow::~SDLWindow()
 {
-    SDL_GL_DeleteContext(m_context);
-    SDL_DestroyWindow(m_window);
+    SDL_GL_DeleteContext(context_);
+    SDL_DestroyWindow(window_);
 
-    m_context = NULL;
-    m_window = NULL;
+    context_ = NULL;
+    window_ = NULL;
 }
 
-const std::string& SdlWindow::GetTitle() const
+const std::string& SDLWindow::GetTitle() const
 {
-    return m_title;
+    return title_;
 }
 
-int SdlWindow::GetWidth() const
+int SDLWindow::GetWidth() const
 {
     int width;
-    SDL_GetWindowSize(m_window, &width, NULL);
+    SDL_GetWindowSize(window_, &width, NULL);
     return width;
 }
 
-int SdlWindow::GetHeight() const
+int SDLWindow::GetHeight() const
 {
     int height;
-    SDL_GetWindowSize(m_window, NULL, &height);
+    SDL_GetWindowSize(window_, NULL, &height);
     return height;
 }
 
-void SdlWindow::SetTitle(const std::string& title)
+void SDLWindow::SetTitle(const std::string& title)
 {
-    m_title = title;
-    SDL_SetWindowTitle(m_window, title.c_str());
+    title_ = title;
+    SDL_SetWindowTitle(window_, title.c_str());
 }
 
-void SdlWindow::SetSize(int width, int height)
+void SDLWindow::SetSize(int width, int height)
 {
-    SDL_SetWindowSize(m_window, width, height);
+    SDL_SetWindowSize(window_, width, height);
 }
 
-void SdlWindow::Center()
+void SDLWindow::Center()
 {
-    SDL_SetWindowPosition(m_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    SDL_SetWindowPosition(window_, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 }
 
-void SdlWindow::PollEvents()
+void SDLWindow::PollEvents()
 {
     SDL_Event e;
 
@@ -93,14 +93,14 @@ void SdlWindow::PollEvents()
         switch (e.type)
         {
         case SDL_QUIT:
-            m_close = true;
+            close_ = true;
         }
     }
 }
 
-void SdlWindow::SwapBuffers()
+void SDLWindow::SwapBuffers()
 {
-    SDL_GL_SwapWindow(m_window);
+    SDL_GL_SwapWindow(window_);
 }
 
 }

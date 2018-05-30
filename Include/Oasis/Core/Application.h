@@ -16,8 +16,8 @@ public:
     int Start();
     void Stop();
 
-    float GetFps() const { return m_fps; }
-    float GetUps() const { return m_ups; }
+    float GetFps() const { return fps_; }
+    float GetUps() const { return ups_; }
 
     virtual Config GetConfig() const { return Config(); }
 
@@ -27,8 +27,8 @@ public:
     virtual void Exit() = 0;
 
 private:
-    bool m_running;
-    float m_fps, m_ups;
+    bool running_;
+    float fps_, ups_;
 };
 
 }

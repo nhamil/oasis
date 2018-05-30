@@ -37,9 +37,9 @@ public:
     bool CalculateNormals();
     bool CalculateTangents();
 
-    bool HasNormals() const { return m_normals.size(); }
-    bool HasTexCoords() const { return m_texCoords.size(); }
-    bool HasTangents() const { return m_tangents.size(); }
+    bool HasNormals() const { return normals_.size(); }
+    bool HasTexCoords() const { return texCoords_.size(); }
+    bool HasTangents() const { return tangents_.size(); }
 
     // attributes
 
@@ -71,15 +71,15 @@ public:
 private:
     void ClearAttributes();
 
-    bool m_updateVertices;
-    int m_vertexCount;
-    std::vector<Vector3> m_positions;
-    std::vector<Vector3> m_normals;
-    std::vector<Vector2> m_texCoords;
-    std::vector<Vector3> m_tangents;
-    VertexBuffer* m_vertexBuffer;
+    bool updateVertices_;
+    int vertexCount_;
+    std::vector<Vector3> positions_;
+    std::vector<Vector3> normals_;
+    std::vector<Vector2> texCoords_;
+    std::vector<Vector3> tangents_;
+    VertexBuffer* vertexBuffer_;
 
-    std::vector<Submesh> m_submeshes;
+    std::vector<Submesh> submeshes_;
 };
 
 }
