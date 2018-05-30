@@ -2,7 +2,11 @@ message(STATUS "Looking for GLEW")
 
 set(GLEW_SEARCH_PATHS 
     ${GLEW_DIR} 
-    ${PROJECT_SOURCE_DIR}/ThirdParty/GLEW/
+    ${PROJECT_SOURCE_DIR}/ThirdParty/GLEW 
+    /usr/local 
+    /opt/local 
+    /usr 
+    /opt 
 )
 
 # find include directory 
@@ -14,9 +18,9 @@ find_path(GLEW_INCLUDE_DIR
 
 # find glew32 library 
 find_library(GLEW_GLEW32
-    NAMES glew32.dll
+    NAMES glew32.dll GLEW glew32 
     PATHS ${GLEW_SEARCH_PATHS} 
-    PATH_SUFFIXES lib 
+    PATH_SUFFIXES lib lib64
 )
 
 # finish finding GLEW 

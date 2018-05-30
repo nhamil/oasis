@@ -4,7 +4,9 @@
 
 #ifdef _WIN32
 #include "Oasis/OasisWindows.h"
-#endif // WIN32
+#else // linux 
+#include <time.h> 
+#endif 
 
 namespace Oasis
 {
@@ -27,6 +29,9 @@ private:
     LARGE_INTEGER m_start;
     LARGE_INTEGER m_stop;
     bool m_running;
+    #else // linux 
+    struct timespec m_start, m_stop; 
+    bool m_running; 
     #endif // _WIN32
 };
 

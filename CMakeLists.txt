@@ -16,7 +16,9 @@ set(SOURCES
     ${OASIS_SOURCE_FOLDER}/Core/Application.cpp 
     ${OASIS_SOURCE_FOLDER}/Core/Engine.cpp 
     ${OASIS_SOURCE_FOLDER}/Core/TimerWindows.cpp 
+    ${OASIS_SOURCE_FOLDER}/Core/TimerLinux.cpp 
     ${OASIS_SOURCE_FOLDER}/Core/TimeUtilWindows.cpp 
+    ${OASIS_SOURCE_FOLDER}/Core/TimeUtilLinux.cpp 
     
     # Core/SDL  
     ${OASIS_SOURCE_FOLDER}/Core/SDL/SdlWindow.cpp 
@@ -54,7 +56,7 @@ endif()
 
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Wall")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -std=c++11")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall")
 
 # check bit mode 
@@ -71,7 +73,7 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake/")
 
 # find OpenGL
-find_package(OPENGL REQUIRED)
+find_package(OpenGL REQUIRED)
 
 # find SDL2 
 find_package(SDL2 REQUIRED)
