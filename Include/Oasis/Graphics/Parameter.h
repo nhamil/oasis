@@ -4,6 +4,8 @@
 
 #include "Oasis/Math/MathUtil.h"
 
+#include <string.h> 
+
 namespace Oasis
 {
 
@@ -20,15 +22,15 @@ enum ParameterType
     PARAMETER_COUNT
 };
 
-union ParameterValue
+struct OASIS_API ParameterValue
 {
-    int intValue;
-    float floatValue;
-    Vector2 vector2Value;
-    Vector3 vector3Value;
-    Vector4 vector4Value;
-    Matrix3 matrix3Value;
-    Matrix4 matrix4Value;
+    char data[sizeof (Matrix4)]; 
+
+    template <class T> 
+    T& Get() const { return *(T*) data; } 
+
+    template <class T> 
+    void Set(T t) { memset(data, &t, sizeof (T)); }
 
     ParameterValue() {}
     ~ParameterValue() {}

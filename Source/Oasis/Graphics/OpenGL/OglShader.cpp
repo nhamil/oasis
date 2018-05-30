@@ -200,7 +200,7 @@ void OglShader::FindUniforms()
 
 UniformValue* OglShader::GetUniformValue(const std::string& name)
 {
-    unordered_map<string, UniformValue>::iterator it = m_uniformValues.find(name);
+    map<string, UniformValue>::iterator it = m_uniformValues.find(name);
 
     if (it == m_uniformValues.end())
     {

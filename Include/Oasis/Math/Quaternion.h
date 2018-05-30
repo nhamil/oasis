@@ -26,7 +26,7 @@ struct OASIS_API Quaternion
 
     static Quaternion FromMatrix4(const Matrix4& m);
 
-    static Quaternion Direction(const Vector3& dir, const Vector3& up = { 0, 1, 0 });
+    static Quaternion Direction(const Vector3& dir, const Vector3& up = (Vector3) { 0, 1, 0 });
 
     Quaternion() : x(0), y(0), z(0), w(0) {}
 

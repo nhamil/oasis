@@ -91,10 +91,10 @@ void TestApp::Init()
 
     Vector3 positions[] =
     {
-        { -0.5, -0.5, 0 },
-        {  0.5, -0.5, 0 },
-        {  0.5,  0.5, 0 },
-        { -0.5,  0.5, 0 },
+        (Vector3) { -0.5, -0.5, 0 },
+        (Vector3) {  0.5, -0.5, 0 },
+        (Vector3) {  0.5,  0.5, 0 },
+        (Vector3) { -0.5,  0.5, 0 },
     };
 
     mesh.SetPositions(4, positions);
@@ -114,12 +114,12 @@ void TestApp::Render()
     Graphics* g = Engine::GetGraphics();
     Window* w = Engine::GetWindow();
 
-    g->SetClearColor({0.6, 0.7, 0.9, 1.0});
+    g->SetClearColor((Vector4){0.6, 0.7, 0.9, 1.0});
     g->Clear();
 
     g->SetShader(shader);
     g->SetUniform("u_Color", (Vector3){1, 1, 0});
-    g->SetUniform("oa_Model", Matrix4::Translation({0, 0, -5}));
+    g->SetUniform("oa_Model", Matrix4::Translation((Vector3){0, 0, -5}));
     g->SetUniform("oa_View", Matrix4::Identity());
     g->SetUniform("oa_Proj", Matrix4::Matrix4::Perspective(70 * OASIS_TO_RAD, w->GetAspectRatio(), 0.1, 100.0));
 

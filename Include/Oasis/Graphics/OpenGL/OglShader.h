@@ -7,7 +7,7 @@
 
 #include <GL/glew.h>
 
-#include <unordered_map>
+#include <map>
 
 namespace Oasis
 {
@@ -67,7 +67,7 @@ private:
     std::string m_vSource;
     std::string m_fSource;
 
-    std::unordered_map<std::string, UniformValue> m_uniformValues;
+    std::map<std::string, UniformValue> m_uniformValues;
 };
 
 }
