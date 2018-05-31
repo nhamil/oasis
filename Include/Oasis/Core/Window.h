@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Oasis/Oasis.h"
+#include "Oasis/Input/Keyboard.h"
 
 #include <string>
 
@@ -11,6 +12,9 @@ class OASIS_API Window
 {
 public:
     virtual ~Window() {}
+
+    virtual const Keyboard& GetKeyboard() const = 0; 
+    virtual Keyboard& GetKeyboard() = 0; 
 
     virtual const std::string& GetTitle() const = 0;
     virtual int GetWidth() const = 0;

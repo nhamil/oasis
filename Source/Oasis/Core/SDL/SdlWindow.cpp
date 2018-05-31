@@ -16,6 +16,7 @@ SDLWindow::SDLWindow(const std::string& title)
     , window_(NULL)
     , context_(NULL)
     , close_(false)
+    , keys_() 
 {
     // init SDL if it has not already been
     if (!sdlInit_) SDL_Init(SDL_INIT_EVERYTHING);
@@ -88,12 +89,21 @@ void SDLWindow::PollEvents()
 {
     SDL_Event e;
 
+    keys_.Update(); 
+
     while (SDL_PollEvent(&e))
     {
         switch (e.type)
         {
         case SDL_QUIT:
             close_ = true;
+            break; 
+        case SDL_KEYDOWN: 
+            keys_.SetKey((Key) e.key.keysym.sym, true); 
+            break; 
+        case SDL_KEYUP: 
+            keys_.SetKey((Key) e.key.keysym.sym, false); 
+            break; 
         }
     }
 }

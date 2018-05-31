@@ -13,7 +13,6 @@ set(SOURCES
     ${OASIS_SOURCE_FOLDER}/TestApp.cpp 
     
     # Core  
-    ${OASIS_SOURCE_FOLDER}/Core/Application.cpp 
     ${OASIS_SOURCE_FOLDER}/Core/Engine.cpp 
     ${OASIS_SOURCE_FOLDER}/Core/TimerWindows.cpp 
     ${OASIS_SOURCE_FOLDER}/Core/TimerLinux.cpp 
@@ -23,6 +22,9 @@ set(SOURCES
     # Core/SDL  
     ${OASIS_SOURCE_FOLDER}/Core/SDL/SDLWindow.cpp 
     
+    # Input 
+    ${OASIS_SOURCE_FOLDER}/Input/Keyboard.cpp 
+
     # Graphics 
     ${OASIS_SOURCE_FOLDER}/Graphics/IndexBuffer.cpp 
     ${OASIS_SOURCE_FOLDER}/Graphics/Mesh.cpp 

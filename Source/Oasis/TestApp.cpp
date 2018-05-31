@@ -104,7 +104,16 @@ void TestApp::Init()
 
 void TestApp::Update(float dt)
 {
-    pos.z -= 0.5 * dt;
+    Keyboard* keys = Engine::GetKeyboard(); 
+
+    if (keys->IsKeyDown(KEY_ESCAPE)) Engine::Stop(); 
+
+    float move = 5 * dt; 
+
+    if (keys->IsKeyDown(KEY_I)) { pos.z -= move; }
+    if (keys->IsKeyDown(KEY_K)) { pos.z += move; }
+    if (keys->IsKeyDown(KEY_J)) { pos.x -= move; }
+    if (keys->IsKeyDown(KEY_L)) { pos.x += move; }
 
     angle += 180 * dt * OASIS_TO_RAD;
 }
@@ -119,8 +128,8 @@ void TestApp::Render()
 
     g->SetShader(shader);
     g->SetUniform("u_Color", (Vector3){1, 1, 0});
-    g->SetUniform("oa_Model", Matrix4::Translation((Vector3){0, 0, -5}));
-    g->SetUniform("oa_View", Matrix4::Identity());
+    g->SetUniform("oa_View", Matrix4::Translation(-pos));
+    g->SetUniform("oa_Model", Matrix4::RotationY(angle));
     g->SetUniform("oa_Proj", Matrix4::Matrix4::Perspective(70 * OASIS_TO_RAD, w->GetAspectRatio(), 0.1, 100.0));
 
     g->SetVertexArray(mesh.GetVertexArray(0));
