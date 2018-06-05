@@ -22,18 +22,17 @@ enum class ParameterType
     count
 };
 
-struct OASIS_API ParameterValue
+union OASIS_API ParameterValue
 {
-    char data[sizeof (Matrix4)]; // largest data type 
+    int intValue; 
+    float floatValue; 
+    Vector2 vec2Value; 
+    Vector3 vec3Value; 
+    Vector4 vec4Value; 
+    Matrix3 mat3Value; 
+    Matrix4 mat4Value; 
 
-    template <class T> 
-    T& Get() const { return *(T*) data; } 
-
-    template <class T> 
-    void Set(T t) { memset(data, &t, sizeof (T)); }
-
-    ParameterValue() {}
-    ~ParameterValue() {}
+    ParameterValue() { intValue = 0; } 
 };
 
 class OASIS_API Parameter

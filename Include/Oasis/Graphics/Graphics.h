@@ -2,6 +2,7 @@
 
 #include "Oasis/Common.h"
 #include "Oasis/Graphics/BufferUsage.h" 
+#include "Oasis/Graphics/Parameter.h" 
 #include "Oasis/Graphics/VertexFormat.h" 
 #include "Oasis/Math/MathUtil.h"
 
