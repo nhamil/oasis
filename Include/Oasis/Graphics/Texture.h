@@ -1,32 +1,32 @@
 #pragma once
 
-#include "Oasis/Oasis.h"
+#include "Oasis/Common.h"
 
 namespace Oasis
 {
 
-enum TextureFormat
+enum class TextureFormat
 {
-    TEXTURE_FORMAT_RGBA8,
-    TEXTURE_FORMAT_RGBA16F,
-    TEXTURE_FORMAT_RGBA32F,
-    TEXTURE_FORMAT_DEPTH16,
-    TEXTURE_FORMAT_DEPTH24,
-    TEXTURE_FORMAT_DEPTH24STENCIL8,
-    TEXTURE_FORMAT_DEPTH32,
+    RGBA8,
+    RGBA16F,
+    RGBA32F,
+    DEPTH16,
+    DEPTH24,
+    DEPTH24STENCIL8,
+    DEPTH32,
 
-    TEXTURE_FORMAT_COUNT
+    count
 };
 
-enum TextureFilter
+enum class TextureFilter
 {
-    FILTER_NEAREST,
-    FILTER_BILINEAR,
-    FILTER_TRILINEAR,
+    NEAREST,
+    BILINEAR,
+    TRILINEAR,
 
-    MIN_FILTER_COUNT
+    count
 };
-enum Axis
+enum class Axis
 {
     AXIS_X,
     AXIS_Y,
@@ -35,18 +35,18 @@ enum Axis
     AXIS_COUNT
 };
 
-enum WrapMode
+enum class WrapMode
 {
-    WRAP_MODE_CLAMP,
-    WRAP_MODE_REPEAT,
+    CLAMP,
+    REPEAT,
 
-    WRAP_MODE_COUNT
+    count
 } ;
 
 class OASIS_API Texture
 {
 public:
-    virtual Texture() {}
+    virtual ~Texture() = default; 
 
     virtual void Release() = 0;
 

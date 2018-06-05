@@ -1,6 +1,6 @@
 #pragma once 
 
-#include "Oasis/Oasis.h"
+#include "Oasis/Common.h"
 
 // TODO: remove this 
 #include <SDL2/SDL.h> 
@@ -8,7 +8,7 @@
 namespace Oasis 
 {
 
-enum Key 
+enum class Key 
 {
     KEY_A = SDLK_a, 
     KEY_B = SDLK_b, 
@@ -55,7 +55,7 @@ enum Key
 
     KEY_ESCAPE = SDLK_ESCAPE, 
 
-    KEY_COUNT = 4096 
+    COUNT = 4096 
 }; 
 
 class OASIS_API Keyboard 
@@ -71,8 +71,8 @@ public:
     bool IsKeyJustDown(Key key) const; 
 
 private: 
-    bool keys_[KEY_COUNT]; 
-    bool lastKeys_[KEY_COUNT]; 
+    bool keys_[(int) Key::COUNT]; 
+    bool lastKeys_[(int) Key::COUNT]; 
 }; 
 
 }

@@ -31,7 +31,7 @@ static const string OGL_FS = ""
     "  gl_FragColor = vec4(u_Color, 1.0); \n"
     "} \n";
 
-static const GLuint OGL_PRIMITIVE[PRIMITIVE_COUNT] =
+static const GLuint OGL_PRIMITIVE[(int) Primitive::COUNT] =
 {
     GL_LINES,
     GL_LINE_STRIP,
@@ -206,7 +206,7 @@ void OGLGraphics::DrawArrays(Primitive prim, int start, int primCount)
     BindVertexArray();
 
     // TODO primitive size
-    glDrawArrays(OGL_PRIMITIVE[prim], start, primCount * 3);
+    glDrawArrays(OGL_PRIMITIVE[(int) prim], start, primCount * 3);
 }
 
 void OGLGraphics::DrawIndexed(Primitive prim, int start, int primCount)
@@ -216,7 +216,7 @@ void OGLGraphics::DrawIndexed(Primitive prim, int start, int primCount)
     BindVertexArray();
 
     // TODO primitive size
-    glDrawElements(OGL_PRIMITIVE[prim], primCount * 3, GL_UNSIGNED_SHORT, (void*)(start * sizeof(short)));
+    glDrawElements(OGL_PRIMITIVE[(int) prim], primCount * 3, GL_UNSIGNED_SHORT, (void*)(start * sizeof(short)));
 }
 
 IndexBuffer* OGLGraphics::CreateIndexBuffer(int numElements, BufferUsage usage)

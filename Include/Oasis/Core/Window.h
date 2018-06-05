@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Oasis/Oasis.h"
+#include "Oasis/Common.h"
 #include "Oasis/Input/Keyboard.h"
 
 #include <string>
@@ -11,7 +11,7 @@ namespace Oasis
 class OASIS_API Window
 {
 public:
-    virtual ~Window() {}
+    virtual ~Window() = default; 
 
     virtual const Keyboard& GetKeyboard() const = 0; 
     virtual Keyboard& GetKeyboard() = 0; 

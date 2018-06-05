@@ -1,33 +1,45 @@
 #pragma once
 
-#include "Oasis/Oasis.h"
+#include "Oasis/Common.h"
 
-#include "Oasis/Graphics/HardwareBuffer.h"
+#include "Oasis/Graphics/BufferUsage.h" 
+#include "Oasis/Graphics/Graphics.h" 
+#include "Oasis/Graphics/GraphicsResource.h"
 
 #include <vector>
 
 namespace Oasis
 {
 
-class OASIS_API IndexBuffer : public HardwareBuffer
+class OASIS_API IndexBuffer : public GraphicsResource
 {
 public:
-    IndexBuffer(int startElements, BufferUsage usage = BUFFER_USAGE_DYNAMIC);
-    virtual ~IndexBuffer();
+    // upload data if it is dirty 
+    void Update();
 
-    void Upload();
-
-    int GetElementCount() const { return data.size(); }
-
+    inline BufferUsage GetBufferUsage() const { return usage_; } 
+    inline int GetElementCount() const { return data_.size(); }
     void GetData(int start, int numElements, short* out) const;
 
+    void SetBufferUsage(BufferUsage usage); 
     void SetElementCount(int numElements);
-
     void SetData(int start, int numElements, const short* in);
 
-protected:
-    std::vector<short> data;
-    bool dirty;
+private:
+    friend class Graphics; 
+
+    IndexBuffer(int startElements, BufferUsage usage = BufferUsage::DYNAMIC);
+    ~IndexBuffer();
+
+    OASIS_NO_COPY(IndexBuffer) 
+
+    void CreateResource(); 
+    void UploadResource(); 
+    void DestroyResource(); 
+
+    BufferUsage usage_; 
+    std::vector<short> data_;
+    bool dirty_ = true;
 };
 
 }

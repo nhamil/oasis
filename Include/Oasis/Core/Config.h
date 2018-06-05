@@ -1,27 +1,24 @@
 #pragma once
 
-#include "Oasis/Oasis.h"
+#include "Oasis/Common.h"
 
 namespace Oasis
 {
 
-enum GraphicsBackend
+enum class GraphicsBackend
 {
-    GRAPHICS_BACKEND_NONE = 0,
-    GRAPHICS_BACKEND_OPENGL = 1,
-    GRAPHICS_BACKEND_DONT_CARE = 2
+    NONE = 0,
+    OPENGL = 1,
+    DONT_CARE = 2, 
+
+    count
 };
 
 struct OASIS_API Config
 {
-    Config()
-        : graphicsBackend(GRAPHICS_BACKEND_DONT_CARE)
-        , targetFps(60)
-        , targetUps(60) {}
-
-    GraphicsBackend graphicsBackend;
-    double targetFps;
-    double targetUps;
+    GraphicsBackend graphicsBackend = GraphicsBackend::DONT_CARE;
+    double targetFps = 60;
+    double targetUps = 60;
 };
 
 }

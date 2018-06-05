@@ -1,4 +1,4 @@
-#include <Oasis/Oasis.h>
+#include <Oasis/Common.h>
 #include <Oasis/Core/Application.h>
 #include <Oasis/Core/Window.h>
 #include <Oasis/Graphics/Graphics.h>
@@ -54,7 +54,7 @@ void TestApp::Init()
 
     Parameter p = 3.2;
 
-    cout << "type = " << (int) p.GetType() << " " << (int) PARAMETER_INT << endl;
+    cout << "type = " << (int) p.GetType() << " " << (int) ParameterType::INT << endl;
 
     cout << p.GetInt() << " " << p.GetFloat() << " " << p.GetVector2() << endl;
 
@@ -91,10 +91,10 @@ void TestApp::Init()
 
     Vector3 positions[] =
     {
-        (Vector3) { -0.5, -0.5, 0 },
-        (Vector3) {  0.5, -0.5, 0 },
-        (Vector3) {  0.5,  0.5, 0 },
-        (Vector3) { -0.5,  0.5, 0 },
+        { -0.5, -0.5, 0 },
+        {  0.5, -0.5, 0 },
+        {  0.5,  0.5, 0 },
+        { -0.5,  0.5, 0 },
     };
 
     mesh.SetPositions(4, positions);
@@ -106,14 +106,14 @@ void TestApp::Update(float dt)
 {
     Keyboard* keys = Engine::GetKeyboard(); 
 
-    if (keys->IsKeyDown(KEY_ESCAPE)) Engine::Stop(); 
+    if (keys->IsKeyDown(Key::KEY_ESCAPE)) Engine::Stop(); 
 
     float move = 5 * dt; 
 
-    if (keys->IsKeyDown(KEY_I)) { pos.z -= move; }
-    if (keys->IsKeyDown(KEY_K)) { pos.z += move; }
-    if (keys->IsKeyDown(KEY_J)) { pos.x -= move; }
-    if (keys->IsKeyDown(KEY_L)) { pos.x += move; }
+    if (keys->IsKeyDown(Key::KEY_I)) { pos.z -= move; }
+    if (keys->IsKeyDown(Key::KEY_K)) { pos.z += move; }
+    if (keys->IsKeyDown(Key::KEY_J)) { pos.x -= move; }
+    if (keys->IsKeyDown(Key::KEY_L)) { pos.x += move; }
 
     angle += 180 * dt * OASIS_TO_RAD;
 }
@@ -123,17 +123,17 @@ void TestApp::Render()
     Graphics* g = Engine::GetGraphics();
     Window* w = Engine::GetWindow();
 
-    g->SetClearColor((Vector4){0.6, 0.7, 0.9, 1.0});
+    g->SetClearColor({0.6, 0.7, 0.9, 1.0});
     g->Clear();
 
     g->SetShader(shader);
-    g->SetUniform("u_Color", (Vector3){1, 1, 0});
+    g->SetUniform("u_Color", (Vector3) {1, 1, 0});
     g->SetUniform("oa_View", Matrix4::Translation(-pos));
     g->SetUniform("oa_Model", Matrix4::RotationY(angle));
     g->SetUniform("oa_Proj", Matrix4::Matrix4::Perspective(70 * OASIS_TO_RAD, w->GetAspectRatio(), 0.1, 100.0));
 
     g->SetVertexArray(mesh.GetVertexArray(0));
-    g->DrawIndexed(PRIMITIVE_TRIANGLE_LIST, 0, 2);
+    g->DrawIndexed(Primitive::TRIANGLE_LIST, 0, 2);
 }
 
 void TestApp::Exit()

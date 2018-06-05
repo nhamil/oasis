@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Oasis/Oasis.h"
+#include "Oasis/Common.h"
 
 #include "Oasis/Math/MathUtil.h"
 
@@ -10,9 +10,6 @@ namespace Oasis
 class OASIS_API Transform
 {
 public:
-    Transform();
-    ~Transform();
-
     const Vector3& GetPosition() const { return position_; }
     Vector3& GetPosition() { return position_; }
 
@@ -31,9 +28,9 @@ public:
     }
 
 private:
-    Vector3 position_;
-    Quaternion rotation_;
-    Vector3 scale_;
+    Vector3 position_ = Vector3::ZERO;
+    Quaternion rotation_ = Quaternion::AxisAngle(Vector3::Up, 0);
+    Vector3 scale_ = Vector3(1);
 };
 
 }

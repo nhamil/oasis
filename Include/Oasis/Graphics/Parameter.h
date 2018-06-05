@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Oasis/Oasis.h"
+#include "Oasis/Common.h"
 
 #include "Oasis/Math/MathUtil.h"
 
@@ -9,22 +9,22 @@
 namespace Oasis
 {
 
-enum ParameterType
+enum class ParameterType
 {
-    PARAMETER_INT,
-    PARAMETER_FLOAT,
-    PARAMETER_VECTOR2,
-    PARAMETER_VECTOR3,
-    PARAMETER_VECTOR4,
-    PARAMETER_MATRIX3,
-    PARAMETER_MATRIX4,
+    INT,
+    FLOAT,
+    VECTOR2,
+    VECTOR3,
+    VECTOR4,
+    MATRIX3,
+    MATRIX4,
 
-    PARAMETER_COUNT
+    count
 };
 
 struct OASIS_API ParameterValue
 {
-    char data[sizeof (Matrix4)]; 
+    char data[sizeof (Matrix4)]; // largest data type 
 
     template <class T> 
     T& Get() const { return *(T*) data; } 

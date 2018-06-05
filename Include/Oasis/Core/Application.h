@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Oasis/Oasis.h"
+#include "Oasis/Common.h"
 #include "Oasis/Core/Config.h"
 
 namespace Oasis
@@ -9,8 +9,7 @@ namespace Oasis
 class OASIS_API Application
 {
 public:
-    Application() {} 
-    virtual ~Application() {}
+    virtual ~Application() = default; 
 
     virtual Config GetConfig() const { return Config(); }
 

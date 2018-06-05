@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Oasis/Oasis.h"
+#include "Oasis/Common.h"
+#include "Oasis/Graphics/GraphicsResource.h" 
 
 #include <vector>
 
@@ -10,40 +11,31 @@ namespace Oasis
 class IndexBuffer;
 class VertexBuffer;
 
-class OASIS_API VertexArray
+class OASIS_API VertexArray : GraphicsResource 
 {
 public:
-    VertexArray() : vertexBuffers(), indexBuffer(NULL) {}
-    virtual ~VertexArray() {}
+    void Update(); 
 
-    void Release() { ReleaseGpuData(); }
+    void SetIndexBuffer(IndexBuffer* ib); 
+    void SetVertexBuffers(int count, VertexBuffer** vbs); 
+    inline void SetVertexBuffer(VertexBuffer* vb) { SetVertexBuffers(1, &vb); }
 
-    void Upload() { SetGpuBuffers(vertexBuffers.size(), &vertexBuffers[0], indexBuffer); }
+    inline bool HasIndexBuffer() const { return indexBuffer_ != NULL; }
+    inline IndexBuffer* GetIndexBuffer() const { return indexBuffer_; }
 
-    void SetIndexBuffer(IndexBuffer* ib) { indexBuffer = ib; }
+    int GetVertexBufferCount() const { return vertexBuffers_.size(); }
+    VertexBuffer* GetVertexBuffer(int index) const { return vertexBuffers_[index]; }
 
-    void SetVertexBuffers(int count, VertexBuffer** vbs)
-    {
-        vertexBuffers.clear();
-        for (int i = 0; i < count; i++) vertexBuffers.push_back(vbs[i]);
-    }
+private:
+    friend class Graphics; 
 
-    void SetVertexBuffer(VertexBuffer* vb) { SetVertexBuffers(1, &vb); }
+    VertexArray(); 
+    ~VertexArray(); 
 
-    bool HasIndexBuffer() const { return indexBuffer != NULL; }
-
-    IndexBuffer* GetIndexBuffer() const { return indexBuffer; }
-
-    int GetVertexBufferCount() const { return vertexBuffers.size(); }
-
-    VertexBuffer* GetVertexBuffer(int index) const { return vertexBuffers[index]; }
-
-protected:
-    virtual void SetGpuBuffers(int count, VertexBuffer** vbs, IndexBuffer* ib) = 0;
-    virtual void ReleaseGpuData() = 0;
-
-    std::vector<VertexBuffer*> vertexBuffers;
-    IndexBuffer* indexBuffer;
+    OASIS_NO_COPY(VertexArray) 
+    
+    std::vector<VertexBuffer*> vertexBuffers_;
+    IndexBuffer* indexBuffer_;
 };
 
 }

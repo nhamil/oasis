@@ -1,21 +1,21 @@
 #pragma once
 
-#include "Oasis/Oasis.h"
+#include "Oasis/Common.h"
 
 #include <vector>
 
 namespace Oasis
 {
 
-enum Attribute
+enum class Attribute
 {
-    ATTRIBUTE_POSITION,
-    ATTRIBUTE_NORMAL,
-    ATTRIBUTE_TANGENT,
-    ATTRIBUTE_TEXTURE,
-    ATTRIBUTE_COLOR,
+    POSITION,
+    NORMAL,
+    TANGENT,
+    TEXTURE,
+    COLOR,
 
-    ATTRIBUTE_COUNT
+    count
 };
 
 OASIS_API int GetAttributeSize(Attribute attrib);

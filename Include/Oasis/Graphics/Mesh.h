@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Oasis/Oasis.h"
+#include "Oasis/Common.h"
 #include "Oasis/Graphics/Graphics.h"
 
 #include <vector>

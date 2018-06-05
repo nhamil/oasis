@@ -3,21 +3,21 @@
 namespace Oasis
 {
 
-const VertexFormat VertexFormat::POSITION = VertexFormat().AddAttribute(ATTRIBUTE_POSITION);
-const VertexFormat VertexFormat::NORMAL = VertexFormat().AddAttribute(ATTRIBUTE_NORMAL);
-const VertexFormat VertexFormat::TANGENT = VertexFormat().AddAttribute(ATTRIBUTE_TANGENT);
-const VertexFormat VertexFormat::TEXTURE = VertexFormat().AddAttribute(ATTRIBUTE_TEXTURE);
-const VertexFormat VertexFormat::COLOR = VertexFormat().AddAttribute(ATTRIBUTE_COLOR);
+const VertexFormat VertexFormat::POSITION = VertexFormat().AddAttribute(Attribute::POSITION);
+const VertexFormat VertexFormat::NORMAL = VertexFormat().AddAttribute(Attribute::NORMAL);
+const VertexFormat VertexFormat::TANGENT = VertexFormat().AddAttribute(Attribute::TANGENT);
+const VertexFormat VertexFormat::TEXTURE = VertexFormat().AddAttribute(Attribute::TEXTURE);
+const VertexFormat VertexFormat::COLOR = VertexFormat().AddAttribute(Attribute::COLOR);
 
 int GetAttributeSize(Attribute attrib)
 {
     switch (attrib)
     {
-    case ATTRIBUTE_TANGENT: return 3;
-    case ATTRIBUTE_POSITION: return 3;
-    case ATTRIBUTE_NORMAL: return 3;
-    case ATTRIBUTE_COLOR: return 4;
-    case ATTRIBUTE_TEXTURE: return 2;
+    case Attribute::TANGENT: return 3;
+    case Attribute::POSITION: return 3;
+    case Attribute::NORMAL: return 3;
+    case Attribute::COLOR: return 4;
+    case Attribute::TEXTURE: return 2;
     default: return 0;
     }
 }

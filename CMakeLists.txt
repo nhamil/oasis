@@ -10,34 +10,31 @@ add_definitions(-DOASIS_EXPORT=1)
 # add sources 
 set(SOURCES
     # Oasis 
-    ${OASIS_SOURCE_FOLDER}/TestApp.cpp 
+    ${OASIS_SOURCE_FOLDER}/TestApp2.cpp 
     
     # Core  
     ${OASIS_SOURCE_FOLDER}/Core/Engine.cpp 
+    ${OASIS_SOURCE_FOLDER}/Core/Display.cpp 
     ${OASIS_SOURCE_FOLDER}/Core/TimerWindows.cpp 
     ${OASIS_SOURCE_FOLDER}/Core/TimerLinux.cpp 
     ${OASIS_SOURCE_FOLDER}/Core/TimeUtilWindows.cpp 
     ${OASIS_SOURCE_FOLDER}/Core/TimeUtilLinux.cpp 
-    
-    # Core/SDL  
-    ${OASIS_SOURCE_FOLDER}/Core/SDL/SDLWindow.cpp 
     
     # Input 
     ${OASIS_SOURCE_FOLDER}/Input/Keyboard.cpp 
 
     # Graphics 
     ${OASIS_SOURCE_FOLDER}/Graphics/IndexBuffer.cpp 
-    ${OASIS_SOURCE_FOLDER}/Graphics/Mesh.cpp 
+    #${OASIS_SOURCE_FOLDER}/Graphics/Mesh.cpp 
     ${OASIS_SOURCE_FOLDER}/Graphics/Parameter.cpp 
+    ${OASIS_SOURCE_FOLDER}/Graphics/VertexArray.cpp 
     ${OASIS_SOURCE_FOLDER}/Graphics/VertexBuffer.cpp 
     ${OASIS_SOURCE_FOLDER}/Graphics/VertexFormat.cpp 
     
     # Graphics/OpenGL 
-    ${OASIS_SOURCE_FOLDER}/Graphics/OpenGL/OGLGraphics.cpp 
-    ${OASIS_SOURCE_FOLDER}/Graphics/OpenGL/OGLIndexBuffer.cpp 
-    ${OASIS_SOURCE_FOLDER}/Graphics/OpenGL/OGLShader.cpp 
-    ${OASIS_SOURCE_FOLDER}/Graphics/OpenGL/OGLVertexArray.cpp 
-    ${OASIS_SOURCE_FOLDER}/Graphics/OpenGL/OGLVertexBuffer.cpp 
+    ${OASIS_SOURCE_FOLDER}/Graphics/GL/GLGraphics.cpp 
+    ${OASIS_SOURCE_FOLDER}/Graphics/GL/GLIndexBuffer.cpp 
+    ${OASIS_SOURCE_FOLDER}/Graphics/GL/GLVertexBuffer.cpp 
     
     # Math 
     ${OASIS_SOURCE_FOLDER}/Math/MathUtil.cpp 
@@ -56,10 +53,10 @@ else()
     message(STATUS "Build type set to ${CMAKE_BUILD_TYPE}")
 endif() 
 
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Wall")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -O2 -std=c++0x")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Wall -O2 -std=c++0x")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -O2 -std=c++0x")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -O2 -std=c++0x")
 
 # check bit mode 
 if(CMAKE_SIZEOF_VOID_P EQUAL 4) 

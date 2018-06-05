@@ -11,7 +11,7 @@ Submesh::Submesh()
     : update(true)
     , vertexArray(NULL)
     , indexBuffer(NULL)
-    , primitive(PRIMITIVE_TRIANGLE_LIST)
+    , primitive(Primitive::TRIANGLE_LIST)
     , indices() {}
 
 Mesh::Mesh()

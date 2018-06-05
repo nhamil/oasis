@@ -6,47 +6,46 @@ namespace Oasis
 {
 
 VertexBuffer::VertexBuffer(int startElements, const VertexFormat& format, BufferUsage usage)
-    : HardwareBuffer(usage)
-    , format(format)
-    , data()
-    , dirty(true)
+    : usage_(usage) 
+    , format_(format)
 {
-    data.resize(startElements * format.GetSize());
+    data_.resize(startElements * format.GetSize());
+    CreateResource(); 
 }
 
 VertexBuffer::~VertexBuffer() {}
 
-void VertexBuffer::Upload()
+void VertexBuffer::Update()
 {
-    if (dirty) UploadGpuData(data.size() * sizeof (float), &data[0]);
+    if (dirty_) UploadResource(); 
 
-    dirty = false;
+    dirty_ = false;
 }
 
 void VertexBuffer::GetData(int start, int numElements, float* out) const
 {
-    int s = start * format.GetSize();
-    int e = numElements * format.GetSize() * sizeof (float);
+    int s = start * format_.GetSize();
+    int e = numElements * format_.GetSize() * sizeof (float);
 
-    memcpy(out, &data[s], e);
+    memcpy(out, &data_[s], e);
 }
 
 void VertexBuffer::SetData(int start, int numElements, const float* in)
 {
-    dirty = true;
-    start *= format.GetSize();
+    dirty_ = true;
+    start *= format_.GetSize();
 
-    for (int i = 0; i < numElements * format.GetSize(); i++)
+    for (int i = 0; i < numElements * format_.GetSize(); i++)
     {
-        data[start + i] = in ? in[i] : 0;
+        data_[start + i] = in ? in[i] : 0;
     }
 }
 
 void VertexBuffer::SetElementCount(int numElements)
 {
-    if (data.size() != (unsigned) numElements * format.GetSize()) dirty = true;
+    if (data_.size() != (unsigned) numElements * format_.GetSize()) dirty_ = true;
 
-    data.resize(numElements * format.GetSize());
+    data_.resize(numElements * format_.GetSize());
 }
 
 }

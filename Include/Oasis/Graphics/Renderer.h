@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Oasis/Oasis.h"
+#include "Oasis/Common.h"
 
 #include "Oasis/Math/Matrix3.h"
 #include "Oasis/Math/Matrix4.h"

@@ -1,11 +1,9 @@
 #include "Oasis/Core/Engine.h"
 
-#include "Oasis/Core/Application.h"
-#include "Oasis/Core/Timer.h"
-
-#include "Oasis/Core/SDL/SDLWindow.h"
-
-#include "Oasis/Graphics/OpenGL/OGLGraphics.h"
+#include "Oasis/Core/Application.h" 
+#include "Oasis/Core/Display.h" 
+#include "Oasis/Core/Timer.h" 
+#include "Oasis/Graphics/Graphics.h" 
 
 #include <iostream>
 
@@ -14,23 +12,15 @@ using namespace std;
 namespace Oasis
 {
 
-int GameLoop(); 
+float Engine::ups_ = 0; 
+float Engine::fps_ = 0; 
+Application* Engine::app_ = nullptr; 
+bool Engine::running_ = false; 
+Config Engine::config_; 
 
-namespace // private data
-{
-    bool running_ = false;
-    float fps_ = 0, ups_ = 0; 
-
-    Config config_; 
-    Application* app_ = NULL; 
-    Graphics* graphics_ = NULL;
-    Window* window_ = NULL;
-}
-
-bool Engine::IsRunning()
-{
-    return running_;
-}
+unordered_map<ClassId, void*> Engine::subsystems_; 
+Display* Engine::display_ = nullptr; 
+Graphics* Engine::graphics_ = nullptr; 
 
 int Engine::Start(Application* app)
 {
@@ -48,13 +38,12 @@ int Engine::Start(Application* app)
         return -2; 
     }
 
-    config_ = app->GetConfig(); 
+    app_ = app; 
 
     running_ = true;
 
-    app_ = app; 
-    window_ = new SDLWindow();
-    graphics_ = new OGLGraphics();
+    display_ = new Display(); 
+    graphics_ = new Graphics(); 
 
     return GameLoop();
 }
@@ -69,43 +58,7 @@ void Engine::Stop()
     running_ = false;
 }
 
-Graphics* Engine::GetGraphics()
-{
-    return graphics_;
-}
-
-Window* Engine::GetWindow()
-{
-    return window_;
-}
-
-Keyboard* Engine::GetKeyboard() 
-{
-    return &window_->GetKeyboard(); 
-}
-
-void PreUpdate(float dt)
-{
-    window_->PollEvents();
-}
-
-void PostUpdate(float dt)
-{
-
-}
-
-void PreRender()
-{
-    graphics_->PreRender();
-}
-
-void PostRender()
-{
-    graphics_->PostRender();
-    window_->SwapBuffers();
-}
-
-int GameLoop() 
+int Engine::GameLoop() 
 {
     app_->Init(); 
 
@@ -157,7 +110,7 @@ int GameLoop()
             secondTimer.Reset();
         }
 
-        if (window_->IsCloseRequested())
+        if (display_->IsCloseRequested())
         {
             Engine::Stop();
         }
@@ -166,19 +119,42 @@ int GameLoop()
     app_->Exit(); 
 
     // engine has been told to stop 
-    cout << "Stopping application..." << endl;
+    cout << "Stopping engine..." << endl;
 
-    //delete graphics_;
-    graphics_ = NULL;
+    delete display_; 
+    display_ = nullptr; 
 
-    //delete window_;
-    window_ = NULL;
+    delete graphics_; 
+    graphics_ = nullptr; 
 
-    app_ = NULL; 
+    app_ = nullptr; 
 
     cout << "Done!" << endl;
 
     return 0; 
+}
+
+void Engine::PreUpdate(float dt) 
+{
+    display_->PollEvents(); 
+}
+
+void Engine::PostUpdate(float dt) 
+{
+
+}
+
+void Engine::PreRender() 
+{
+    graphics_->PreRender(); 
+    graphics_->SetClearColor(0.6, 0.8, 0.9); 
+    graphics_->Clear(); 
+}
+
+void Engine::PostRender() 
+{
+    graphics_->PostRender(); 
+    display_->SwapBuffers(); 
 }
 
 }
