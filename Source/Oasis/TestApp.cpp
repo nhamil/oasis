@@ -1,7 +1,7 @@
 #include <Oasis/Common.h>
 #include <Oasis/Core/Application.h>
 #include <Oasis/Core/Window.h>
-#include <Oasis/Graphics/Graphics.h>
+#include <Oasis/Graphics/GraphicsDevice.h>
 #include <Oasis/Graphics/Mesh.h>
 #include <Oasis/Graphics/Parameter.h>
 
@@ -42,8 +42,8 @@ public:
 
 private:
     Mesh mesh;
-    Shader* shader;
-    VertexArray* geom;
+    ShaderResource* ShaderResource;
+    VertexArrayResource* geom;
     Vector3 pos;
     float angle;
 };
@@ -60,13 +60,13 @@ void TestApp::Init()
 
     cout << (p == 3.2) << endl;
 
-    Graphics* g = Engine::GetGraphics();
+    GraphicsDevice* g = Engine::GetGraphics();
 
-    shader = g->CreateShader(OGL_VS, OGL_FS);
+    = g->CreateShader(OGL_VS, OGL_FS);
     geom = g->CreateVertexArray();
 
-    VertexBuffer* vb = g->CreateVertexBuffer(4, VertexFormat::POSITION);
-    IndexBuffer* ib = g->CreateIndexBuffer(6);
+    VertexBufferResource* vb = g->CreateVertexBuffer(4, VertexFormat::POSITION);
+    IndexBufferResource* ib = g->CreateIndexBuffer(6);
 
     float verts[] =
     {
@@ -120,13 +120,13 @@ void TestApp::Update(float dt)
 
 void TestApp::Render()
 {
-    Graphics* g = Engine::GetGraphics();
+    GraphicsDevice* g = Engine::GetGraphics();
     Window* w = Engine::GetWindow();
 
     g->SetClearColor({0.6, 0.7, 0.9, 1.0});
     g->Clear();
 
-    g->SetShader(shader);
+    g->SetShader(ShaderResource);
     g->SetUniform("u_Color", (Vector3) {1, 1, 0});
     g->SetUniform("oa_View", Matrix4::Translation(-pos));
     g->SetUniform("oa_Model", Matrix4::RotationY(angle));

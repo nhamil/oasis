@@ -55,6 +55,39 @@ Parameter::Parameter(const Matrix4& value)
     *this = value;
 }
 
+Parameter::Parameter(ParameterType type) 
+{
+    type_ = type; 
+
+    switch (type) 
+    {
+    case ParameterType::INT: 
+        value_.intValue = 0; 
+        break; 
+    case ParameterType::FLOAT: 
+        value_.floatValue = 0; 
+        break; 
+    case ParameterType::VECTOR2: 
+        value_.vec2Value = 0; 
+        break; 
+    case ParameterType::VECTOR3: 
+        value_.vec3Value = 0; 
+        break; 
+    case ParameterType::VECTOR4: 
+        value_.vec4Value = 0; 
+        break; 
+    case ParameterType::MATRIX3: 
+        value_.mat3Value = 0; 
+        break; 
+    case ParameterType::MATRIX4: 
+        value_.mat4Value = 0; 
+        break; 
+    default: 
+        type = ParameterType::UNKNOWN; 
+        value_.mat4Value = 0; 
+    }
+}
+
 Parameter& Parameter::operator=(const Parameter& param)
 {
     type_ = param.type_;
@@ -80,8 +113,9 @@ Parameter& Parameter::operator=(const Parameter& param)
         value_.mat3Value = param.value_.mat3Value;
         break;
     case ParameterType::MATRIX4:
-        value_.mat3Value = param.value_.mat3Value;
+        value_.mat4Value = param.value_.mat4Value;
         break;
+    case ParameterType::UNKNOWN: 
     default: // should not happen, instead update this if new types are added
         memcpy(&value_, &param.value_, sizeof (ParameterValue));
         break;

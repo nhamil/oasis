@@ -25,15 +25,16 @@ set(SOURCES
 
     # Graphics 
     ${OASIS_SOURCE_FOLDER}/Graphics/IndexBuffer.cpp 
-    #${OASIS_SOURCE_FOLDER}/Graphics/Mesh.cpp 
+    ${OASIS_SOURCE_FOLDER}/Graphics/Mesh.cpp 
     ${OASIS_SOURCE_FOLDER}/Graphics/Parameter.cpp 
-    ${OASIS_SOURCE_FOLDER}/Graphics/VertexArray.cpp 
+    ${OASIS_SOURCE_FOLDER}/Graphics/Shader.cpp 
     ${OASIS_SOURCE_FOLDER}/Graphics/VertexBuffer.cpp 
     ${OASIS_SOURCE_FOLDER}/Graphics/VertexFormat.cpp 
     
     # Graphics/OpenGL 
-    ${OASIS_SOURCE_FOLDER}/Graphics/GL/GLGraphics.cpp 
+    ${OASIS_SOURCE_FOLDER}/Graphics/GL/GLGraphicsDevice.cpp 
     ${OASIS_SOURCE_FOLDER}/Graphics/GL/GLIndexBuffer.cpp 
+    ${OASIS_SOURCE_FOLDER}/Graphics/GL/GLShader.cpp 
     ${OASIS_SOURCE_FOLDER}/Graphics/GL/GLVertexBuffer.cpp 
     
     # Math 
@@ -44,6 +45,7 @@ set(SOURCES
 
 # add include directory 
 include_directories(Include) 
+include_directories(Source) 
 
 # set up build type 
 if(NOT CMAKE_BUILD_TYPE) 

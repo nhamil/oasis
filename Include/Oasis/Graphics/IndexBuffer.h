@@ -3,19 +3,20 @@
 #include "Oasis/Common.h"
 
 #include "Oasis/Graphics/BufferUsage.h" 
-#include "Oasis/Graphics/Graphics.h" 
-#include "Oasis/Graphics/GraphicsResource.h"
 
 #include <vector>
 
 namespace Oasis
 {
 
-class OASIS_API IndexBuffer : public GraphicsResource
+class OASIS_API IndexBuffer : public ReferenceCounted
 {
 public:
+    IndexBuffer(int startElements, BufferUsage usage); 
+    virtual ~IndexBuffer(); 
+
     // upload data if it is dirty 
-    void Update();
+    void Flush();
 
     inline BufferUsage GetBufferUsage() const { return usage_; } 
     inline int GetElementCount() const { return data_.size(); }
@@ -25,17 +26,8 @@ public:
     void SetElementCount(int numElements);
     void SetData(int start, int numElements, const short* in);
 
-private:
-    friend class Graphics; 
-
-    IndexBuffer(int startElements, BufferUsage usage = BufferUsage::DYNAMIC);
-    ~IndexBuffer();
-
-    OASIS_NO_COPY(IndexBuffer) 
-
-    void CreateResource(); 
-    void UploadResource(); 
-    void DestroyResource(); 
+protected:
+    virtual void Upload() = 0; 
 
     BufferUsage usage_; 
     std::vector<short> data_;

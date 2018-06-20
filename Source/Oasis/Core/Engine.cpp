@@ -3,7 +3,7 @@
 #include "Oasis/Core/Application.h" 
 #include "Oasis/Core/Display.h" 
 #include "Oasis/Core/Timer.h" 
-#include "Oasis/Graphics/Graphics.h" 
+#include "Oasis/Graphics/GL/GLGraphicsDevice.h" 
 
 #include <iostream>
 
@@ -18,9 +18,8 @@ Application* Engine::app_ = nullptr;
 bool Engine::running_ = false; 
 Config Engine::config_; 
 
-unordered_map<ClassId, void*> Engine::subsystems_; 
 Display* Engine::display_ = nullptr; 
-Graphics* Engine::graphics_ = nullptr; 
+GraphicsDevice* Engine::graphics_ = nullptr; 
 
 int Engine::Start(Application* app)
 {
@@ -43,7 +42,7 @@ int Engine::Start(Application* app)
     running_ = true;
 
     display_ = new Display(); 
-    graphics_ = new Graphics(); 
+    graphics_ = new GLGraphicsDevice(); 
 
     return GameLoop();
 }

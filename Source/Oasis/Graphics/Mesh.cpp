@@ -1,327 +1,233 @@
-#include "Oasis/Graphics/Mesh.h"
+#include "Oasis/Graphics/Mesh.h" 
 
-#include <iostream>
+#include "Oasis/Core/Engine.h" 
+#include "Oasis/Graphics/IndexBuffer.h" 
+#include "Oasis/Graphics/VertexBuffer.h" 
 
-using namespace std;
+#include <iostream> 
 
-namespace Oasis
+#define OASIS_MESH_SET_ATTRIBUTE(list, in) { \
+    list.clear(); \
+    list.reserve(vertexCount_); \
+    if (in) \
+    { \
+        for (int i = 0; i < vertexCount_; i++) \
+        { \
+            list.push_back(in[i]); \
+        } \
+    } \
+    verticesDirty_ = true; }
+
+#define OASIS_MESH_GET_ATTRIBUTE(list, out) \
+    for (int i = 0; i < count; i++) out[i] = list[i + start]; 
+
+#define OASIS_MESH_PUSH_BACK_VEC2(list, vec) { \
+    list.push_back(vec.x); \
+    list.push_back(vec.y); }
+
+#define OASIS_MESH_PUSH_BACK_VEC3(list, vec) { \
+    list.push_back(vec.x); \
+    list.push_back(vec.y); \
+    list.push_back(vec.z); }
+
+using namespace std; 
+
+namespace Oasis 
 {
 
-Submesh::Submesh()
-    : update(true)
-    , vertexArray(NULL)
-    , indexBuffer(NULL)
-    , primitive(Primitive::TRIANGLE_LIST)
-    , indices() {}
-
-Mesh::Mesh()
-    : updateVertices_(true)
-    , vertexCount_(0)
-    , positions_()
-    , normals_()
-    , texCoords_()
-    , tangents_()
-    , vertexBuffer_(NULL)
-    , submeshes_()
+Submesh::Submesh() 
 {
-    SetSubmeshCount(1);
+
 }
 
-Mesh::~Mesh()
+Submesh::~Submesh() 
 {
-    Release();
+    if (indexBuffer) indexBuffer->Release(); 
 }
 
-void Mesh::Release()
+Mesh::Mesh() 
 {
-    updateVertices_ = true;
 
-    for (unsigned i = 0; i < submeshes_.size(); i++)
-    {
-        Submesh& sm = submeshes_[i];
-
-        if (sm.vertexArray) sm.vertexArray->Release();
-        if (sm.indexBuffer) sm.indexBuffer->Release();
-    }
-
-    submeshes_.clear();
-
-    if (vertexBuffer_)
-    {
-        vertexBuffer_->Release();
-        delete vertexBuffer_;
-        vertexBuffer_ = NULL;
-    }
 }
 
-void Mesh::Clear()
+Mesh::~Mesh() 
 {
-    // clear vertices
-    vertexCount_ = 0;
-    positions_.clear();
-    normals_.clear();
-    texCoords_.clear();
-    tangents_.clear();
-    updateVertices_ = true;
-
-    // clear and remove indices
-    for (unsigned i = 0; i < submeshes_.size(); i++)
-    {
-        Submesh& sm = submeshes_[i];
-
-        if (sm.vertexArray) sm.vertexArray->Release();
-        if (sm.indexBuffer) sm.indexBuffer->Release();
-    }
-
-    submeshes_.clear();
-    SetSubmeshCount(1);
+    if (vertexBuffer_) vertexBuffer_->Release(); 
 }
 
-void Mesh::Upload()
+void Mesh::Clear() 
 {
-    Graphics* g = Engine::GetGraphics();
-    // TODO finish
+    verticesDirty_ = true; 
 
-    if (updateVertices_)
-    {
-        if (positions_.size())
+    positions_.clear(); 
+    normals_.clear(); 
+    texCoords_.clear(); 
+    tangents_.clear(); 
+}
+
+void Mesh::Upload() 
+{
+    // vertices 
+
+    //cout << "Mesh: start upload" << endl; 
+
+    if (verticesDirty_) {
+        VertexFormat format; 
+
+        if (HasPositions()) format.AddAttribute(Attribute::POSITION); 
+        if (HasNormals()) format.AddAttribute(Attribute::NORMAL); 
+        if (HasTexCoords()) format.AddAttribute(Attribute::TEXTURE); 
+        if (HasTangents()) format.AddAttribute(Attribute::TANGENT); 
+
+        //cout << "Mesh: create vertex buffer" << endl; 
+
+        if (!vertexBuffer_) vertexBuffer_ = Engine::GetGraphicsDevice()->CreateVertexBuffer(vertexCount_, format); 
+        vertexBuffer_->SetElementCount(vertexCount_); 
+
+        //cout << "Mesh: format vertices" << endl; 
+
+        vector<float> vertices; 
+        vertices.reserve(vertexCount_ * format.GetSize()); 
+
+        for (int i = 0; i < vertexCount_; i++) 
         {
-            int floatsPerElement = 3;
-
-            VertexFormat format;
-            format.AddAttribute(ATTRIBUTE_POSITION);
-
-            if (normals_.size()) { floatsPerElement += 3; format.AddAttribute(ATTRIBUTE_NORMAL); }
-            if (texCoords_.size()) { floatsPerElement += 2; format.AddAttribute(ATTRIBUTE_TEXTURE); }
-            if (tangents_.size()) { floatsPerElement += 3; format.AddAttribute(ATTRIBUTE_TANGENT); }
-
-            if (!vertexBuffer_)
-            {
-                vertexBuffer_ = g->CreateVertexBuffer(vertexCount_, format);
-            }
-            else
-            {
-                vertexBuffer_->SetElementCount(vertexCount_);
-            }
-
-            float element[floatsPerElement];
-
-            for (int i = 0; i < vertexCount_; i++)
-            {
-                int j = 0;
-
-                element[j++] = positions_[i].x;
-                element[j++] = positions_[i].y;
-                element[j++] = positions_[i].z;
-
-                if (normals_.size())
-                {
-                    element[j++] = normals_[i].x;
-                    element[j++] = normals_[i].y;
-                    element[j++] = normals_[i].z;
-                }
-
-                if (texCoords_.size())
-                {
-                    element[j++] = texCoords_[i].x;
-                    element[j++] = texCoords_[i].y;
-                }
-
-                if (tangents_.size())
-                {
-                    element[j++] = tangents_[i].x;
-                    element[j++] = tangents_[i].y;
-                    element[j++] = tangents_[i].z;
-                }
-
-                vertexBuffer_->SetData(i, 1, element);
-            }
-
-            vertexBuffer_->Upload();
+            if (HasPositions()) OASIS_MESH_PUSH_BACK_VEC3(vertices, positions_[i]); 
+            if (HasNormals()) OASIS_MESH_PUSH_BACK_VEC3(vertices, normals_[i]); 
+            if (HasTexCoords()) OASIS_MESH_PUSH_BACK_VEC2(vertices, texCoords_[i]); 
+            if (HasTangents()) OASIS_MESH_PUSH_BACK_VEC3(vertices, tangents_[i]); 
         }
-        else if (vertexBuffer_)
+
+        //cout << "Mesh: upload vertices" << endl; 
+
+        vertexBuffer_->SetData(0, vertexCount_, &vertices[0]); 
+        vertexBuffer_->Flush(); 
+        verticesDirty_ = false; 
+    }
+
+    //cout << "Mesh: done with vertices" << endl; 
+
+    // indices 
+
+    for (int submesh = 0; submesh < GetSubmeshCount(); submesh++) 
+    {
+        Submesh& sm = submeshes_[submesh]; 
+
+        if (sm.dirty) 
         {
-            vertexBuffer_->Release();
-            delete vertexBuffer_;
-            vertexBuffer_ = NULL;
+            int indCount = sm.indices.size(); 
+
+            if (!sm.indexBuffer) sm.indexBuffer = Engine::GetGraphicsDevice()->CreateIndexBuffer(indCount); 
+            sm.indexBuffer->SetElementCount(indCount); 
+            sm.indexBuffer->SetData(0, indCount, &sm.indices[0]); 
+            sm.indexBuffer->Flush(); 
+            sm.dirty = false; 
         }
     }
 
-    // set buffers of all submeshes
-    for (unsigned i = 0; i < submeshes_.size(); i++)
+    //cout << "Mesh: done with indices" << endl; 
+}
+
+int Mesh::GetVertexCount() const 
+{
+    return vertexCount_; 
+}
+
+void Mesh::GetPositions(int start, int count, Vector3* out) const 
+{
+    OASIS_MESH_GET_ATTRIBUTE(positions_, out); 
+}
+
+void Mesh::GetNormals(int start, int count, Vector3* out) const 
+{
+    OASIS_MESH_GET_ATTRIBUTE(normals_, out); 
+}
+
+void Mesh::GetTexCoords(int start, int count, Vector2* out) const 
+{
+    OASIS_MESH_GET_ATTRIBUTE(texCoords_, out); 
+}
+
+void Mesh::GetTangents(int start, int count, Vector3* out) const 
+{
+    OASIS_MESH_GET_ATTRIBUTE(tangents_, out); 
+}
+
+void Mesh::SetVertexCount(int count) 
+{
+    if (GetVertexCount() == count) return; // already correct no need to change 
+
+    Clear(); 
+    vertexCount_ = count; 
+}
+
+void Mesh::SetPositions(const Vector3* in) 
+{
+    OASIS_MESH_SET_ATTRIBUTE(positions_, in); 
+}
+
+void Mesh::SetNormals(const Vector3* in) 
+{
+    OASIS_MESH_SET_ATTRIBUTE(normals_, in); 
+}
+
+void Mesh::SetTexCoords(const Vector2* in) 
+{
+    OASIS_MESH_SET_ATTRIBUTE(texCoords_, in); 
+}
+
+void Mesh::SetTangents(const Vector3* in) 
+{
+    OASIS_MESH_SET_ATTRIBUTE(tangents_, in); 
+}
+
+VertexBuffer* Mesh::GetVertexBuffer() 
+{
+    return vertexBuffer_; 
+}
+
+int Mesh::GetSubmeshCount() const 
+{
+    return submeshes_.size(); 
+}
+
+int Mesh::GetIndexCount(int submesh) const 
+{
+    return submeshes_[submesh].indices.size(); 
+}
+
+void Mesh::GetIndices(int submesh, int start, int count, short* indices) const
+{
+    auto& data = submeshes_[submesh].indices; 
+
+    for (int i = 0; i < count; i++) 
     {
-        Submesh& s = submeshes_[i];
-
-        if (!s.indexBuffer) s.indexBuffer = g->CreateIndexBuffer(s.indices.size());
-        s.indexBuffer->SetData(0, s.indices.size(), &s.indices[0]);
-        s.indexBuffer->Upload();
-
-        if (!s.vertexArray) s.vertexArray = g->CreateVertexArray();
-        s.vertexArray->SetVertexBuffer(vertexBuffer_);
-        s.vertexArray->SetIndexBuffer(s.indexBuffer);
-        s.vertexArray->Upload();
+        indices[i] = data[start + i]; 
     }
 }
 
-bool Mesh::CalculateNormals()
+void Mesh::SetSubmeshCount(int count) 
 {
-    // TODO finish
-    return false;
+    submeshes_.resize(count); 
 }
 
-bool Mesh::CalculateTangents()
+bool Mesh::SetIndices(int submesh, int count, const short* indices) 
 {
-    // TODO finish
-    return false;
-}
+    Submesh& sm = submeshes_[submesh]; 
 
-void Mesh::ClearAttributes()
-{
-    positions_.clear();
-    normals_.clear();
-    texCoords_.clear();
-    tangents_.clear();
-}
+    sm.dirty = true; 
+    sm.indices.resize(count); 
 
-void Mesh::SetPositions(int count, const Vector3* positions)
-{
-    updateVertices_ = true;
-
-    if (vertexCount_ != count)
+    for (int i = 0; i < count; i++) 
     {
-        vertexCount_ = count;
-        ClearAttributes();
+        sm.indices[i] = indices[i]; 
     }
 
-    positions_.clear();
-    for (int i = 0; i < count; i++) positions_.push_back(positions[i]);
+    return true; 
 }
 
-void Mesh::SetNormals(const Vector3* normals)
+IndexBuffer* Mesh::GetIndexBuffer(int submesh) 
 {
-    updateVertices_ = true;
-
-    normals_.clear();
-    for (int i = 0; i < vertexCount_; i++) normals_.push_back(normals[i]);
-}
-
-void Mesh::SetTexCoord(const Vector2* texCoords)
-{
-    updateVertices_ = true;
-
-    texCoords_.clear();
-    for (int i = 0; i < vertexCount_; i++) texCoords_.push_back(texCoords[i]);
-}
-
-void Mesh::SetTangents(const Vector3* tangents)
-{
-    updateVertices_ = true;
-
-    tangents_.clear();
-    for (int i = 0; i < vertexCount_; i++) tangents_.push_back(tangents[i]);
-}
-
-int Mesh::GetVertexCount() const
-{
-    return vertexCount_;
-}
-
-void Mesh::GetPositions(int start, int count, Vector3* in) const
-{
-    for (int i = 0; i < count; i++)
-    {
-        in[i] = positions_[i + start];
-    }
-}
-
-void Mesh::GetNormals(int start, int count, Vector3* in) const
-{
-    for (int i = 0; i < count; i++)
-    {
-        in[i] = normals_[i + start];
-    }
-}
-
-void Mesh::GetTexCoords(int start, int count, Vector2* in) const
-{
-    for (int i = 0; i < count; i++)
-    {
-        in[i] = texCoords_[i + start];
-    }
-}
-
-void Mesh::GetTangents(int start, int count, Vector3* in) const
-{
-    for (int i = 0; i < count; i++)
-    {
-        in[i] = tangents_[i + start];
-    }
-}
-
-VertexBuffer* Mesh::GetVertexBuffer()
-{
-    return vertexBuffer_;
-}
-
-void Mesh::SetSubmeshCount(int count)
-{
-    int curSize = (int) submeshes_.size();
-
-    for (int i = curSize; i > count; i--)
-    {
-        // remove more than count submeshes
-        submeshes_.pop_back();
-    }
-
-    curSize = (int) submeshes_.size();
-
-    for (int i = curSize; i < count; i++)
-    {
-        // add submeshes to make count correct
-        submeshes_.push_back(Submesh());
-    }
-}
-
-void Mesh::SetIndices(int submesh, int count, const short* indices)
-{
-    Submesh& s = submeshes_[submesh];
-    s.update = true;
-
-    s.indices.clear();
-
-    for (int i = 0; i < count; i++)
-    {
-        s.indices.push_back(indices[i]);
-    }
-}
-
-int Mesh::GetSubmeshCount() const
-{
-    return submeshes_.size();
-}
-
-int Mesh::GetIndexCount(int submesh) const
-{
-    return submeshes_[submesh].indices.size();
-}
-
-void Mesh::GetIndices(int submesh, int start, int count, short* in) const
-{
-    const Submesh& s = submeshes_[submesh];
-    for (int i = 0; i < count; i++)
-    {
-        in[i] = s.indices[i + start];
-    }
-}
-
-VertexArray* Mesh::GetVertexArray(int submesh)
-{
-    return submeshes_[submesh].vertexArray;
-}
-
-IndexBuffer* Mesh::GetIndexBuffer(int submesh)
-{
-    return submeshes_[submesh].indexBuffer;
+    return submeshes_[submesh].indexBuffer; 
 }
 
 }

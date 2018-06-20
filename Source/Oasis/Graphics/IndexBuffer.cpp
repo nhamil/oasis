@@ -9,14 +9,13 @@ IndexBuffer::IndexBuffer(int startElements, BufferUsage usage)
     : usage_(usage) 
 {
     data_.resize(startElements);
-    CreateResource(); 
 }
 
 IndexBuffer::~IndexBuffer() {}
 
-void IndexBuffer::Update()
+void IndexBuffer::Flush()
 {
-    if (dirty_) UploadResource(); 
+    if (dirty_) Upload(); 
 
     dirty_ = false;
 }

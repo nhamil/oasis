@@ -11,6 +11,7 @@ namespace Oasis
 
 enum class ParameterType
 {
+    UNKNOWN, 
     INT,
     FLOAT,
     VECTOR2,
@@ -22,7 +23,7 @@ enum class ParameterType
     count
 };
 
-union OASIS_API ParameterValue
+union ParameterValue
 {
     int intValue; 
     float floatValue; 
@@ -48,6 +49,7 @@ public:
     Parameter(const Vector4& value);
     Parameter(const Matrix3& value);
     Parameter(const Matrix4& value);
+    Parameter(ParameterType type); 
     ~Parameter() {}
 
     Parameter& operator=(const Parameter& param);

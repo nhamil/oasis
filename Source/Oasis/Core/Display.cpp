@@ -55,14 +55,14 @@ Display::~Display()
 int Display::GetWidth() const 
 {
     int width;
-    SDL_GetWindowSize(window_, &width, NULL);
+    SDL_GetWindowSize(window_, &width, nullptr);
     return width;
 } 
 
 int Display::GetHeight() const 
 {
     int height;
-    SDL_GetWindowSize(window_, NULL, &height);
+    SDL_GetWindowSize(window_, nullptr, &height);
     return height;
 } 
 

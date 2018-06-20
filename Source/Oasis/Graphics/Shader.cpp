@@ -5,25 +5,45 @@ using namespace std;
 namespace Oasis 
 {
 
-static const int OGL_ATTRIBUTE_INDEX[ATTRIBUTE_COUNT] =
-{
-    0, 1, 2, 3, 4
-};
-
-static const string OGL_ATTRIBUTE_NAME[ATTRIBUTE_COUNT] =
-{
-    "a_Position",
-    "a_Normal",
-    "a_Bitangent",
-    "a_Texture",
-    "a_Color"
-};
-
 Shader::Shader(const string& vs, const string& fs) 
+    : vSource_(vs) 
+    , fSource_(fs) 
 {
-
+    
 }
 
-Shader::~Shader() {}
+Shader::~Shader() 
+{
+    
+}
+
+void Shader::Flush() 
+{
+    Upload(); 
+}
+
+void Shader::ClearParameter(const string& name) 
+{
+    auto it = parameters_.find(name); 
+
+    if (it != parameters_.end()) 
+    {
+        auto& param = it->second; 
+        param.Reset();
+        FlagUpdateParameter(name); 
+    }
+}
+
+void Shader::SetParameter(const string& name, const Parameter& value) 
+{
+    auto it = parameters_.find(name); 
+
+    if (it != parameters_.end()) 
+    {
+        auto& param = it->second; 
+        param.Set(value); 
+        if (param.dirty) FlagUpdateParameter(name); 
+    }
+}
 
 }

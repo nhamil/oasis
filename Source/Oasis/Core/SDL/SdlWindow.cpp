@@ -13,8 +13,8 @@ bool SDLWindow::sdlInit_ = false;
 
 SDLWindow::SDLWindow(const std::string& title)
     : title_(title)
-    , window_(NULL)
-    , context_(NULL)
+    , window_(nullptr)
+    , context_(nullptr)
     , close_(false)
     , keys_() 
 {
@@ -46,8 +46,8 @@ SDLWindow::~SDLWindow()
     SDL_GL_DeleteContext(context_);
     SDL_DestroyWindow(window_);
 
-    context_ = NULL;
-    window_ = NULL;
+    context_ = nullptr;
+    window_ = nullptr;
 }
 
 const std::string& SDLWindow::GetTitle() const
@@ -58,14 +58,14 @@ const std::string& SDLWindow::GetTitle() const
 int SDLWindow::GetWidth() const
 {
     int width;
-    SDL_GetWindowSize(window_, &width, NULL);
+    SDL_GetWindowSize(window_, &width, nullptr);
     return width;
 }
 
 int SDLWindow::GetHeight() const
 {
     int height;
-    SDL_GetWindowSize(window_, NULL, &height);
+    SDL_GetWindowSize(window_, nullptr, &height);
     return height;
 }
 

@@ -7,15 +7,16 @@
 #include "Oasis/Core/Config.h" 
 #include "Oasis/Core/Display.h" 
 #include "Oasis/Core/Engine.h"
+#include "Oasis/Core/ReferenceCounted.h" 
 #include "Oasis/Core/Timer.h" 
 #include "Oasis/Core/TimeUtil.h" 
 
 #include "Oasis/Input/Keyboard.h" 
 
-#include "Oasis/Graphics/Graphics.h"
+#include "Oasis/Graphics/GraphicsDevice.h"
 #include "Oasis/Graphics/IndexBuffer.h" 
+#include "Oasis/Graphics/Mesh.h" 
 #include "Oasis/Graphics/Shader.h" 
-#include "Oasis/Graphics/VertexArray.h" 
 #include "Oasis/Graphics/VertexBuffer.h" 
 #include "Oasis/Graphics/VertexFormat.h" 
 

@@ -1,25 +1,21 @@
 #pragma once
 
 #include "Oasis/Common.h"
-#include "Oasis/Graphics/Graphics.h"
+#include "Oasis/Graphics/GraphicsDevice.h"
 
 #include <vector>
 
 namespace Oasis
 {
 
-class VertexArray;
-class IndexBuffer;
-class VertexBuffer;
-
 struct OASIS_API Submesh
 {
     Submesh();
+    ~Submesh(); 
 
-    bool update;
-    VertexArray* vertexArray;
-    IndexBuffer* indexBuffer;
-    Primitive primitive;
+    bool dirty = true;
+    IndexBuffer* indexBuffer = nullptr;
+    Primitive primitive = Primitive::TRIANGLE_LIST;
     std::vector<short> indices;
 };
 
@@ -29,55 +25,52 @@ public:
     Mesh();
     ~Mesh();
 
-    void Release();
-
     void Clear();
     void Upload();
 
     bool CalculateNormals();
     bool CalculateTangents();
 
+    bool HasPositions() const { return positions_.size(); } 
     bool HasNormals() const { return normals_.size(); }
     bool HasTexCoords() const { return texCoords_.size(); }
     bool HasTangents() const { return tangents_.size(); }
 
     // attributes
 
-    void SetPositions(int count, const Vector3* positions);
-    void SetNormals(const Vector3* normals);
-    void SetTexCoord(const Vector2* texCoords);
-    void SetTangents(const Vector3* tangents);
-
     int GetVertexCount() const;
-    void GetPositions(int start, int count, Vector3* in) const;
-    void GetNormals(int start, int count, Vector3* in) const;
-    void GetTexCoords(int start, int count, Vector2* in) const;
-    void GetTangents(int start, int count, Vector3* in) const;
+    void GetPositions(int start, int count, Vector3* out) const;
+    void GetNormals(int start, int count, Vector3* out) const;
+    void GetTexCoords(int start, int count, Vector2* out) const;
+    void GetTangents(int start, int count, Vector3* out) const;
+
+    void SetVertexCount(int count); 
+    void SetPositions(const Vector3* positions);
+    void SetNormals(const Vector3* normals);
+    void SetTexCoords(const Vector2* texCoords);
+    void SetTangents(const Vector3* tangents);
 
     VertexBuffer* GetVertexBuffer();
 
     // submeshes
 
-    void SetSubmeshCount(int count);
-    void SetIndices(int submesh, int count, const short* indices);
-
     int GetSubmeshCount() const;
     int GetIndexCount(int submesh) const;
     void GetIndices(int submesh, int start, int count, short* in) const;
 
-    VertexArray* GetVertexArray(int submesh);
+    void SetSubmeshCount(int count);
+    bool SetIndices(int submesh, int count, const short* indices);
+
     IndexBuffer* GetIndexBuffer(int submesh);
 
 private:
-    void ClearAttributes();
-
-    bool updateVertices_;
-    int vertexCount_;
+    bool verticesDirty_ = true;
+    int vertexCount_ = 0;
     std::vector<Vector3> positions_;
     std::vector<Vector3> normals_;
     std::vector<Vector2> texCoords_;
     std::vector<Vector3> tangents_;
-    VertexBuffer* vertexBuffer_;
+    VertexBuffer* vertexBuffer_ = nullptr;
 
     std::vector<Submesh> submeshes_;
 };

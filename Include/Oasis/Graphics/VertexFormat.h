@@ -32,6 +32,7 @@ public:
     VertexFormat();
     VertexFormat(const VertexFormat& other);
     VertexFormat& operator=(const VertexFormat& other);
+    ~VertexFormat() = default; 
 
     bool operator==(const VertexFormat& other) const;
     bool operator!=(const VertexFormat& other) const;

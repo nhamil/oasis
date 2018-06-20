@@ -10,19 +10,18 @@ VertexBuffer::VertexBuffer(int startElements, const VertexFormat& format, Buffer
     , format_(format)
 {
     data_.resize(startElements * format.GetSize());
-    CreateResource(); 
 }
 
 VertexBuffer::~VertexBuffer() {}
 
-void VertexBuffer::Update()
+void VertexBuffer::Flush()
 {
-    if (dirty_) UploadResource(); 
+    if (dirty_) Upload(); 
 
     dirty_ = false;
 }
 
-void VertexBuffer::GetData(int start, int numElements, float* out) const
+void VertexBuffer::GetData(int start, int numElements, void* out) const
 {
     int s = start * format_.GetSize();
     int e = numElements * format_.GetSize() * sizeof (float);
@@ -30,14 +29,16 @@ void VertexBuffer::GetData(int start, int numElements, float* out) const
     memcpy(out, &data_[s], e);
 }
 
-void VertexBuffer::SetData(int start, int numElements, const float* in)
+void VertexBuffer::SetData(int start, int numElements, const void* in)
 {
     dirty_ = true;
     start *= format_.GetSize();
 
+    const float* arr = (const float*) in; 
+
     for (int i = 0; i < numElements * format_.GetSize(); i++)
     {
-        data_[start + i] = in ? in[i] : 0;
+        data_[start + i] = in ? arr[i] : 0;
     }
 }
 

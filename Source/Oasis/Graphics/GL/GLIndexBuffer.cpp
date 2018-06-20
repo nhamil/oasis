@@ -1,4 +1,7 @@
-#include "Oasis/Graphics/IndexBuffer.h"
+#include "Oasis/Graphics/GL/GLIndexBuffer.h"
+
+#include "Oasis/Graphics/GL/GLGraphicsDevice.h" 
+#include "Oasis/Graphics/GL/GLUtil.h" 
 
 #include <string.h>
 
@@ -9,25 +12,43 @@ using namespace std;
 namespace Oasis
 {
 
-void IndexBuffer::CreateResource()
+GLIndexBuffer::GLIndexBuffer(GLGraphicsDevice* graphicsDevice, int startElements, BufferUsage usage) 
+    : IndexBuffer(startElements, usage) 
+    , graphics_(graphicsDevice) 
 {
-    glGenBuffers(1, &id);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, GetElementCount() * sizeof (short), NULL, GL_DYNAMIC_DRAW);
+    Create(); 
 }
 
-void IndexBuffer::UploadResource()
+GLIndexBuffer::~GLIndexBuffer() 
 {
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, GetElementCount() * sizeof (short), &data_[0], GL_DYNAMIC_DRAW);
+    Destroy(); 
 }
 
-void IndexBuffer::DestroyResource()
+void GLIndexBuffer::Create()
 {
-    if (id)
+    if (id_) return; 
+
+    GLCALL(glGenBuffers(1, &id_));
+    GLCALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_));
+    GLCALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, GetElementCount() * sizeof (short), nullptr, GL_DYNAMIC_DRAW));
+}
+
+void GLIndexBuffer::Upload()
+{
+    if (!id_) Create(); 
+
+    GLCALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_));
+    GLCALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, GetElementCount() * sizeof (short), &data_[0], GL_DYNAMIC_DRAW));
+}
+
+void GLIndexBuffer::Destroy()
+{
+    if (id_)
     {
-        glDeleteBuffers(1, &id);
-        id = 0;
+        if (graphics_->GetIndexBuffer() == this) graphics_->SetIndexBuffer(nullptr); 
+
+        GLCALL(glDeleteBuffers(1, &id_));
+        id_ = 0;
     }
 }
 
