@@ -9,19 +9,6 @@ const VertexFormat VertexFormat::TANGENT = VertexFormat().AddAttribute(Attribute
 const VertexFormat VertexFormat::TEXTURE = VertexFormat().AddAttribute(Attribute::TEXTURE);
 const VertexFormat VertexFormat::COLOR = VertexFormat().AddAttribute(Attribute::COLOR);
 
-int GetAttributeSize(Attribute attrib)
-{
-    switch (attrib)
-    {
-    case Attribute::TANGENT: return 3;
-    case Attribute::POSITION: return 3;
-    case Attribute::NORMAL: return 3;
-    case Attribute::COLOR: return 4;
-    case Attribute::TEXTURE: return 2;
-    default: return 0;
-    }
-}
-
 VertexFormat::VertexFormat()
     : elements_()
     , size_(0) {}

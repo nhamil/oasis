@@ -30,7 +30,7 @@ public:
 
     inline void SetVertexBuffer(VertexBuffer* vertexBuffer) { SetVertexBuffers(1, &vertexBuffer);  } 
 
-    virtual void SetTextureUnit(int unit, Texture* texture); 
+    virtual void SetTextureUnit(int unit, Texture* texture) = 0; 
 
     virtual void Draw(Primitive prim, int start, int triCount) = 0;  
 

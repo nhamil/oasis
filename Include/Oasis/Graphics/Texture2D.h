@@ -18,7 +18,6 @@ public:
 
 protected: 
     std::vector<char> data_; 
-    bool dirty_ = true; 
 };
 
 }

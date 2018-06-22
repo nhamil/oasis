@@ -61,6 +61,8 @@ void TestApp2::Init()
 {
     cout << "Init App" << endl; 
 
+    cout << "Size of Texture: " << sizeof (Texture) << endl; 
+
     auto g = Engine::GetGraphicsDevice();  
 
     float verts[] =
@@ -145,6 +147,9 @@ void TestApp2::Exit()
 
 int main(int argc, char** argv) 
 {
+    (void) argc; 
+    (void) argv; 
+
     Engine::Start(new TestApp2); 
 
     return 0; 

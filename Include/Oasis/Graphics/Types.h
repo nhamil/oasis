@@ -32,7 +32,18 @@ enum class Attribute
     count
 };
 
-OASIS_API int GetAttributeSize(Attribute attrib);
+inline int GetAttributeSize(Attribute attrib)
+{
+    switch (attrib)
+    {
+    case Attribute::TANGENT: return 3;
+    case Attribute::POSITION: return 3;
+    case Attribute::NORMAL: return 3;
+    case Attribute::COLOR: return 4;
+    case Attribute::TEXTURE: return 2;
+    default: return 0;
+    }
+}
 
 enum class TextureFormat 
 {
@@ -49,6 +60,23 @@ enum class TextureType
     TEXTURE_CUBE, 
     TEXTURE_2D_ARRAY, 
     RENDER_TEXTURE_2D, 
+
+    count 
+};
+
+enum class TextureFilter 
+{
+    NEAREST, 
+    BILINEAR, 
+    TRILINEAR, 
+
+    count 
+};
+
+enum class TextureWrapMode  
+{
+    CLAMP, 
+    REPEAT, 
 
     count 
 };

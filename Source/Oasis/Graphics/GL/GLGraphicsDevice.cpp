@@ -44,7 +44,13 @@ static const GLuint PRIMITIVE_TYPES[(int) Primitive::count] =
     GL_TRIANGLE_STRIP
 };
 
-GLGraphicsDevice::GLGraphicsDevice() {}
+GLGraphicsDevice::GLGraphicsDevice() 
+{
+    for (int i = 0; i < GetMaxTextureUnitCount(); i++) 
+    {
+        textureUnits_[i] = nullptr; 
+    }
+}
 GLGraphicsDevice::~GLGraphicsDevice() {} 
 
 void GLGraphicsDevice::PreRender() 
