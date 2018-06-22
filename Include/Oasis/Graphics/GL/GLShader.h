@@ -28,7 +28,7 @@ private:
     void Create(); 
     void Destroy(); 
 
-    bool CompileShader(GLuint id, GLenum type, const char* typeName, const std::string& source); 
+    bool CompileShader(GLuint id, const char* typeName, const std::string& source); 
     bool LinkProgram(GLuint vId, GLuint fId); 
     void FindUniforms(); 
 

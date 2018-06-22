@@ -67,6 +67,7 @@ enum class TextureType
 enum class TextureFilter 
 {
     NEAREST, 
+    LINEAR, 
     BILINEAR, 
     TRILINEAR, 
 

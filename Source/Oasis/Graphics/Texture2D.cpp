@@ -13,6 +13,17 @@ Texture2D::Texture2D(TextureFormat format, int width, int height)
 
 Texture2D::~Texture2D() {}
 
+void Texture2D::SetMipmapCount(int levels) 
+{
+    if (levels < 1) levels = 1; 
+
+    if (levels != mipmaps_) 
+    {
+        mipmaps_ = levels; 
+        dirtyParams_ = true; 
+    }
+}
+
 void Texture2D::GetData(int startx, int starty, int width, int height, void* out) const 
 {
     char* pixels = (char*) out; 

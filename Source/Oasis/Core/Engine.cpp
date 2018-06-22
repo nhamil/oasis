@@ -157,12 +157,13 @@ int Engine::GameLoop()
 
 void Engine::PreUpdate(float dt) 
 {
+    (void) dt; 
     display_->PollEvents(); 
 }
 
 void Engine::PostUpdate(float dt) 
 {
-
+    (void) dt; 
 }
 
 void Engine::PreRender() 

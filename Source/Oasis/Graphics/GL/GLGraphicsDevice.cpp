@@ -59,6 +59,7 @@ void GLGraphicsDevice::PreRender()
 
     GLCALL(glEnable(GL_BLEND)); 
     GLCALL(glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA)); 
+    GLCALL(glEnable(GL_DEPTH_TEST)); 
 
     SetShader(nullptr); 
     SetVertexBuffer(nullptr); 
@@ -153,10 +154,15 @@ void GLGraphicsDevice::SetViewport(int x, int y, int w, int h)
 void GLGraphicsDevice::Draw(Primitive prim, int start, int triCount) 
 {
     // TODO 
+    (void) prim; 
+    (void) start; 
+    (void) triCount; 
 }  
 
 void GLGraphicsDevice::DrawIndexed(Primitive prim, int start, int triCount) 
 {
+    (void) prim; 
+
     if (!indexBuffer_) return; 
     if (!shaderProgram_) return; 
 

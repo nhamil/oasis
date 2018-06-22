@@ -49,8 +49,8 @@ void GLShader::Create()
 
     valid_ = true; 
 
-    GLCALL(valid_ &= CompileShader(vId, GL_VERTEX_SHADER, "vertex shader", vSource_)); 
-    GLCALL(valid_ &= CompileShader(fId, GL_FRAGMENT_SHADER, "fragment shader", fSource_)); 
+    GLCALL(valid_ &= CompileShader(vId, "vertex shader", vSource_)); 
+    GLCALL(valid_ &= CompileShader(fId, "fragment shader", fSource_)); 
     GLCALL(valid_ &= LinkProgram(vId, fId)); 
 
     if (valid_) FindUniforms(); 
@@ -153,7 +153,7 @@ ParameterType GLShader::GetParameterType(GLenum type)
     }
 }
 
-bool GLShader::CompileShader(GLuint id, GLenum type, const char* typeName, const string& source) 
+bool GLShader::CompileShader(GLuint id, const char* typeName, const string& source) 
 {
     const char* src = source.c_str();
     int srcLength = source.length();
