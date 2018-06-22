@@ -59,7 +59,7 @@ void GLShader::Create()
     GLCALL(glDeleteShader(fId)); 
 }
 
-void GLShader::Upload() 
+void GLShader::UploadToGPU() 
 {
     GLCALL(glUseProgram(id_)); 
 

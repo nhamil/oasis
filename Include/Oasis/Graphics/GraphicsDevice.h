@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Oasis/Common.h"
-#include "Oasis/Graphics/BufferUsage.h" 
 #include "Oasis/Graphics/Parameter.h" 
+#include "Oasis/Graphics/Types.h" 
 #include "Oasis/Graphics/VertexFormat.h" 
 #include "Oasis/Math/MathUtil.h"
 
@@ -10,20 +10,6 @@
 
 namespace Oasis
 {
-
-class IndexBuffer;
-class Shader; 
-class VertexBuffer;
-
-enum class Primitive
-{
-    LINE_LIST,
-    LINE_STRIP,
-    TRIANGLE_LIST,
-    TRIANGLE_STRIP,
-
-    count
-};
 
 class OASIS_API GraphicsDevice 
 {
@@ -44,6 +30,8 @@ public:
 
     inline void SetVertexBuffer(VertexBuffer* vertexBuffer) { SetVertexBuffers(1, &vertexBuffer);  } 
 
+    virtual void SetTextureUnit(int unit, Texture* texture); 
+
     virtual void Draw(Primitive prim, int start, int triCount) = 0;  
 
     virtual void DrawIndexed(Primitive prim, int start, int triCount) = 0;  
@@ -56,11 +44,17 @@ public:
 
     virtual VertexBuffer* GetVertexBuffer(int index) = 0;  
     
+    virtual int GetMaxTextureUnitCount() = 0; 
+
+    virtual Texture* GetTextureUnit(int unit) = 0; 
+
     virtual Shader* CreateShader(const std::string& vSource, const std::string& fSource) = 0;  
 
     virtual IndexBuffer* CreateIndexBuffer(int numElements, BufferUsage usage = BufferUsage::DYNAMIC) = 0;  
 
     virtual VertexBuffer* CreateVertexBuffer(int numElements, const VertexFormat& format, BufferUsage usage = BufferUsage::DYNAMIC) = 0;  
+
+    virtual Texture2D* CreateTexture2D(TextureFormat format, int width, int height) = 0; 
 
 private: 
     friend class Engine; 

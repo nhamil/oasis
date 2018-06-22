@@ -28,6 +28,8 @@ set(SOURCES
     ${OASIS_SOURCE_FOLDER}/Graphics/Mesh.cpp 
     ${OASIS_SOURCE_FOLDER}/Graphics/Parameter.cpp 
     ${OASIS_SOURCE_FOLDER}/Graphics/Shader.cpp 
+    ${OASIS_SOURCE_FOLDER}/Graphics/Texture.cpp 
+    ${OASIS_SOURCE_FOLDER}/Graphics/Texture2D.cpp 
     ${OASIS_SOURCE_FOLDER}/Graphics/VertexBuffer.cpp 
     ${OASIS_SOURCE_FOLDER}/Graphics/VertexFormat.cpp 
     
@@ -35,6 +37,7 @@ set(SOURCES
     ${OASIS_SOURCE_FOLDER}/Graphics/GL/GLGraphicsDevice.cpp 
     ${OASIS_SOURCE_FOLDER}/Graphics/GL/GLIndexBuffer.cpp 
     ${OASIS_SOURCE_FOLDER}/Graphics/GL/GLShader.cpp 
+    ${OASIS_SOURCE_FOLDER}/Graphics/GL/GLTexture2D.cpp 
     ${OASIS_SOURCE_FOLDER}/Graphics/GL/GLVertexBuffer.cpp 
     
     # Math 

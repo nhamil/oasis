@@ -99,7 +99,7 @@ void TestApp::Init()
 
     mesh.SetPositions(4, positions);
     mesh.SetIndices(0, 6, inds);
-    mesh.Upload();
+    mesh.UploadToGPU();
 }
 
 void TestApp::Update(float dt)

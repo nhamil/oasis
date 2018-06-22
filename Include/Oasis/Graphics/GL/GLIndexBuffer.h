@@ -18,7 +18,7 @@ public:
     inline GLuint GetId() const { return id_; } 
 
 private: 
-    void Upload() override; 
+    void UploadToGPU() override; 
     void Create(); 
     void Destroy(); 
 

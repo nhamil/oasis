@@ -33,7 +33,7 @@ void GLVertexBuffer::Create()
     GLCALL(glBufferData(GL_ARRAY_BUFFER, GetElementCount() * GetVertexFormat().GetSize() * sizeof (float), nullptr, GL_DYNAMIC_DRAW));
 }
 
-void GLVertexBuffer::Upload()
+void GLVertexBuffer::UploadToGPU()
 {
     if (!id_) Create(); 
 

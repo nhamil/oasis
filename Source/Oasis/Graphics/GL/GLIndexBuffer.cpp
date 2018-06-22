@@ -33,7 +33,7 @@ void GLIndexBuffer::Create()
     GLCALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, GetElementCount() * sizeof (short), nullptr, GL_DYNAMIC_DRAW));
 }
 
-void GLIndexBuffer::Upload()
+void GLIndexBuffer::UploadToGPU()
 {
     if (!id_) Create(); 
 

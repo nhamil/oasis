@@ -1,24 +1,12 @@
 #pragma once
 
 #include "Oasis/Common.h"
+#include "Oasis/Graphics/Types.h" 
 
 #include <vector>
 
 namespace Oasis
 {
-
-enum class Attribute
-{
-    POSITION,
-    NORMAL,
-    TANGENT,
-    TEXTURE,
-    COLOR,
-
-    count
-};
-
-OASIS_API int GetAttributeSize(Attribute attrib);
 
 class OASIS_API VertexFormat
 {

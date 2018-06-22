@@ -4,6 +4,7 @@
 #include "Oasis/Core/Display.h" 
 #include "Oasis/Graphics/GL/GLIndexBuffer.h" 
 #include "Oasis/Graphics/GL/GLShader.h"
+#include "Oasis/Graphics/GL/GLTexture2D.h" 
 #include "Oasis/Graphics/GL/GLUtil.h"  
 #include "Oasis/Graphics/GL/GLVertexBuffer.h" 
 
@@ -50,9 +51,12 @@ void GLGraphicsDevice::PreRender()
 {
     Display* d = Engine::GetDisplay(); 
 
+    GLCALL(glEnable(GL_BLEND)); 
+    GLCALL(glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA)); 
+
     SetShader(nullptr); 
-    //SetVertexBuffer(nullptr); 
-    //SetIndexBuffer(nullptr); 
+    SetVertexBuffer(nullptr); 
+    SetIndexBuffer(nullptr); 
     SetViewport(0, 0, d->GetWidth(), d->GetHeight()); 
     SetClearColor(0.7, 0.8, 0.9); 
     Clear(); 
@@ -102,6 +106,38 @@ void GLGraphicsDevice::SetVertexBuffers(int count, VertexBuffer** vbs)
     }
 }
 
+void GLGraphicsDevice::SetTextureUnit(int unit, Texture* texture) 
+{
+    Texture* set = nullptr; 
+
+    if (texture) 
+    {
+        // make sure texture is a GLTexture 
+        switch (texture->GetType()) 
+        {
+        case TextureType::TEXTURE_2D: 
+            set = dynamic_cast<GLTexture2D*>(texture); 
+            break; 
+        case TextureType::TEXTURE_3D: 
+            // TODO 
+            break; 
+        case TextureType::TEXTURE_CUBE: 
+            // TODO 
+            break; 
+        case TextureType::TEXTURE_2D_ARRAY: 
+            // TODO 
+            break; 
+        default: break; 
+        }
+
+        textureUnits_[unit] = set; 
+    }
+    else 
+    {
+        textureUnits_[unit] = nullptr; 
+    }
+}
+
 void GLGraphicsDevice::SetViewport(int x, int y, int w, int h) 
 {
     viewport_ = Vector4(x, y, w, h); 
@@ -118,12 +154,12 @@ void GLGraphicsDevice::DrawIndexed(Primitive prim, int start, int triCount)
     if (!indexBuffer_) return; 
     if (!shaderProgram_) return; 
 
-    indexBuffer_->Flush(); 
-    shaderProgram_->Flush(); 
+    indexBuffer_->FlushToGPU(); 
+    shaderProgram_->FlushToGPU(); 
 
     for (int i = 0; i < GetVertexBufferCount(); i++) 
     {
-        if (vertexBuffers_[i]) vertexBuffers_[i]->Flush(); 
+        if (vertexBuffers_[i]) vertexBuffers_[i]->FlushToGPU(); 
     }
 
     // TODO 
@@ -161,12 +197,45 @@ void GLGraphicsDevice::DrawIndexed(Primitive prim, int start, int triCount)
         GLCALL(glBindBuffer(GL_ARRAY_BUFFER, vb->GetId())); 
         GLCALL(glEnableVertexAttribArray(GLShader::GetAttributeIndex((Attribute) i))); 
         GLCALL(glVertexAttribPointer(
-            i, 
+            GLShader::GetAttributeIndex((Attribute) i),  
             GetAttributeSize((Attribute) i), 
             GL_FLOAT, 
             GL_FALSE, 
             vb->GetVertexFormat().GetSize() * sizeof (float), 
             (void*) (vb->GetVertexFormat().GetOffset((Attribute) i) * sizeof (float)))); 
+        /*cout << "Mesh: Attribute " 
+            << " " << vb->GetId()
+            << " " << GLShader::GetAttributeIndex((Attribute) i)
+            << " " << GetAttributeSize((Attribute) i) 
+            << " " << vb->GetVertexFormat().GetSize() * sizeof (float) 
+            << " " << (vb->GetVertexFormat().GetOffset((Attribute) i) * sizeof (float)) 
+            << " " << endl; */
+    }
+
+    for (int i = 0; i < GetMaxTextureUnitCount(); i++) 
+    {
+        GLCALL(glActiveTexture(GL_TEXTURE0 + i)); 
+
+        Texture* tex = textureUnits_[i]; 
+
+        if (tex) 
+        {
+            tex->FlushToGPU(); 
+
+            switch (tex->GetType()) 
+            {
+            case TextureType::TEXTURE_2D:  
+                GLCALL(glBindTexture(GL_TEXTURE_2D, ((GLTexture2D*) tex)->GetId())); 
+                break; 
+            default: 
+                GLCALL(glBindTexture(GL_TEXTURE_2D, 0)); 
+                break; 
+            }
+        }
+        else 
+        {
+            GLCALL(glBindTexture(GL_TEXTURE_2D, 0)); 
+        }
     }
 
     GLCALL(glDrawElements(/*PRIMITIVE_TYPES[(int) prim]*/ GL_TRIANGLES, triCount, GL_UNSIGNED_SHORT, (void*)(start * sizeof (short)))); 
@@ -186,5 +255,10 @@ VertexBuffer* GLGraphicsDevice::CreateVertexBuffer(int numElements, const Vertex
 {
     return new GLVertexBuffer(this, numElements, format, usage); 
 }  
+
+Texture2D* GLGraphicsDevice::CreateTexture2D(TextureFormat format, int width, int height) 
+{
+    return new GLTexture2D(this, format, width, height); 
+}
 
 }

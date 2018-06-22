@@ -27,12 +27,14 @@ Display::Display(const string& title)
         SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
     );
 
+    glContext_ = SDL_GL_CreateContext(window_);
+    SDL_GL_MakeCurrent(window_, glContext_);
+
+    SDL_GL_SetSwapInterval(0); 
+
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-
-    glContext_ = SDL_GL_CreateContext(window_);
-    SDL_GL_MakeCurrent(window_, glContext_);
 
     glewExperimental = GL_TRUE;
     glewInit();
@@ -106,7 +108,7 @@ void Display::PollEvents()
 } 
 
 void Display::SwapBuffers() 
-{
+{ 
     SDL_GL_SwapWindow(window_);
 }  
 

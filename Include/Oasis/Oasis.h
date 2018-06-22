@@ -16,7 +16,10 @@
 #include "Oasis/Graphics/GraphicsDevice.h"
 #include "Oasis/Graphics/IndexBuffer.h" 
 #include "Oasis/Graphics/Mesh.h" 
+#include "Oasis/Graphics/Renderer.h" 
 #include "Oasis/Graphics/Shader.h" 
+#include "Oasis/Graphics/Texture.h" 
+#include "Oasis/Graphics/Texture2D.h" 
 #include "Oasis/Graphics/VertexBuffer.h" 
 #include "Oasis/Graphics/VertexFormat.h" 
 
@@ -25,7 +28,6 @@
 #ifndef OASIS_MAIN 
     #define OASIS_MAIN(AppName) \
         int main(int argc, char** argv) { \
-            AppName oasisApp; \
-            return Engine::Start(&oasisApp); \
+            return Engine::Start(new AppName); \
         }
 #endif 

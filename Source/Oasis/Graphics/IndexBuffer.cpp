@@ -13,9 +13,9 @@ IndexBuffer::IndexBuffer(int startElements, BufferUsage usage)
 
 IndexBuffer::~IndexBuffer() {}
 
-void IndexBuffer::Flush()
+void IndexBuffer::FlushToGPU()
 {
-    if (dirty_) Upload(); 
+    if (dirty_) UploadToGPU(); 
 
     dirty_ = false;
 }

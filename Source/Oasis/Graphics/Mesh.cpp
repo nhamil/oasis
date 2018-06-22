@@ -65,7 +65,7 @@ void Mesh::Clear()
     tangents_.clear(); 
 }
 
-void Mesh::Upload() 
+void Mesh::UploadToGPU() 
 {
     // vertices 
 
@@ -82,7 +82,11 @@ void Mesh::Upload()
         //cout << "Mesh: create vertex buffer" << endl; 
 
         if (!vertexBuffer_) vertexBuffer_ = Engine::GetGraphicsDevice()->CreateVertexBuffer(vertexCount_, format); 
-        vertexBuffer_->SetElementCount(vertexCount_); 
+        else 
+        {
+            vertexBuffer_->SetVertexFormat(format); 
+            vertexBuffer_->SetElementCount(vertexCount_); 
+        }
 
         //cout << "Mesh: format vertices" << endl; 
 
@@ -97,10 +101,10 @@ void Mesh::Upload()
             if (HasTangents()) OASIS_MESH_PUSH_BACK_VEC3(vertices, tangents_[i]); 
         }
 
-        //cout << "Mesh: upload vertices" << endl; 
+        //cout << "Mesh: upload vertices " << format.GetSize() << endl; 
 
         vertexBuffer_->SetData(0, vertexCount_, &vertices[0]); 
-        vertexBuffer_->Flush(); 
+        vertexBuffer_->FlushToGPU(); 
         verticesDirty_ = false; 
     }
 
@@ -119,7 +123,7 @@ void Mesh::Upload()
             if (!sm.indexBuffer) sm.indexBuffer = Engine::GetGraphicsDevice()->CreateIndexBuffer(indCount); 
             sm.indexBuffer->SetElementCount(indCount); 
             sm.indexBuffer->SetData(0, indCount, &sm.indices[0]); 
-            sm.indexBuffer->Flush(); 
+            sm.indexBuffer->FlushToGPU(); 
             sm.dirty = false; 
         }
     }

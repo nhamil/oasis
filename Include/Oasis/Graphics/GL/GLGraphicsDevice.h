@@ -30,23 +30,31 @@ public:
 
     void SetVertexBuffers(int count, VertexBuffer** vertexBuffers) override; 
 
+    void SetTextureUnit(int unit, Texture* texture) override; 
+
     void Draw(Primitive prim, int start, int triCount) override;   
 
     void DrawIndexed(Primitive prim, int start, int triCount) override;   
 
-    Shader* GetShader() override { return shaderProgram_; }   
+    inline Shader* GetShader() override { return shaderProgram_; }   
 
-    IndexBuffer* GetIndexBuffer() override { return indexBuffer_; }   
+    inline IndexBuffer* GetIndexBuffer() override { return indexBuffer_; }   
 
-    int GetVertexBufferCount() override { return vertexBuffers_.size(); }    
+    inline int GetVertexBufferCount() override { return vertexBuffers_.size(); }    
 
-    VertexBuffer* GetVertexBuffer(int index) override { return vertexBuffers_[index]; }    
+    inline VertexBuffer* GetVertexBuffer(int index) override { return vertexBuffers_[index]; }    
     
+    inline int GetMaxTextureUnitCount() override { return 8; } 
+
+    inline Texture* GetTextureUnit(int unit) override { return textureUnits_[unit]; }  
+
     Shader* CreateShader(const std::string& vSource, const std::string& fSource) override;   
 
     IndexBuffer* CreateIndexBuffer(int numElements, BufferUsage usage = BufferUsage::DYNAMIC) override;   
 
     VertexBuffer* CreateVertexBuffer(int numElements, const VertexFormat& format, BufferUsage usage = BufferUsage::DYNAMIC) override;   
+
+    Texture2D* CreateTexture2D(TextureFormat format, int width, int height) override; 
 
 private: 
     void PreRender();   
@@ -59,6 +67,7 @@ private:
     GLShader* shaderProgram_; 
     GLIndexBuffer* indexBuffer_; 
     std::vector<GLVertexBuffer*> vertexBuffers_; 
+    Texture* textureUnits_[8]; 
 };
 
 }

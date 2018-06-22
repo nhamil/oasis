@@ -26,7 +26,7 @@ public:
     ~Mesh();
 
     void Clear();
-    void Upload();
+    void UploadToGPU();
 
     bool CalculateNormals();
     bool CalculateTangents();
@@ -64,6 +64,8 @@ public:
     IndexBuffer* GetIndexBuffer(int submesh);
 
 private:
+    OASIS_NO_COPY(Mesh)  
+
     bool verticesDirty_ = true;
     int vertexCount_ = 0;
     std::vector<Vector3> positions_;

@@ -3,7 +3,7 @@
 #include <iostream> 
 #include <GL/glew.h> 
 
-#if 0 
+#if 1 
 
 #define GLCALL(x) { \
     std::cout << "Calling GL function: " << #x /*<< " from " << __FILE__ << ":" << __LINE__*/ << std::endl; \

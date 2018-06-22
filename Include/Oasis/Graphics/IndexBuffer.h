@@ -2,7 +2,7 @@
 
 #include "Oasis/Common.h"
 
-#include "Oasis/Graphics/BufferUsage.h" 
+#include "Oasis/Graphics/Types.h" 
 
 #include <vector>
 
@@ -16,7 +16,7 @@ public:
     virtual ~IndexBuffer(); 
 
     // upload data if it is dirty 
-    void Flush();
+    void FlushToGPU();
 
     inline BufferUsage GetBufferUsage() const { return usage_; } 
     inline int GetElementCount() const { return data_.size(); }
@@ -27,7 +27,7 @@ public:
     void SetData(int start, int numElements, const short* in);
 
 protected:
-    virtual void Upload() = 0; 
+    virtual void UploadToGPU() = 0; 
 
     BufferUsage usage_; 
     std::vector<short> data_;

@@ -25,6 +25,8 @@ int Engine::Start(Application* app)
 {
     cout << "Starting engine..." << endl;
 
+    config_ = app->GetConfig(); 
+
     if (IsRunning())
     {
         cerr << "Engine is already running, cannot start!" << endl;
@@ -69,33 +71,52 @@ int Engine::GameLoop()
     Timer timer;
     Timer secondTimer;
 
-    double frameTimer = 0;
+    //double frameTimer = 0;
     double skipFrames = 1.0 / config_.targetFps;
 
-    double tickTimer = 0;
+    //double tickTimer = 0;
     double skipTicks = 1.0 / config_.targetUps;
+
+    double prevTime = timer.GetSeconds(); 
+    double delay = 0; 
+
+    double prevFrameTime = timer.GetSeconds(); 
+    double frameDelay = 0; 
 
     while (running_) 
     {
-        int loop = 0;
+        double curTime = timer.GetSeconds(); 
+        double delta = curTime - prevTime; 
+        prevTime = curTime; 
+        delay += delta; 
 
-        while (loop++ < 10 && tickTimer < timer.GetSeconds())
+        double curFrameTime = timer.GetSeconds(); 
+        double frameDelta = curFrameTime - prevFrameTime; 
+        prevFrameTime = curFrameTime; 
+        frameDelay += frameDelta; 
+
+        bool render = false; 
+
+        while (delay >= skipTicks) 
         {
+            render = true; 
+
             PreUpdate(dt);
             app_->Update(dt);
             PostUpdate(dt);
 
-            tickTimer += skipTicks;
+            delay -= skipTicks; 
             tickCount++;
         }
 
-        if (frameTimer < timer.GetSeconds())
+        // TODO change this 
+        while (render && frameDelay >= skipFrames) 
         {
             PreRender();
             app_->Render();
             PostRender();
 
-            frameTimer += skipFrames;
+            frameDelay -= skipFrames; 
             frameCount++;
         }
 
@@ -116,6 +137,7 @@ int Engine::GameLoop()
     }
 
     app_->Exit(); 
+    delete app_; 
 
     // engine has been told to stop 
     cout << "Stopping engine..." << endl;

@@ -14,9 +14,9 @@ VertexBuffer::VertexBuffer(int startElements, const VertexFormat& format, Buffer
 
 VertexBuffer::~VertexBuffer() {}
 
-void VertexBuffer::Flush()
+void VertexBuffer::FlushToGPU()
 {
-    if (dirty_) Upload(); 
+    if (dirty_) UploadToGPU(); 
 
     dirty_ = false;
 }
@@ -47,6 +47,17 @@ void VertexBuffer::SetElementCount(int numElements)
     if (data_.size() != (unsigned) numElements * format_.GetSize()) dirty_ = true;
 
     data_.resize(numElements * format_.GetSize());
+}
+
+void VertexBuffer::SetVertexFormat(const VertexFormat& format) 
+{
+    if (format_ != format) 
+    {
+        dirty_ = true; 
+        format_ = format; 
+
+        data_.resize(GetElementCount() * format_.GetSize());
+    }
 }
 
 }

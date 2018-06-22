@@ -60,7 +60,6 @@ public:
     void ClearParameter(const std::string& name); 
     void SetParameter(const std::string& name, const Parameter& value); 
 
-    inline void SetTextureUnit(const std::string& name, int value) { SetParameter(name, Parameter(value)); } 
     inline void SetInt(const std::string& name, int value) { SetParameter(name, Parameter(value)); } 
     inline void SetFloat(const std::string& name, float value) { SetParameter(name, Parameter(value)); }  
     inline void SetVector2(const std::string& name, const Vector2& value) { SetParameter(name, Parameter(value)); }  
