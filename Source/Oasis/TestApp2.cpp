@@ -174,6 +174,7 @@ void TestApp2::Init()
     texture->SetData(0, 0, 128, 128, texData); 
     texture->SetMipmapCount(10); 
     texture->SetFilter(TextureFilter::TRILINEAR); 
+    texture->SetWrapMode(TextureWrapMode::REPEAT); 
     texture->FlushToGPU(); 
 }
 
