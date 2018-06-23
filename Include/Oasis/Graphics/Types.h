@@ -6,6 +6,7 @@ namespace Oasis
 {
 
 class IndexBuffer;
+class RenderTexture2D; 
 class Shader; 
 class Texture; 
 class Texture2D; 

@@ -21,4 +21,5 @@
 #include <vector> 
 
 #include "Oasis/Core/ClassId.h" 
+#include "Oasis/Core/Logger.h" 
 #include "Oasis/Core/ReferenceCounted.h" 

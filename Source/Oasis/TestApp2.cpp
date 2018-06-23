@@ -59,9 +59,7 @@ namespace Oasis { class Material; }
 
 void TestApp2::Init() 
 {
-    cout << "Init App" << endl; 
-
-    cout << "Size of Texture: " << sizeof (Texture) << endl; 
+    Logger::Log(LogLevel::INFO, "Init App"); 
 
     auto g = Engine::GetGraphicsDevice();  
 
@@ -206,7 +204,10 @@ void TestApp2::Exit()
 {
     cout << "Exit App" << endl; 
 
-    shader->Release(); 
+    auto g = Engine::GetGraphicsDevice(); 
+
+    //g->DestroyShader(shader); 
+    //g->DestroyTexture2D(texture); 
 }
 
 int main(int argc, char** argv) 

@@ -15,6 +15,7 @@ set(SOURCES
     # Core  
     ${OASIS_SOURCE_FOLDER}/Core/Engine.cpp 
     ${OASIS_SOURCE_FOLDER}/Core/Display.cpp 
+    ${OASIS_SOURCE_FOLDER}/Core/Logger.cpp 
     ${OASIS_SOURCE_FOLDER}/Core/TimerWindows.cpp 
     ${OASIS_SOURCE_FOLDER}/Core/TimerLinux.cpp 
     ${OASIS_SOURCE_FOLDER}/Core/TimeUtilWindows.cpp 
