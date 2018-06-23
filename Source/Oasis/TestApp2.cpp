@@ -1,6 +1,7 @@
 #include <Oasis/Oasis.h> 
 
-#include <iostream> 
+#include "Oasis/Core/Logger.h"
+
 #include <memory> 
 
 #define BLACK (char)0, (char)0, (char)0, (char)0 
@@ -59,7 +60,7 @@ namespace Oasis { class Material; }
 
 void TestApp2::Init() 
 {
-    Logger::Log(LogLevel::INFO, "Init App"); 
+    Logger::Info("Init App"); 
 
     auto g = Engine::GetGraphicsDevice();  
 
@@ -202,7 +203,7 @@ void TestApp2::Render()
 
 void TestApp2::Exit() 
 {
-    cout << "Exit App" << endl; 
+    Logger::Info("Exit App"); 
 
     auto g = Engine::GetGraphicsDevice(); 
 

@@ -5,8 +5,6 @@
 #include "Oasis/Core/Timer.h" 
 #include "Oasis/Graphics/GL/GLGraphicsDevice.h" 
 
-#include <iostream>
-
 using namespace std;
 
 namespace Oasis
@@ -23,19 +21,19 @@ GraphicsDevice* Engine::graphics_ = nullptr;
 
 int Engine::Start(Application* app)
 {
-    cout << "Starting engine..." << endl;
+    Logger::Debug("Starting engine..."); 
 
     config_ = app->GetConfig(); 
 
     if (IsRunning())
     {
-        cerr << "Engine is already running, cannot start!" << endl;
+        Logger::Error("Engine is already running, cannot start!"); 
         return -1;
     }
 
     if (!app) 
     {
-        cerr << "Application is null, cannot start!" << endl; 
+        Logger::Error("Application is null, cannot start!"); 
         return -2; 
     }
 
@@ -53,7 +51,7 @@ void Engine::Stop()
 {
     if (!running_)
     {
-        cerr << "Engine attempted to stop but is not running!" << endl;
+        Logger::Error("Engine attempted to stop but is not running!");
     }
 
     running_ = false;
@@ -122,7 +120,7 @@ int Engine::GameLoop()
 
         if (secondTimer.GetSeconds() >= 1)
         {
-            cout << "FPS: " << frameCount << ", Ticks: " << tickCount << endl;
+            Logger::Debug("FPS: ", frameCount, ", Ticks: ", tickCount); 
             fps_ = frameCount;
             ups_ = tickCount;
             tickCount = frameCount = 0;
@@ -140,7 +138,7 @@ int Engine::GameLoop()
     delete app_; 
 
     // engine has been told to stop 
-    cout << "Stopping engine..." << endl;
+    Logger::Debug("Stopping engine...");
 
     delete display_; 
     display_ = nullptr; 
@@ -150,7 +148,7 @@ int Engine::GameLoop()
 
     app_ = nullptr; 
 
-    cout << "Done!" << endl;
+    Logger::Debug("Engine terminated!");
 
     return 0; 
 }

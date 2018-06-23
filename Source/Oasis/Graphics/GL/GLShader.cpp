@@ -172,11 +172,11 @@ bool GLShader::CompileShader(GLuint id, const char* typeName, const string& sour
         errorMessage_ += text;
         errorMessage_ += "\n";
 
-        cout << "Error compiling " << typeName << " : " << text << endl;
+        Logger::Warning("Error compiling ", typeName, " : ", text);
         return false;
     }
 
-    cout << "Compiling " << typeName << " success!" << endl;
+    Logger::Debug("Compiling ", typeName, " success!");
     return true;
 }
 
@@ -189,7 +189,7 @@ bool GLShader::LinkProgram(GLuint vId, GLuint fId)
     for (int i = 0; i < (int) Attribute::count; i++)
     {
         GLCALL(glBindAttribLocation(id_, ATTRIBUTE_INDEX[i], ATTRIBUTE_NAME[i]));
-        cout << "Binding attrib location " << ATTRIBUTE_INDEX[i] << " to " << ATTRIBUTE_NAME[i] << endl;
+        Logger::Debug("Binding attrib location ", ATTRIBUTE_INDEX[i], " to ", ATTRIBUTE_NAME[i]);
     }
 
     GLCALL(glLinkProgram(id_));
@@ -205,7 +205,7 @@ bool GLShader::LinkProgram(GLuint vId, GLuint fId)
         errorMessage_ += text;
         errorMessage_ += "\n";
 
-        cout << "Error linking program : " << text << endl;
+        Logger::Error("Error linking program : ", text);
 
         GLCALL(glDeleteShader(id_));
         id_ = 0;
@@ -213,7 +213,7 @@ bool GLShader::LinkProgram(GLuint vId, GLuint fId)
         return false;
     }
 
-    cout << "Linking program success!" << endl;
+    Logger::Debug("Linking program success!");
     return true;
 }
 
