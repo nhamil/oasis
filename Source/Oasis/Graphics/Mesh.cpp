@@ -4,8 +4,6 @@
 #include "Oasis/Graphics/IndexBuffer.h" 
 #include "Oasis/Graphics/VertexBuffer.h" 
 
-#include <iostream> 
-
 #define OASIS_MESH_SET_ATTRIBUTE(list, in) { \
     list.clear(); \
     list.reserve(vertexCount_); \

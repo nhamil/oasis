@@ -4,8 +4,6 @@
 #include "Oasis/Graphics/GL/GLGraphicsDevice.h" 
 #include "Oasis/Graphics/GL/GLUtil.h" 
 
-#include <iostream> 
-
 using namespace std; 
 
 namespace Oasis 
@@ -189,7 +187,7 @@ bool GLShader::LinkProgram(GLuint vId, GLuint fId)
     for (int i = 0; i < (int) Attribute::count; i++)
     {
         GLCALL(glBindAttribLocation(id_, ATTRIBUTE_INDEX[i], ATTRIBUTE_NAME[i]));
-        Logger::Debug("Binding attrib location ", ATTRIBUTE_INDEX[i], " to ", ATTRIBUTE_NAME[i]);
+        //Logger::Debug("Binding attrib location ", ATTRIBUTE_INDEX[i], " to ", ATTRIBUTE_NAME[i]);
     }
 
     GLCALL(glLinkProgram(id_));

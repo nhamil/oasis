@@ -2,8 +2,6 @@
 
 #include <GL/glew.h>
 
-#include <iostream>
-
 using namespace std;
 
 namespace Oasis
