@@ -7,7 +7,7 @@
 namespace Oasis
 {
 
-class OASIS_API VertexBuffer : public ReferenceCounted 
+class OASIS_API VertexBuffer 
 {
 public:
     VertexBuffer(int startElements, const VertexFormat& format, BufferUsage usage);

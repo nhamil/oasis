@@ -9,7 +9,7 @@
 namespace Oasis
 {
 
-class OASIS_API IndexBuffer : public ReferenceCounted 
+class OASIS_API IndexBuffer 
 {
 public:
     IndexBuffer(int startElements, BufferUsage usage); 

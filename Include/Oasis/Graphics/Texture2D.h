@@ -13,12 +13,13 @@ public:
 
     void GetData(int x, int y, int width, int height, void* out) const; 
 
-    void Resize(int width, int height); 
-    void SetData(int x, int y, int width, int height, const void* in); 
-
     int GetMipmapCount() const { return mipmaps_; } 
 
+    void Resize(int width, int height); 
+
     void SetMipmapCount(int levels); 
+
+    void SetData(int x, int y, int width, int height, const void* in); 
 
 protected: 
     std::vector<char> data_; 

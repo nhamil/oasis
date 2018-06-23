@@ -49,9 +49,39 @@ inline int GetAttributeSize(Attribute attrib)
 enum class TextureFormat 
 {
     RGBA8, 
+    RGBA16F, 
+    RGBA32F, 
+    DEPTH16, 
+    DEPTH24, 
+    DEPTH24STENCIL8, 
+    DEPTH32, 
     
     count 
 };
+
+inline bool IsDepthTextureFormat(TextureFormat format) 
+{
+    switch (format) 
+    {
+    case TextureFormat::DEPTH16: 
+    case TextureFormat::DEPTH24: 
+    case TextureFormat::DEPTH24STENCIL8: 
+    case TextureFormat::DEPTH32: 
+        return true; 
+    default: 
+        return false; 
+    }
+}
+
+inline bool IsStencilTextureFormat(TextureFormat format) 
+{
+    return format == TextureFormat::DEPTH24STENCIL8; 
+}
+
+inline bool IsColorTextureFormat(TextureFormat format) 
+{
+    return !IsDepthTextureFormat(format); 
+}
 
 enum class TextureType 
 {

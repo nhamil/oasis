@@ -42,7 +42,7 @@ struct OASIS_API ShaderParameter
     }
 };
 
-class OASIS_API Shader : public ReferenceCounted  
+class OASIS_API Shader  
 {
 public:
     Shader(const std::string& vSource, const std::string& fSource); 
