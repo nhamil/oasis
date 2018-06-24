@@ -12,6 +12,35 @@ class GLIndexBuffer;
 class GLShader; 
 class GLVertexBuffer; 
 
+struct OASIS_API GLContext 
+{
+    struct AttribArray 
+    {
+        GLuint64 offset = 0; 
+        GLuint count = 0;
+        GLuint size = 0; 
+        GLuint vbo = 0; 
+    };
+
+    struct Framebuffer 
+    {
+        GLenum drawBuffer[4] {}; 
+        GLuint colorBuffer[4] {}; 
+        GLuint depthBuffer = 0; 
+        unsigned numBuffers = 0; 
+    };
+
+    Framebuffer fboContents; 
+    AttribArray attribArray[8] {}; 
+    bool attribArrayEnabled[8] {};  
+    GLuint texture[8] {};
+    GLuint ibo = 0;  
+    GLuint vbo = 0; 
+    GLuint textureUnit = 0; 
+    GLuint program = 0; 
+    GLuint fbo = 0; 
+};
+
 class OASIS_API GLGraphicsDevice : public GraphicsDevice 
 {
 public: 
@@ -72,6 +101,14 @@ public:
     void OnDestroy(IndexBuffer* buffer) { (void) buffer; } 
     void OnDestroy(Shader* shader) { (void) shader; } 
 
+    bool SetVertexAttribArrayEnabled(GLuint index, bool enabled); 
+    bool SetVertexAttribPointer(GLuint index, GLuint vbo, GLuint count, GLuint size, GLuint64 offset); 
+    bool BindVertexBuffer(GLuint id); 
+    bool BindIndexBuffer(GLuint id); 
+    bool BindShader(GLuint id); 
+    bool BindTexture2D(GLuint index, GLuint id); 
+    bool BindFramebuffer(GLuint id); 
+
 private: 
     void PreRender();   
     void PostRender(); 
@@ -90,6 +127,8 @@ private:
     Texture* renderTargets_[4]; 
     Texture* depthTarget_ = nullptr; 
     GLuint fbo_ = 0; 
+
+    GLContext context_; 
 };
 
 }

@@ -61,6 +61,8 @@ GLGraphicsDevice::~GLGraphicsDevice() {}
 
 void GLGraphicsDevice::PreRender() 
 {
+    // Logger::Debug("Graphics: PreRender"); 
+
     Display* d = Engine::GetDisplay(); 
 
     GLCALL(glEnable(GL_BLEND)); 
@@ -82,7 +84,7 @@ void GLGraphicsDevice::PreRender()
 
 void GLGraphicsDevice::PostRender() 
 {
-
+    // Logger::Debug("Graphics: PostRender"); 
 }
 
 void GLGraphicsDevice::SetClearColor(float r, float g, float b) 
@@ -257,8 +259,11 @@ bool GLGraphicsDevice::PrepareToDraw()
     }
 
     // TODO 
-    GLCALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer_->GetId())); 
-    GLCALL(glUseProgram(shaderProgram_->GetId())); 
+    // GLCALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer_->GetId())); 
+    // GLCALL(glUseProgram(shaderProgram_->GetId())); 
+
+    BindIndexBuffer(indexBuffer_->GetId()); 
+    BindShader(shaderProgram_->GetId()); 
 
     int attribs[(int) Attribute::count]; 
 
@@ -283,20 +288,29 @@ bool GLGraphicsDevice::PrepareToDraw()
     {
         if (attribs[i] == -1) 
         {
-            GLCALL(glDisableVertexAttribArray(GLShader::GetAttributeIndex((Attribute) i))); 
+            // GLCALL(glDisableVertexAttribArray(GLShader::GetAttributeIndex((Attribute) i))); 
+            SetVertexAttribArrayEnabled(GLShader::GetAttributeIndex((Attribute) i), false); 
             continue; 
         }
 
         GLVertexBuffer* vb = vertexBuffers_[attribs[i]]; 
-        GLCALL(glBindBuffer(GL_ARRAY_BUFFER, vb->GetId())); 
-        GLCALL(glEnableVertexAttribArray(GLShader::GetAttributeIndex((Attribute) i))); 
-        GLCALL(glVertexAttribPointer(
+        SetVertexAttribPointer(
             GLShader::GetAttributeIndex((Attribute) i),  
+            vb->GetId(),  
             GetAttributeSize((Attribute) i), 
-            GL_FLOAT, 
-            GL_FALSE, 
             vb->GetVertexFormat().GetSize() * sizeof (float), 
-            (void*) (vb->GetVertexFormat().GetOffset((Attribute) i) * sizeof (float)))); 
+            vb->GetVertexFormat().GetOffset((Attribute) i) * sizeof (float) 
+        ); 
+
+        // GLCALL(glBindBuffer(GL_ARRAY_BUFFER, vb->GetId())); 
+        // GLCALL(glEnableVertexAttribArray(GLShader::GetAttributeIndex((Attribute) i))); 
+        // GLCALL(glVertexAttribPointer(
+        //     GLShader::GetAttributeIndex((Attribute) i),  
+        //     GetAttributeSize((Attribute) i), 
+        //     GL_FLOAT, 
+        //     GL_FALSE, 
+        //     vb->GetVertexFormat().GetSize() * sizeof (float), 
+        //     (void*) (vb->GetVertexFormat().GetOffset((Attribute) i) * sizeof (float)))); 
         /*cout << "Mesh: Attribute " 
             << " " << vb->GetId()
             << " " << GLShader::GetAttributeIndex((Attribute) i)
@@ -308,7 +322,7 @@ bool GLGraphicsDevice::PrepareToDraw()
 
     for (int i = 0; i < GetMaxTextureUnitCount(); i++) 
     {
-        GLCALL(glActiveTexture(GL_TEXTURE0 + i)); 
+        // GLCALL(glActiveTexture(GL_TEXTURE0 + i)); 
 
         Texture* tex = textureUnits_[i]; 
 
@@ -319,19 +333,23 @@ bool GLGraphicsDevice::PrepareToDraw()
             switch (tex->GetType()) 
             {
             case TextureType::TEXTURE_2D:  
-                GLCALL(glBindTexture(GL_TEXTURE_2D, ((GLTexture2D*) tex)->GetId())); 
+                // GLCALL(glBindTexture(GL_TEXTURE_2D, ((GLTexture2D*) tex)->GetId())); 
+                BindTexture2D(i, ((GLTexture2D*) tex)->GetId()); 
                 break; 
             case TextureType::RENDER_TEXTURE_2D:  
-                GLCALL(glBindTexture(GL_TEXTURE_2D, ((GLRenderTexture2D*) tex)->GetId())); 
+                // GLCALL(glBindTexture(GL_TEXTURE_2D, ((GLRenderTexture2D*) tex)->GetId())); 
+                BindTexture2D(i, ((GLRenderTexture2D*) tex)->GetId()); 
                 break; 
             default: 
-                GLCALL(glBindTexture(GL_TEXTURE_2D, 0)); 
+                // GLCALL(glBindTexture(GL_TEXTURE_2D, 0)); 
+                BindTexture2D(i, 0); 
                 break; 
             }
         }
         else 
         {
-            GLCALL(glBindTexture(GL_TEXTURE_2D, 0)); 
+            // GLCALL(glBindTexture(GL_TEXTURE_2D, 0)); 
+            BindTexture2D(i, 0); 
         }
     }
 
@@ -345,9 +363,11 @@ void GLGraphicsDevice::SetupFramebuffer()
     if (HasCustomRenderTarget()) 
     {
         // bind 
-        GLCALL(glBindFramebuffer(GL_FRAMEBUFFER, fbo_)); 
+        // GLCALL(glBindFramebuffer(GL_FRAMEBUFFER, fbo_)); 
+        BindFramebuffer(fbo_); 
 
         vector<GLuint> drawBuffers; 
+        vector<GLuint> colorBuffers; 
 
         for (int i = 0; i < GetMaxRenderTargetCount(); i++) 
         {
@@ -359,35 +379,82 @@ void GLGraphicsDevice::SetupFramebuffer()
                 tex->FlushToGPU(); 
 
                 // Logger::Debug(tex->GetId()); 
-                GLCALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, tex->GetId(), 0)); 
+                // GLCALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, tex->GetId(), 0)); 
                 drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + i); 
-            }
-
-            if (depthTarget_) 
-            {
-                GLRenderTexture2D* tex = (GLRenderTexture2D*) depthTarget_; 
-
-                tex->FlushToGPU(); 
-
-                GLCALL(glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, tex->GetId(), 0)); 
-            }
-
-            // Logger::Debug("DrawBuffers: ", drawBuffers.size()); 
-            GLCALL(glDrawBuffers(drawBuffers.size(), &drawBuffers[0])); 
-
-            int status; 
-
-            GLCALL(status = glCheckFramebufferStatus(GL_FRAMEBUFFER)); 
-
-            if (status != GL_FRAMEBUFFER_COMPLETE) 
-            {
-                Logger::Warning("Framebuffer is not complete: ", status); 
+                colorBuffers.push_back(tex->GetId()); 
             }
         }
+
+        if (depthTarget_) 
+        {
+            GLRenderTexture2D* tex = (GLRenderTexture2D*) depthTarget_; 
+
+            tex->FlushToGPU(); 
+
+            GLuint id = tex->GetId(); 
+
+            if (context_.fboContents.depthBuffer != id) 
+            {
+                context_.fboContents.depthBuffer = id; 
+                GLCALL(glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, id, 0)); 
+            }
+        }
+
+        // Logger::Debug("DrawBuffers: ", drawBuffers.size()); 
+
+        bool setDrawBuffers = context_.fboContents.numBuffers != drawBuffers.size(); 
+
+        // Logger::Debug("setDrawBuffers: ", setDrawBuffers, " (", context_.fboContents.numBuffers, ")"); 
+
+        if (!setDrawBuffers) 
+        {
+            for (int i = 0; i < drawBuffers.size(); i++) 
+            {
+                if (context_.fboContents.drawBuffer[i] != drawBuffers[i] || context_.fboContents.colorBuffer[i] != colorBuffers[i]) 
+                {
+                    // Logger::Debug("Different draw/color buffer: ", context_.fboContents.drawBuffer[i], " ", drawBuffers[i], " : ", context_.fboContents.colorBuffer[i], " ", colorBuffers[i]); 
+                    setDrawBuffers = true; 
+                    break; 
+                }
+            }
+        }
+
+        if (setDrawBuffers) 
+        {
+            int max = context_.fboContents.numBuffers > drawBuffers.size() ? context_.fboContents.numBuffers : drawBuffers.size(); 
+
+            for (int i = 0; i < max; i++) 
+            {
+                if (i < drawBuffers.size()) 
+                {
+                    GLCALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorBuffers[i], 0)); 
+                }
+                else 
+                {
+                    GLCALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, 0, 0)); 
+                }
+
+                context_.fboContents.drawBuffer[i] = drawBuffers[i]; 
+                context_.fboContents.colorBuffer[i] = colorBuffers[i]; 
+            }
+
+            context_.fboContents.numBuffers = drawBuffers.size(); 
+            GLCALL(glDrawBuffers(drawBuffers.size(), &drawBuffers[0])); 
+        }
+
+        // int status; 
+
+        // GLCALL(status = glCheckFramebufferStatus(GL_FRAMEBUFFER)); 
+
+        // if (status != GL_FRAMEBUFFER_COMPLETE) 
+        // {
+        //     Logger::Warning("Framebuffer is not complete: ", status); 
+        // }
     }
     else 
     {
-        GLCALL(glBindFramebuffer(GL_FRAMEBUFFER, 0)); 
+        // GLCALL(glBindFramebuffer(GL_FRAMEBUFFER, 0)); 
+        BindFramebuffer(0); 
     }
 }
 
@@ -398,6 +465,124 @@ bool GLGraphicsDevice::HasCustomRenderTarget()
     for (int i = 0; i < GetMaxRenderTargetCount(); i++) 
     {
         if (renderTargets_[i]) return true; 
+    }
+
+    return false; 
+}
+
+bool GLGraphicsDevice::BindFramebuffer(GLuint id) 
+{
+    if (context_.fbo != id) 
+    {
+        context_.fbo = id; 
+        GLCALL(glBindFramebuffer(GL_FRAMEBUFFER, id)); 
+        return true; 
+    }
+
+    return false; 
+}
+
+bool GLGraphicsDevice::BindIndexBuffer(GLuint id) 
+{
+    if (context_.ibo != id) 
+    {
+        context_.ibo = id; 
+        GLCALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id)); 
+        return true; 
+    }
+
+    return false; 
+}
+
+bool GLGraphicsDevice::BindShader(GLuint id) 
+{
+    if (context_.program != id) 
+    {
+        context_.program = id; 
+        GLCALL(glUseProgram(id)); 
+        return true; 
+    }
+
+    return false; 
+}
+
+bool GLGraphicsDevice::BindTexture2D(GLuint index, GLuint id) 
+{
+    if (context_.texture[index] != id) 
+    {
+        if (context_.textureUnit != index) 
+        {
+            context_.textureUnit = index; 
+            GLCALL(glActiveTexture(GL_TEXTURE0 + index)); 
+        }
+
+        context_.texture[index] = id; 
+        GLCALL(glBindTexture(GL_TEXTURE_2D, id)); 
+        return true; 
+    }
+
+    return false; 
+}
+
+bool GLGraphicsDevice::BindVertexBuffer(GLuint id) 
+{
+    if (context_.vbo != id) 
+    {
+        context_.vbo = id; 
+        GLCALL(glBindBuffer(GL_ARRAY_BUFFER, id)); 
+        return true; 
+    }
+
+    return false; 
+}
+
+bool GLGraphicsDevice::SetVertexAttribArrayEnabled(GLuint index, bool enabled) 
+{
+    if (context_.attribArrayEnabled[index] != enabled) 
+    {
+        if (enabled) 
+        {
+            GLCALL(glEnableVertexAttribArray(index)); 
+        }
+        else 
+        {
+            GLCALL(glDisableVertexAttribArray(index)); 
+        }
+
+        context_.attribArrayEnabled[index] = enabled; 
+
+        return true; 
+    }
+
+    return false; 
+}
+
+bool GLGraphicsDevice::SetVertexAttribPointer(GLuint index, GLuint vbo, GLuint count, GLuint size, GLuint64 offset) 
+{
+    bool justEnabled = SetVertexAttribArrayEnabled(index, true); 
+    
+    GLContext::AttribArray& arr = context_.attribArray[index]; 
+
+    if (justEnabled || arr.vbo != vbo || arr.count != count || arr.size != size || arr.offset != offset) 
+    {
+        BindVertexBuffer(vbo); 
+        GLCALL(
+            glVertexAttribPointer(
+                index,  
+                count, 
+                GL_FLOAT, 
+                GL_FALSE, 
+                size, 
+                (void*) offset
+            )
+        ); 
+
+        arr.vbo = vbo; 
+        arr.count = count; 
+        arr.size = size; 
+        arr.offset = offset; 
+
+        return true; 
     }
 
     return false; 

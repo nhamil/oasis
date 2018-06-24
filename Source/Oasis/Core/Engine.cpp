@@ -108,7 +108,8 @@ int Engine::GameLoop()
         }
 
         // TODO change this 
-        while (render && frameDelay >= skipFrames) 
+        // while (render && frameDelay >= skipFrames) 
+        
         {
             PreRender();
             app_->Render();

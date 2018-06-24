@@ -59,7 +59,8 @@ void GLShader::Create()
 
 void GLShader::UploadToGPU() 
 {
-    GLCALL(glUseProgram(id_)); 
+    // GLCALL(glUseProgram(id_)); 
+    graphics_->BindShader(id_); 
 
     for (auto& name : updateParameters_) 
     {

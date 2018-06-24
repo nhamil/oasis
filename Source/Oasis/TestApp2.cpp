@@ -10,8 +10,8 @@
 using namespace Oasis; 
 using namespace std; 
 
-#define RT_WIDTH 600 
-#define RT_HEIGHT 300
+#define RT_WIDTH 1920 
+#define RT_HEIGHT 1080
 
 static const string VERTEX_SOURCE = R"(#version 120 
 attribute vec3 a_Position; 
@@ -47,6 +47,13 @@ class TestApp2 : public Application
 {
 public: 
     virtual ~TestApp2() = default; 
+
+    Config GetConfig() const override 
+    {
+        Config conf; 
+        conf.targetFps = -1; 
+        return conf; 
+    }
 
     void Init() override; 
     void Update(float dt) override; 
@@ -218,6 +225,8 @@ void TestApp2::Update(float dt)
 
 void TestApp2::Render() 
 {
+    // Logger::Debug("TestApp2::Render Begin"); 
+
     auto g = Engine::GetGraphicsDevice(); 
     auto w = Engine::GetDisplay(); 
 
@@ -229,17 +238,32 @@ void TestApp2::Render()
     g->Clear(); 
 
     shader->SetVector3("u_Color", { 1, 1, 1 }); 
-    shader->SetMatrix4("oa_View", Matrix4::Translation({0, 0, -11 + 9 * (float) std::sin(angle * 0.5)})); 
     shader->SetMatrix4("oa_Model", Matrix4::RotationY(1.3 * angle) * Matrix4::RotationX(1.7 * angle) * Matrix4::RotationZ(2.1 * angle)); 
     shader->SetMatrix4("oa_Proj", Matrix4::Perspective(90 * OASIS_TO_RAD, w->GetAspectRatio(), 0.1, 100.0)); 
     shader->SetTextureUnit("u_Texture", 0); 
-    shader->FlushToGPU(); 
 
     g->SetTextureUnit(0, texture); 
     g->SetShader(shader); 
     g->SetIndexBuffer(mesh.GetIndexBuffer(0)); 
     g->SetVertexBuffer(mesh.GetVertexBuffer()); 
-    g->DrawIndexed(Primitive::TRIANGLE_LIST, 0, 6 * 6); 
+
+    // int x = 0, y = 0, z = 0; 
+
+    for (int x = -15; x <= 15; x++) 
+    {
+        for (int y = -6; y <= 6; y++) 
+        {
+            for (int z = -15; z <= 0; z++) 
+            {
+                shader->SetMatrix4("oa_View", Matrix4::Translation({x * 3, y * 3, z * 3 + -11 + 9 * (float) std::sin(angle * 0.5)})); 
+                shader->FlushToGPU(); 
+
+                g->DrawIndexed(Primitive::TRIANGLE_LIST, 0, 6 * 6); 
+            }
+        }
+    }
+
+    // Logger::Debug("TestApp2::Render Render to Screen"); 
 
     // render texture to screen 
     g->ClearRenderTargets(); 
@@ -256,6 +280,8 @@ void TestApp2::Render()
     g->SetIndexBuffer(rectIbo); 
     g->SetVertexBuffer(rectVbo); 
     g->DrawIndexed(Primitive::TRIANGLE_LIST, 0, 6); 
+
+    // Logger::Debug("TestApp2::Render Finish"); 
 }
 
 void TestApp2::Exit() 

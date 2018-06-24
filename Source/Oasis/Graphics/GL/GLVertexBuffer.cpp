@@ -29,7 +29,8 @@ void GLVertexBuffer::Create()
     if (id_) return; 
 
     GLCALL(glGenBuffers(1, &id_));
-    GLCALL(glBindBuffer(GL_ARRAY_BUFFER, id_));
+    // GLCALL(glBindBuffer(GL_ARRAY_BUFFER, id_));
+    graphics_->BindVertexBuffer(id_); 
     GLCALL(glBufferData(GL_ARRAY_BUFFER, GetElementCount() * GetVertexFormat().GetSize() * sizeof (float), nullptr, GL_DYNAMIC_DRAW));
 }
 
@@ -37,7 +38,8 @@ void GLVertexBuffer::UploadToGPU()
 {
     if (!id_) Create(); 
 
-    GLCALL(glBindBuffer(GL_ARRAY_BUFFER, id_));
+    // GLCALL(glBindBuffer(GL_ARRAY_BUFFER, id_));
+    graphics_->BindVertexBuffer(id_); 
     GLCALL(glBufferData(GL_ARRAY_BUFFER, GetElementCount() * GetVertexFormat().GetSize() * sizeof (float), &data_[0], GL_DYNAMIC_DRAW));
 }
 

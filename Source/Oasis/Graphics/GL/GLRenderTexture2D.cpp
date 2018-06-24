@@ -23,7 +23,8 @@ void GLRenderTexture2D::Create()
 
     GLCALL(glGenTextures(1, &id_)); 
 
-    GLCALL(glBindTexture(GL_TEXTURE_2D, id_)); 
+    // GLCALL(glBindTexture(GL_TEXTURE_2D, id_)); 
+    graphics_->BindTexture2D(0, id_); 
     
     if (IsDepthTextureFormat(format_)) 
     {

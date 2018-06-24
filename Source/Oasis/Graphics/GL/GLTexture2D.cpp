@@ -43,8 +43,9 @@ void GLTexture2D::UploadToGPU()
 
     if (dirtyParams_) 
     {
-        GLCALL(glActiveTexture(GL_TEXTURE0)); 
-        GLCALL(glBindTexture(GL_TEXTURE_2D, id_)); 
+        // GLCALL(glActiveTexture(GL_TEXTURE0)); 
+        // GLCALL(glBindTexture(GL_TEXTURE_2D, id_)); 
+        graphics_->BindTexture2D(0, id_); 
 
         GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0)); 
         GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipmaps_)); 
@@ -80,8 +81,9 @@ void GLTexture2D::Create()
     {
         GLCALL(glGenTextures(1, &id_)); 
 
-        GLCALL(glActiveTexture(GL_TEXTURE0)); 
-        GLCALL(glBindTexture(GL_TEXTURE_2D, id_)); 
+        // GLCALL(glActiveTexture(GL_TEXTURE0)); 
+        // GLCALL(glBindTexture(GL_TEXTURE_2D, id_)); 
+        graphics_->BindTexture2D(0, id_); 
 
         GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0)); 
         GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0)); 
@@ -111,10 +113,11 @@ void GLTexture2D::Destroy()
 {
     if (id_) 
     {
-        for (int i = 0; i < graphics_->GetMaxTextureUnitCount(); i++) 
-        {
-            if (graphics_->GetTextureUnit(i) == this) graphics_->SetTextureUnit(i, nullptr); 
-        }
+        graphics_->OnDestroy(this); 
+        // for (int i = 0; i < graphics_->GetMaxTextureUnitCount(); i++) 
+        // {
+        //     if (graphics_->GetTextureUnit(i) == this) graphics_->SetTextureUnit(i, nullptr); 
+        // }
 
         GLCALL(glDeleteTextures(1, &id_)); 
         id_ = 0; 
