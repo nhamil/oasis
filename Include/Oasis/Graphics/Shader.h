@@ -2,6 +2,7 @@
 
 #include "Oasis/Common.h"
 #include "Oasis/Graphics/Parameter.h" 
+#include "Oasis/Graphics/Types.h" 
 #include "Oasis/Math/MathUtil.h" 
 
 namespace Oasis
