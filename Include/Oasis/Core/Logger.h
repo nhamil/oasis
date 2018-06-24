@@ -14,13 +14,13 @@ namespace Oasis
 enum class LogLevel 
 {
     FATAL = 0, 
-    ERROR, 
-    WARNING, 
-    INFO, 
-    DEBUG, 
-    FINE, 
+    ERROR = 1, 
+    WARNING = 2, 
+    INFO = 3, 
+    DEBUG = 4, 
+    FINE = 5, 
 
-    count 
+    count = 6
 };
 
 inline const char* GetLogLevelName(LogLevel level) 

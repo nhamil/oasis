@@ -23,3 +23,5 @@
 #include "Oasis/Core/ClassId.h" 
 #include "Oasis/Core/Logger.h" 
 #include "Oasis/Core/ReferenceCounted.h" 
+
+#include "Oasis/Core/Object.h" 

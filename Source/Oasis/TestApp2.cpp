@@ -207,8 +207,8 @@ void TestApp2::Exit()
 
     auto g = Engine::GetGraphicsDevice(); 
 
-    g->DestroyShader(shader); 
-    g->DestroyTexture2D(texture); 
+    shader->Release(); 
+    texture->Release(); 
 }
 
 int main(int argc, char** argv) 

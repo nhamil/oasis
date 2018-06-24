@@ -19,7 +19,7 @@ struct OASIS_API Submesh
     std::vector<short> indices;
 };
 
-class OASIS_API Mesh
+class OASIS_API Mesh : public Object 
 {
 public:
     Mesh();

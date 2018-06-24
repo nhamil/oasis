@@ -8,7 +8,7 @@ namespace Oasis
 
 class Texture2D; 
 
-class OASIS_API Texture 
+class OASIS_API Texture : public GraphicsObject 
 {
 public: 
     Texture(TextureType type, TextureFormat format, int width, int height) : type_(type), format_(format), width_(width), height_(height) {} 

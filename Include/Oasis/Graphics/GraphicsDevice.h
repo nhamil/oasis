@@ -50,23 +50,13 @@ public:
 
     virtual Shader* CreateShader(const std::string& vSource, const std::string& fSource) = 0;  
 
-    virtual void DestroyShader(Shader* shader) = 0; 
-
     virtual IndexBuffer* CreateIndexBuffer(int numElements, BufferUsage usage = BufferUsage::DYNAMIC) = 0;  
-
-    virtual void DestroyIndexBuffer(IndexBuffer* buffer) = 0; 
 
     virtual VertexBuffer* CreateVertexBuffer(int numElements, const VertexFormat& format, BufferUsage usage = BufferUsage::DYNAMIC) = 0;  
 
-    virtual void DestroyVertexBuffer(VertexBuffer* buffer) = 0; 
-
     virtual Texture2D* CreateTexture2D(TextureFormat format, int width, int height) = 0; 
 
-    virtual void DestroyTexture2D(Texture2D* texture) = 0; 
-
     // virtual void CreateRenderTexture2D(TextureFormat format, int width, int height) = 0; 
-
-    // virtual void DestroyRenderTexture2D(RenderTexture2D* texture) = 0; 
 
 private: 
     friend class Engine; 

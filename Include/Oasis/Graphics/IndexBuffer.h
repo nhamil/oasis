@@ -9,7 +9,7 @@
 namespace Oasis
 {
 
-class OASIS_API IndexBuffer 
+class OASIS_API IndexBuffer : public GraphicsObject 
 {
 public:
     IndexBuffer(int startElements, BufferUsage usage); 

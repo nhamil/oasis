@@ -258,39 +258,19 @@ Shader* GLGraphicsDevice::CreateShader(const string& vs, const string& fs)
     return new GLShader(this, vs, fs); 
 }
 
-void GLGraphicsDevice::DestroyShader(Shader* shader) 
-{
-    delete shader; 
-}
-
 IndexBuffer* GLGraphicsDevice::CreateIndexBuffer(int numElements, BufferUsage usage)
 {
     return new GLIndexBuffer(this, numElements, usage); 
 }  
-
-void GLGraphicsDevice::DestroyIndexBuffer(IndexBuffer* buffer) 
-{
-    delete buffer; 
-}
 
 VertexBuffer* GLGraphicsDevice::CreateVertexBuffer(int numElements, const VertexFormat& format, BufferUsage usage) 
 {
     return new GLVertexBuffer(this, numElements, format, usage); 
 }  
 
-void GLGraphicsDevice::DestroyVertexBuffer(VertexBuffer* buffer) 
-{
-    delete buffer; 
-}
-
 Texture2D* GLGraphicsDevice::CreateTexture2D(TextureFormat format, int width, int height) 
 {
     return new GLTexture2D(this, format, width, height); 
-}
-
-void GLGraphicsDevice::DestroyTexture2D(Texture2D* texture) 
-{
-    delete texture; 
 }
 
 }

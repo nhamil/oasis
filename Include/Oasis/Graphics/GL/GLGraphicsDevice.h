@@ -50,19 +50,11 @@ public:
 
     Shader* CreateShader(const std::string& vSource, const std::string& fSource) override;   
 
-    void DestroyShader(Shader* shader) override; 
-
     IndexBuffer* CreateIndexBuffer(int numElements, BufferUsage usage = BufferUsage::DYNAMIC) override;   
-
-    void DestroyIndexBuffer(IndexBuffer* buffer) override; 
 
     VertexBuffer* CreateVertexBuffer(int numElements, const VertexFormat& format, BufferUsage usage = BufferUsage::DYNAMIC) override;   
 
-    void DestroyVertexBuffer(VertexBuffer* buffer) override; 
-
     Texture2D* CreateTexture2D(TextureFormat format, int width, int height) override; 
-
-    void DestroyTexture2D(Texture2D* texture) override; 
 
 private: 
     void PreRender();   

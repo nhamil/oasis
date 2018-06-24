@@ -42,7 +42,7 @@ struct OASIS_API ShaderParameter
     }
 };
 
-class OASIS_API Shader  
+class OASIS_API Shader : public GraphicsObject 
 {
 public:
     Shader(const std::string& vSource, const std::string& fSource); 

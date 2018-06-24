@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "Oasis/Common.h" 
+#include "Oasis/Graphics/GraphicsObject.h" 
 
 namespace Oasis 
 {

@@ -40,10 +40,7 @@ Submesh::Submesh()
 
 Submesh::~Submesh() 
 {
-    if (indexBuffer) 
-    {
-        Engine::GetGraphicsDevice()->DestroyIndexBuffer(indexBuffer); 
-    }
+    if (indexBuffer) indexBuffer->Release(); 
 }
 
 Mesh::Mesh() 
@@ -53,7 +50,7 @@ Mesh::Mesh()
 
 Mesh::~Mesh() 
 {
-    if (vertexBuffer_) Engine::GetGraphicsDevice()->DestroyVertexBuffer(vertexBuffer_); 
+    if (vertexBuffer_) vertexBuffer_->Release(); 
 }
 
 void Mesh::Clear() 

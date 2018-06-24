@@ -15,7 +15,7 @@ namespace Oasis
 class Shader; 
 class Shader; 
 
-class OASIS_API Material
+class OASIS_API Material : public Object 
 {
 public:
     Material();

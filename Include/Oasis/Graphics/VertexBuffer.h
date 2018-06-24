@@ -7,7 +7,7 @@
 namespace Oasis
 {
 
-class OASIS_API VertexBuffer 
+class OASIS_API VertexBuffer : public GraphicsObject 
 {
 public:
     VertexBuffer(int startElements, const VertexFormat& format, BufferUsage usage);
