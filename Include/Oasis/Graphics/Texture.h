@@ -34,11 +34,11 @@ public:
 
     inline TextureWrapMode GetWrapModeY() const { return wrapModeY_; } 
 
-    inline void SetFilter(TextureFilter filter) { filter_ = filter; dirtyParams_ = true; } 
+    inline void SetFilter(TextureFilter filter) { if (filter_ == filter) return; filter_ = filter; dirtyParams_ = true; } 
 
-    inline void SetWrapModeX(TextureWrapMode mode) { wrapModeX_ = mode; dirtyParams_ = true; } 
+    inline void SetWrapModeX(TextureWrapMode mode) { if (wrapModeX_ == mode) return; wrapModeX_ = mode; dirtyParams_ = true; } 
 
-    inline void SetWrapModeY(TextureWrapMode mode) { wrapModeY_ = mode; dirtyParams_ = true; } 
+    inline void SetWrapModeY(TextureWrapMode mode) { if (wrapModeY_ == mode) return; wrapModeY_ = mode; dirtyParams_ = true; } 
 
     inline void SetWrapMode(TextureWrapMode mode) { SetWrapModeX(mode); SetWrapModeY(mode); } 
 

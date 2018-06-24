@@ -10,6 +10,9 @@
 using namespace Oasis; 
 using namespace std; 
 
+#define RT_WIDTH 600 
+#define RT_HEIGHT 300
+
 static const string VERTEX_SOURCE = R"(#version 120 
 attribute vec3 a_Position; 
 attribute vec2 a_Texture; 
@@ -52,8 +55,12 @@ public:
 
     Shader* shader; 
     Texture2D* texture; 
+    RenderTexture2D* colorBuffer; 
+    RenderTexture2D* depthBuffer; 
     float angle; 
     Mesh mesh; 
+    VertexBuffer* rectVbo; 
+    IndexBuffer* rectIbo; 
 };
 
 namespace Oasis { class Material; }
@@ -164,6 +171,9 @@ void TestApp2::Init()
 
     texture = g->CreateTexture2D(TextureFormat::RGBA8, 128, 128); 
 
+    colorBuffer = g->CreateRenderTexture2D(TextureFormat::RGBA8, RT_WIDTH, RT_HEIGHT); 
+    depthBuffer = g->CreateRenderTexture2D(TextureFormat::DEPTH24, RT_WIDTH, RT_HEIGHT); 
+
     char texData[128 * 128 * 4]; 
     for (int i = 0; i < 128 * 128 * 4; i++) 
     {
@@ -175,6 +185,30 @@ void TestApp2::Init()
     texture->SetFilter(TextureFilter::TRILINEAR); 
     texture->SetWrapMode(TextureWrapMode::REPEAT); 
     texture->FlushToGPU(); 
+
+    VertexFormat format; 
+    format.AddAttribute(Attribute::POSITION); 
+    format.AddAttribute(Attribute::TEXTURE); 
+
+    float rectVerts[] = {
+        -1, -1, 0, 0, 0, 
+        1, -1, 0, 1, 0, 
+        1, 1, 0, 1, 1, 
+        -1, 1, 0, 0, 1, 
+    }; 
+
+    short rectInds[] = {
+        0, 1, 2, 
+        0, 2, 3, 
+    }; 
+
+    rectVbo = g->CreateVertexBuffer(4, format); 
+    rectVbo->SetData(0, 4, rectVerts); 
+    rectVbo->FlushToGPU(); 
+
+    rectIbo = g->CreateIndexBuffer(6); 
+    rectIbo->SetData(0, 6, rectInds);
+    rectIbo->FlushToGPU(); 
 }
 
 void TestApp2::Update(float dt) 
@@ -186,6 +220,13 @@ void TestApp2::Render()
 {
     auto g = Engine::GetGraphicsDevice(); 
     auto w = Engine::GetDisplay(); 
+
+    // render to texture 
+    g->ClearRenderTargets(); 
+    g->SetRenderTarget(0, colorBuffer); 
+    g->SetDepthTarget(depthBuffer); 
+    g->SetViewport(0, 0, colorBuffer->GetWidth(), colorBuffer->GetHeight()); 
+    g->Clear(); 
 
     shader->SetVector3("u_Color", { 1, 1, 1 }); 
     shader->SetMatrix4("oa_View", Matrix4::Translation({0, 0, -11 + 9 * (float) std::sin(angle * 0.5)})); 
@@ -199,13 +240,27 @@ void TestApp2::Render()
     g->SetIndexBuffer(mesh.GetIndexBuffer(0)); 
     g->SetVertexBuffer(mesh.GetVertexBuffer()); 
     g->DrawIndexed(Primitive::TRIANGLE_LIST, 0, 6 * 6); 
+
+    // render texture to screen 
+    g->ClearRenderTargets(); 
+    g->SetViewport(0, 0, w->GetWidth(), w->GetHeight()); 
+
+    shader->SetVector3("u_Color", { 1, 1, 1 }); 
+    shader->SetMatrix4("oa_View", Matrix4::IDENTITY); 
+    shader->SetMatrix4("oa_Model", Matrix4::IDENTITY); 
+    shader->SetMatrix4("oa_Proj", Matrix4::IDENTITY); 
+    shader->SetTextureUnit("u_Texture", 0); 
+    shader->FlushToGPU(); 
+
+    g->SetTextureUnit(0, colorBuffer); 
+    g->SetIndexBuffer(rectIbo); 
+    g->SetVertexBuffer(rectVbo); 
+    g->DrawIndexed(Primitive::TRIANGLE_LIST, 0, 6); 
 }
 
 void TestApp2::Exit() 
 {
     Logger::Info("Exit App"); 
-
-    auto g = Engine::GetGraphicsDevice(); 
 
     shader->Release(); 
     texture->Release(); 

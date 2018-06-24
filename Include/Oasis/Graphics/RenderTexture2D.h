@@ -8,12 +8,17 @@ namespace Oasis
 class OASIS_API RenderTexture2D : public Texture 
 {
 public: 
-    RenderTexture2D(TextureFormat format, int width, int height); 
+    RenderTexture2D(TextureFormat format, int width, int height, int multisample); 
     virtual ~RenderTexture2D(); 
+
+    int GetMultisample() const { return multisample_; } 
+
+    void SetMultisample(int samples); 
 
     void Resize(int width, int height); 
 
-private: 
+protected: 
+    int multisample_ = 1; 
 };
 
 }

@@ -32,6 +32,14 @@ public:
 
     void SetTextureUnit(int unit, Texture* texture) override; 
 
+    virtual int GetMaxRenderTargetCount() override;  
+
+    virtual void ClearRenderTargets(bool color, bool depth) override;  
+
+    virtual void SetRenderTarget(int index, RenderTexture2D* texture) override;  
+
+    virtual void SetDepthTarget(RenderTexture2D* texture) override;  
+
     void Draw(Primitive prim, int start, int triCount) override;   
 
     void DrawIndexed(Primitive prim, int start, int triCount) override;   
@@ -56,11 +64,22 @@ public:
 
     Texture2D* CreateTexture2D(TextureFormat format, int width, int height) override; 
 
+    RenderTexture2D* CreateRenderTexture2D(TextureFormat format, int width, int height, int multisamples = 1) override; 
+
+    // TODO implement 
+    void OnDestroy(Texture* texture) { (void) texture; } 
+    void OnDestroy(VertexBuffer* buffer) { (void) buffer; } 
+    void OnDestroy(IndexBuffer* buffer) { (void) buffer; } 
+    void OnDestroy(Shader* shader) { (void) shader; } 
+
 private: 
     void PreRender();   
     void PostRender(); 
 
-    void PrepareVertexBuffers(); 
+    bool PrepareToDraw(); 
+
+    bool HasCustomRenderTarget(); 
+    void SetupFramebuffer(); 
 
     Vector4 clearColor_; 
     Vector4 viewport_; 
@@ -68,6 +87,9 @@ private:
     GLIndexBuffer* indexBuffer_; 
     std::vector<GLVertexBuffer*> vertexBuffers_; 
     Texture* textureUnits_[8]; 
+    Texture* renderTargets_[4]; 
+    Texture* depthTarget_ = nullptr; 
+    GLuint fbo_ = 0; 
 };
 
 }

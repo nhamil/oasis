@@ -17,6 +17,7 @@
 #include "Oasis/Graphics/IndexBuffer.h" 
 #include "Oasis/Graphics/Mesh.h" 
 #include "Oasis/Graphics/Renderer.h" 
+#include "Oasis/Graphics/RenderTexture2D.h" 
 #include "Oasis/Graphics/Shader.h" 
 #include "Oasis/Graphics/Texture.h" 
 #include "Oasis/Graphics/Texture2D.h" 

@@ -32,6 +32,14 @@ public:
 
     virtual void SetTextureUnit(int unit, Texture* texture) = 0; 
 
+    virtual int GetMaxRenderTargetCount() = 0; 
+
+    virtual void ClearRenderTargets(bool color = true, bool depth = true) = 0; 
+
+    virtual void SetRenderTarget(int index, RenderTexture2D* texture) = 0; 
+
+    virtual void SetDepthTarget(RenderTexture2D* texture) = 0; 
+
     virtual void Draw(Primitive prim, int start, int triCount) = 0;  
 
     virtual void DrawIndexed(Primitive prim, int start, int triCount) = 0;  
@@ -56,7 +64,7 @@ public:
 
     virtual Texture2D* CreateTexture2D(TextureFormat format, int width, int height) = 0; 
 
-    // virtual void CreateRenderTexture2D(TextureFormat format, int width, int height) = 0; 
+    virtual RenderTexture2D* CreateRenderTexture2D(TextureFormat format, int width, int height, int multisamples = 1) = 0; 
 
 private: 
     friend class Engine; 
