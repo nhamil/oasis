@@ -76,10 +76,9 @@ void GLGraphicsDevice::PreRender()
     SetClearColor(0.7, 0.8, 0.9); 
     Clear(); 
 
-    if (!fbo_) 
-    {
-        GLCALL(glGenFramebuffers(1, &fbo_)); 
-    }
+    if (!fbo_) GLCALL(glGenFramebuffers(1, &fbo_)); 
+    if (!drawFBO_) GLCALL(glGenFramebuffers(1, &drawFBO_)); 
+    if (!readFBO_) GLCALL(glGenFramebuffers(1, &readFBO_)); 
 }
 
 void GLGraphicsDevice::PostRender() 
@@ -186,7 +185,9 @@ void GLGraphicsDevice::DrawIndexed(Primitive prim, int start, int triCount)
     if (PrepareToDraw()) 
     {
         GLCALL(glDrawElements(/*PRIMITIVE_TYPES[(int) prim]*/ GL_TRIANGLES, triCount, GL_UNSIGNED_SHORT, (void*)(start * sizeof (short)))); 
-    }    
+
+        PostDraw(); 
+    } 
 }  
 
 Shader* GLGraphicsDevice::CreateShader(const string& vs, const string& fs) 
@@ -301,23 +302,6 @@ bool GLGraphicsDevice::PrepareToDraw()
             vb->GetVertexFormat().GetSize() * sizeof (float), 
             vb->GetVertexFormat().GetOffset((Attribute) i) * sizeof (float) 
         ); 
-
-        // GLCALL(glBindBuffer(GL_ARRAY_BUFFER, vb->GetId())); 
-        // GLCALL(glEnableVertexAttribArray(GLShader::GetAttributeIndex((Attribute) i))); 
-        // GLCALL(glVertexAttribPointer(
-        //     GLShader::GetAttributeIndex((Attribute) i),  
-        //     GetAttributeSize((Attribute) i), 
-        //     GL_FLOAT, 
-        //     GL_FALSE, 
-        //     vb->GetVertexFormat().GetSize() * sizeof (float), 
-        //     (void*) (vb->GetVertexFormat().GetOffset((Attribute) i) * sizeof (float)))); 
-        /*cout << "Mesh: Attribute " 
-            << " " << vb->GetId()
-            << " " << GLShader::GetAttributeIndex((Attribute) i)
-            << " " << GetAttributeSize((Attribute) i) 
-            << " " << vb->GetVertexFormat().GetSize() * sizeof (float) 
-            << " " << (vb->GetVertexFormat().GetOffset((Attribute) i) * sizeof (float)) 
-            << " " << endl; */
     }
 
     for (int i = 0; i < GetMaxTextureUnitCount(); i++) 
@@ -336,9 +320,16 @@ bool GLGraphicsDevice::PrepareToDraw()
                 // GLCALL(glBindTexture(GL_TEXTURE_2D, ((GLTexture2D*) tex)->GetId())); 
                 BindTexture2D(i, ((GLTexture2D*) tex)->GetId()); 
                 break; 
-            case TextureType::RENDER_TEXTURE_2D:  
-                // GLCALL(glBindTexture(GL_TEXTURE_2D, ((GLRenderTexture2D*) tex)->GetId())); 
-                BindTexture2D(i, ((GLRenderTexture2D*) tex)->GetId()); 
+            case TextureType::RENDER_TEXTURE_2D: {
+                    // GLCALL(glBindTexture(GL_TEXTURE_2D, ((GLRenderTexture2D*) tex)->GetId())); 
+                    GLRenderTexture2D* rt = ((GLRenderTexture2D*) tex); 
+                    if (rt->GetNeedResolve()) 
+                    {
+                        ResolveRenderTexture2D(rt); 
+                        rt->SetNeedResolve(false); 
+                    }
+                    BindTexture2D(i, rt->GetId()); 
+                }
                 break; 
             default: 
                 // GLCALL(glBindTexture(GL_TEXTURE_2D, 0)); 
@@ -358,6 +349,45 @@ bool GLGraphicsDevice::PrepareToDraw()
     return true; 
 }
 
+void GLGraphicsDevice::PostDraw() 
+{
+    SetRenderbuffersDirty(); 
+}
+
+void GLGraphicsDevice::SetRenderbuffersDirty() 
+{
+    auto depth = (GLRenderTexture2D*) depthTarget_; 
+    if (depth && depth->IsMultisampled()) 
+    {
+        depth->SetNeedResolve(); 
+    }
+
+    for (int i = 0; i < GetMaxRenderTargetCount(); i++) 
+    {
+        auto tex = (GLRenderTexture2D*) renderTargets_[i]; 
+        if (tex && tex->IsMultisampled()) tex->SetNeedResolve(); 
+    }
+}
+
+void GLGraphicsDevice::ResolveRenderTexture2D(GLRenderTexture2D* texture) 
+{
+    if (texture && !IsDepthTextureFormat(texture->GetFormat()))  
+    {
+        // TODO 
+
+        GLCALL(glBindFramebuffer(GL_READ_FRAMEBUFFER, readFBO_)); 
+        GLCALL(glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, texture->GetRenderbufferId())); 
+
+        GLCALL(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFBO_)); 
+        GLCALL(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture->GetId(), 0)); 
+
+        GLCALL(glBlitFramebuffer(0, 0, texture->GetWidth(), texture->GetHeight(), 0, 0, texture->GetWidth(), texture->GetHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST)); 
+
+        // reset framebuffer 
+        GLCALL(glBindFramebuffer(GL_FRAMEBUFFER, context_.fbo)); 
+    }
+}
+
 void GLGraphicsDevice::SetupFramebuffer() 
 {
     if (HasCustomRenderTarget()) 
@@ -368,6 +398,7 @@ void GLGraphicsDevice::SetupFramebuffer()
 
         vector<GLuint> drawBuffers; 
         vector<GLuint> colorBuffers; 
+        vector<bool> isRenderbuffer; 
 
         for (int i = 0; i < GetMaxRenderTargetCount(); i++) 
         {
@@ -381,7 +412,8 @@ void GLGraphicsDevice::SetupFramebuffer()
                 // Logger::Debug(tex->GetId()); 
                 // GLCALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, tex->GetId(), 0)); 
                 drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + i); 
-                colorBuffers.push_back(tex->GetId()); 
+                colorBuffers.push_back(tex->IsMultisampled() ? tex->GetRenderbufferId() : tex->GetId()); 
+                isRenderbuffer.push_back(tex->IsMultisampled()); 
             }
         }
 
@@ -391,12 +423,21 @@ void GLGraphicsDevice::SetupFramebuffer()
 
             tex->FlushToGPU(); 
 
-            GLuint id = tex->GetId(); 
+            GLuint id = tex->IsMultisampled() ? tex->GetRenderbufferId() : tex->GetId(); 
 
-            if (context_.fboContents.depthBuffer != id) 
+            if (context_.fboContents.depthBuffer != id || context_.fboContents.isDepthRenderbuffer != tex->IsMultisampled())  
             {
                 context_.fboContents.depthBuffer = id; 
-                GLCALL(glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, id, 0)); 
+                context_.fboContents.isDepthRenderbuffer = tex->IsMultisampled(); 
+
+                if (tex->IsMultisampled()) 
+                {
+                    GLCALL(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, id)); 
+                }
+                else 
+                {
+                    GLCALL(glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, id, 0)); 
+                }
             }
         }
 
@@ -408,9 +449,9 @@ void GLGraphicsDevice::SetupFramebuffer()
 
         if (!setDrawBuffers) 
         {
-            for (int i = 0; i < drawBuffers.size(); i++) 
+            for (unsigned i = 0; i < drawBuffers.size(); i++) 
             {
-                if (context_.fboContents.drawBuffer[i] != drawBuffers[i] || context_.fboContents.colorBuffer[i] != colorBuffers[i]) 
+                if (context_.fboContents.drawBuffer[i] != drawBuffers[i] || context_.fboContents.colorBuffer[i] != colorBuffers[i] || context_.fboContents.isRenderbuffer[i] != isRenderbuffer[i])  
                 {
                     // Logger::Debug("Different draw/color buffer: ", context_.fboContents.drawBuffer[i], " ", drawBuffers[i], " : ", context_.fboContents.colorBuffer[i], " ", colorBuffers[i]); 
                     setDrawBuffers = true; 
@@ -421,13 +462,20 @@ void GLGraphicsDevice::SetupFramebuffer()
 
         if (setDrawBuffers) 
         {
-            int max = context_.fboContents.numBuffers > drawBuffers.size() ? context_.fboContents.numBuffers : drawBuffers.size(); 
+            unsigned max = context_.fboContents.numBuffers > drawBuffers.size() ? context_.fboContents.numBuffers : drawBuffers.size(); 
 
-            for (int i = 0; i < max; i++) 
+            for (unsigned i = 0; i < max; i++) 
             {
                 if (i < drawBuffers.size()) 
                 {
-                    GLCALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorBuffers[i], 0)); 
+                    if (isRenderbuffer[i]) 
+                    {
+                        GLCALL(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER, colorBuffers[i])); 
+                    }
+                    else 
+                    {
+                        GLCALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorBuffers[i], 0)); 
+                    }
                 }
                 else 
                 {
@@ -436,6 +484,7 @@ void GLGraphicsDevice::SetupFramebuffer()
 
                 context_.fboContents.drawBuffer[i] = drawBuffers[i]; 
                 context_.fboContents.colorBuffer[i] = colorBuffers[i]; 
+                context_.fboContents.isRenderbuffer[i] = isRenderbuffer[i]; 
             }
 
             context_.fboContents.numBuffers = drawBuffers.size(); 

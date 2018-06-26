@@ -16,6 +16,11 @@ public:
 
     GLuint GetId() const { return id_; } 
 
+    GLuint GetRenderbufferId() const { return renderbufferId_; } 
+
+    void SetNeedResolve(bool need = true) { dirtyResolve_ = need; } 
+    bool GetNeedResolve() const { return dirtyResolve_; } 
+
 private: 
     void UploadToGPU() override; 
     void Create(); 
@@ -23,6 +28,8 @@ private:
 
     GLGraphicsDevice* graphics_; 
     GLuint id_ = 0; 
+    GLuint renderbufferId_ = 0; 
+    bool dirtyResolve_ = false; 
 };
 
 }

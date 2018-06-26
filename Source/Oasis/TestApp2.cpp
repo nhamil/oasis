@@ -10,8 +10,11 @@
 using namespace Oasis; 
 using namespace std; 
 
-#define RT_WIDTH 1920 
-#define RT_HEIGHT 1080
+#define RT_WIDTH (1920) 
+#define RT_HEIGHT (1080)
+
+#define TEX_WIDTH (10) 
+#define TEX_HEIGHT (10) 
 
 static const string VERTEX_SOURCE = R"(#version 120 
 attribute vec3 a_Position; 
@@ -176,18 +179,18 @@ void TestApp2::Init()
 
     shader = g->CreateShader(VERTEX_SOURCE, FRAGMENT_SOURCE); 
 
-    texture = g->CreateTexture2D(TextureFormat::RGBA8, 128, 128); 
+    texture = g->CreateTexture2D(TextureFormat::RGBA8, TEX_WIDTH, TEX_HEIGHT); 
 
-    colorBuffer = g->CreateRenderTexture2D(TextureFormat::RGBA8, RT_WIDTH, RT_HEIGHT); 
-    depthBuffer = g->CreateRenderTexture2D(TextureFormat::DEPTH24, RT_WIDTH, RT_HEIGHT); 
+    colorBuffer = g->CreateRenderTexture2D(TextureFormat::RGBA8, RT_WIDTH, RT_HEIGHT, 8); 
+    depthBuffer = g->CreateRenderTexture2D(TextureFormat::DEPTH24, RT_WIDTH, RT_HEIGHT, 8); 
 
-    char texData[128 * 128 * 4]; 
-    for (int i = 0; i < 128 * 128 * 4; i++) 
+    char texData[TEX_WIDTH * TEX_HEIGHT * 4]; 
+    for (int i = 0; i < TEX_WIDTH * TEX_HEIGHT * 4; i++) 
     {
         texData[i] = (char) rand(); 
     }
 
-    texture->SetData(0, 0, 128, 128, texData); 
+    texture->SetData(0, 0, TEX_WIDTH, TEX_HEIGHT, texData); 
     texture->SetMipmapCount(10); 
     texture->SetFilter(TextureFilter::TRILINEAR); 
     texture->SetWrapMode(TextureWrapMode::REPEAT); 
@@ -230,6 +233,8 @@ void TestApp2::Render()
     auto g = Engine::GetGraphicsDevice(); 
     auto w = Engine::GetDisplay(); 
 
+    g->SetClearColor(0.2, 0.2, 0.2); 
+
     // render to texture 
     g->ClearRenderTargets(); 
     g->SetRenderTarget(0, colorBuffer); 
@@ -249,13 +254,13 @@ void TestApp2::Render()
 
     // int x = 0, y = 0, z = 0; 
 
-    for (int x = -15; x <= 15; x++) 
+    for (int x = -5; x <= 5; x++) 
     {
-        for (int y = -6; y <= 6; y++) 
+        for (int y = -5; y <= 5; y++) 
         {
-            for (int z = -15; z <= 0; z++) 
+            for (int z = -4; z <= 0; z++) 
             {
-                shader->SetMatrix4("oa_View", Matrix4::Translation({x * 3, y * 3, z * 3 + -11 + 9 * (float) std::sin(angle * 0.5)})); 
+                shader->SetMatrix4("oa_View", Matrix4::Translation({x * 4.0f + 2, y * 4.0f + 2, z * 4 + -8 + 9 * (float) std::sin(angle * 0.5)})); 
                 shader->FlushToGPU(); 
 
                 g->DrawIndexed(Primitive::TRIANGLE_LIST, 0, 6 * 6); 

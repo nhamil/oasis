@@ -9,6 +9,7 @@ namespace Oasis
 {
 
 class GLIndexBuffer; 
+class GLRenderTexture2D; 
 class GLShader; 
 class GLVertexBuffer; 
 
@@ -26,7 +27,9 @@ struct OASIS_API GLContext
     {
         GLenum drawBuffer[4] {}; 
         GLuint colorBuffer[4] {}; 
+        bool isRenderbuffer[4] {}; 
         GLuint depthBuffer = 0; 
+        bool isDepthRenderbuffer = false; 
         unsigned numBuffers = 0; 
     };
 
@@ -109,14 +112,18 @@ public:
     bool BindTexture2D(GLuint index, GLuint id); 
     bool BindFramebuffer(GLuint id); 
 
+    void ResolveRenderTexture2D(GLRenderTexture2D* texture); 
+
 private: 
     void PreRender();   
     void PostRender(); 
 
     bool PrepareToDraw(); 
+    void PostDraw(); 
 
     bool HasCustomRenderTarget(); 
     void SetupFramebuffer(); 
+    void SetRenderbuffersDirty(); 
 
     Vector4 clearColor_; 
     Vector4 viewport_; 
@@ -127,6 +134,8 @@ private:
     Texture* renderTargets_[4]; 
     Texture* depthTarget_ = nullptr; 
     GLuint fbo_ = 0; 
+    GLuint drawFBO_ = 0; 
+    GLuint readFBO_ = 0; 
 
     GLContext context_; 
 };

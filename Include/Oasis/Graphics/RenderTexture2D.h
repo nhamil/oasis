@@ -11,9 +11,11 @@ public:
     RenderTexture2D(TextureFormat format, int width, int height, int multisample); 
     virtual ~RenderTexture2D(); 
 
-    int GetMultisample() const { return multisample_; } 
+    int GetSampleCount() const { return multisample_; } 
 
-    void SetMultisample(int samples); 
+    bool IsMultisampled() const { return multisample_ > 1; } 
+
+    void SetSampleCount(int samples); 
 
     void Resize(int width, int height); 
 

@@ -4,6 +4,13 @@
 
 #include <GL/glew.h> 
 
+class GLGraphicsDevice; 
+class GLIndexBuffer; 
+class GLRenderTexture2D; 
+class GLShader; 
+class GLTexture2D; 
+class GLVertexBuffer; 
+
 #if 0 
 
 #define GLCALL(x) { \

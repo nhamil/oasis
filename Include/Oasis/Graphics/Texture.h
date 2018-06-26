@@ -14,7 +14,7 @@ public:
     Texture(TextureType type, TextureFormat format, int width, int height) : type_(type), format_(format), width_(width), height_(height) {} 
     virtual ~Texture() {} 
 
-    void FlushToGPU(); 
+    virtual void FlushToGPU(); 
 
     inline TextureType GetType() const { return type_; } 
 

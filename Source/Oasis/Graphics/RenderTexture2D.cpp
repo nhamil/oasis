@@ -19,7 +19,7 @@ void RenderTexture2D::Resize(int width, int height)
     dirty_ = true; 
 }
 
-void RenderTexture2D::SetMultisample(int samples) 
+void RenderTexture2D::SetSampleCount(int samples) 
 {
     if (multisample_ != samples) 
     {
