@@ -3,7 +3,6 @@
 #include "Oasis/Common.h" 
 
 #include "Oasis/Core/Application.h" 
-#include "Oasis/Core/ClassId.h" 
 #include "Oasis/Core/Config.h" 
 #include "Oasis/Core/Display.h" 
 #include "Oasis/Core/Engine.h"
@@ -25,6 +24,9 @@
 #include "Oasis/Graphics/VertexFormat.h" 
 
 #include "Oasis/Math/MathUtil.h" 
+
+#include "Oasis/Util/ClassId.h" 
+#include "Oasis/Util/IdManager.h" 
 
 #ifndef OASIS_MAIN 
     #define OASIS_MAIN(AppName) \

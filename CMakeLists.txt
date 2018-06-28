@@ -10,7 +10,7 @@ add_definitions(-DOASIS_EXPORT=1)
 # add sources 
 set(SOURCES
     # Oasis 
-    ${OASIS_SOURCE_FOLDER}/TestApp2.cpp 
+    ${OASIS_SOURCE_FOLDER}/Main.cpp 
     
     # Core  
     ${OASIS_SOURCE_FOLDER}/Core/Engine.cpp 

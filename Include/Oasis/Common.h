@@ -16,6 +16,7 @@
 
 #include <cstdint> 
 #include <cstdlib>
+#include <set> 
 #include <string> 
 #include <unordered_map> 
 #include <unordered_set> 
@@ -36,8 +37,8 @@ namespace Oasis
 
 }
 
-#include "Oasis/Core/ClassId.h" 
 #include "Oasis/Core/Logger.h" 
 #include "Oasis/Core/ReferenceCounted.h" 
+#include "Oasis/Util/ClassId.h" 
 
 #include "Oasis/Core/Object.h" 

@@ -1,16 +1,13 @@
 #include <iostream>
 
 #include <Oasis/Oasis.h> 
-#include <Oasis/Core/ClassId.h> 
-#include <Oasis/Math/MathUtil.h>
+
+#include <Oasis/Scene/ECS.h> 
+#include <Oasis/Scene/Component.h> 
+#include <Oasis/Scene/ComponentPool.h> 
 
 using namespace std;
 using namespace Oasis; 
-
-struct Position 
-{
-    float x, y; 
-}; 
 
 struct Tester 
 {
@@ -41,6 +38,21 @@ struct Tester
     }
 };
 
+struct Position : public Component
+{
+    Position() = default; 
+    Position(const Position& other) : x(other.x), y(other.y) {} 
+    Position(float x, float y) : x(x), y(y) {} 
+
+    void Print() const
+    {
+        Logger::Info("(", x, ", ", y, ")"); 
+    }
+
+    float x = 0;
+    float y = 0; 
+};
+
 int main(int argc, char** argv)
 {
     cout << "Hello, Oasis!" << endl;
@@ -50,21 +62,27 @@ int main(int argc, char** argv)
     cout << "ID for Vector2: " << GetClassId<Vector4>() << endl; 
     cout << "ID for float: " << GetClassId<float>() << endl; 
 
-    RefCounted<Tester> ptr = new Tester(); 
+    ComponentPool<Position> pool; 
 
-    cout << ptr.GetRefCount() << endl; 
+    uint32 a, b, c, d; 
 
-    {
-        auto ptr2 = ptr; 
+    Position tmp; 
 
-        cout << ptr.GetRefCount() << endl; 
-    }
+    a = pool.CreateComponent(&tmp); 
 
-    ptr->Print(); 
+    Logger::Info("Id: ", a); 
 
-    cout << ptr.GetRefCount() << endl; 
+    ((Position*) pool.GetComponent(a))->Print(); 
 
-    cin.get(); 
+    tmp = { 3, 4 }; 
+    b = pool.CreateComponent(&tmp); 
+    ((Position*) pool.GetComponent(b))->Print(); 
+
+    pool.DestroyComponent(a); 
+
+    tmp = { 5, 6 }; 
+    a = pool.CreateComponent(&tmp); 
+    ((Position*) pool.GetComponent(a))->Print(); 
 
     return 0;
 }
