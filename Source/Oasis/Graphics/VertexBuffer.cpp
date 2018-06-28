@@ -14,7 +14,7 @@ VertexBuffer::VertexBuffer(int startElements, const VertexFormat& format, Buffer
 
 VertexBuffer::~VertexBuffer() {}
 
-void VertexBuffer::FlushToGPU()
+void VertexBuffer::Update()
 {
     if (dirty_) UploadToGPU(); 
 

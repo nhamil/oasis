@@ -13,10 +13,11 @@ public:
     GLTexture2D(GLGraphicsDevice* graphics, TextureFormat format, int width, int height); 
     ~GLTexture2D(); 
 
+    void Update() override; 
+
     inline GLuint GetId() const { return id_; } 
 
 private: 
-    void UploadToGPU() override; 
     void Create(); 
     void Destroy(); 
 

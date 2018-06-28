@@ -113,6 +113,7 @@ public:
     bool BindFramebuffer(GLuint id); 
 
     void ResolveRenderTexture2D(GLRenderTexture2D* texture); 
+    void CopyToBackupTexture(GLuint src, GLuint dst, int width, int height, bool color = true); 
 
 private: 
     void PreRender();   
@@ -124,6 +125,7 @@ private:
     bool HasCustomRenderTarget(); 
     void SetupFramebuffer(); 
     void SetRenderbuffersDirty(); 
+    void SetRenderTextureNotInUse(Texture* texture); 
 
     Vector4 clearColor_; 
     Vector4 viewport_; 

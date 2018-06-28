@@ -11,11 +11,11 @@ public:
     Texture2D(TextureFormat format, int width, int height); 
     virtual ~Texture2D(); 
 
+    inline int GetMipmapCount() const { return mipmaps_; } 
+
     void GetData(int x, int y, int width, int height, void* out) const; 
 
-    int GetMipmapCount() const { return mipmaps_; } 
-
-    void Resize(int width, int height); 
+    void Resize(TextureFormat format, int width, int height); 
 
     void SetMipmapCount(int levels); 
 

@@ -88,9 +88,7 @@ enum class TextureType
 {
     UNKNOWN, 
     TEXTURE_2D, 
-    TEXTURE_3D, 
     TEXTURE_CUBE, 
-    TEXTURE_2D_ARRAY, 
     RENDER_TEXTURE_2D, 
 
     count 

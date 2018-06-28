@@ -12,13 +12,6 @@ RenderTexture2D::RenderTexture2D(TextureFormat format, int width, int height, in
 
 RenderTexture2D::~RenderTexture2D() {} 
 
-void RenderTexture2D::Resize(int width, int height) 
-{
-    width_ = width; 
-    height_ = height; 
-    dirty_ = true; 
-}
-
 void RenderTexture2D::SetSampleCount(int samples) 
 {
     if (multisample_ != samples) 

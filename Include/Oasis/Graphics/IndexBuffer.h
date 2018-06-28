@@ -16,7 +16,7 @@ public:
     virtual ~IndexBuffer(); 
 
     // upload data if it is dirty 
-    void FlushToGPU();
+    void Update();
 
     inline BufferUsage GetBufferUsage() const { return usage_; } 
     inline int GetElementCount() const { return data_.size(); }

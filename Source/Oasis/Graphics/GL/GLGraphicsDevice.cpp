@@ -142,13 +142,7 @@ void GLGraphicsDevice::SetTextureUnit(int unit, Texture* texture)
         case TextureType::RENDER_TEXTURE_2D: 
             set = dynamic_cast<GLRenderTexture2D*>(texture); 
             break; 
-        case TextureType::TEXTURE_3D: 
-            // TODO 
-            break; 
         case TextureType::TEXTURE_CUBE: 
-            // TODO 
-            break; 
-        case TextureType::TEXTURE_2D_ARRAY: 
             // TODO 
             break; 
         default: break; 
@@ -226,12 +220,37 @@ void GLGraphicsDevice::ClearRenderTargets(bool color, bool depth)
     {
         for (int i = 0; i < GetMaxRenderTargetCount(); i++) 
         {
+            if (renderTargets_[i]) 
+            {
+                Texture* tex = renderTargets_[i]; 
+
+                switch (tex->GetType()) 
+                {
+                case TextureType::RENDER_TEXTURE_2D: 
+                    ((GLRenderTexture2D*) tex)->SetInUse(false); 
+                    break; 
+                default: // not supported 
+                    break; 
+                }
+            }
             renderTargets_[i] = nullptr; 
         }
     }
     
     if (depth) 
     {
+        if (depthTarget_) 
+        {
+            Texture* tex = depthTarget_; 
+            switch (tex->GetType()) 
+            {
+            case TextureType::RENDER_TEXTURE_2D: 
+                ((GLRenderTexture2D*) tex)->SetInUse(false); 
+                break; 
+            default: // not supported 
+                break; 
+            }
+        }
         depthTarget_ = nullptr; 
     }
 }
@@ -250,13 +269,13 @@ bool GLGraphicsDevice::PrepareToDraw()
 {
     if (!shaderProgram_) return false; 
 
-    shaderProgram_->FlushToGPU(); 
+    shaderProgram_->Update(); 
 
-    if (indexBuffer_) indexBuffer_->FlushToGPU(); 
+    if (indexBuffer_) indexBuffer_->Update(); 
     
     for (int i = 0; i < GetVertexBufferCount(); i++) 
     {
-        if (vertexBuffers_[i]) vertexBuffers_[i]->FlushToGPU(); 
+        if (vertexBuffers_[i]) vertexBuffers_[i]->Update(); 
     }
 
     // TODO 
@@ -312,7 +331,7 @@ bool GLGraphicsDevice::PrepareToDraw()
 
         if (tex) 
         {
-            tex->FlushToGPU(); 
+            tex->Update(); 
 
             switch (tex->GetType()) 
             {
@@ -323,12 +342,19 @@ bool GLGraphicsDevice::PrepareToDraw()
             case TextureType::RENDER_TEXTURE_2D: {
                     // GLCALL(glBindTexture(GL_TEXTURE_2D, ((GLRenderTexture2D*) tex)->GetId())); 
                     GLRenderTexture2D* rt = ((GLRenderTexture2D*) tex); 
-                    if (rt->GetNeedResolve()) 
+                    rt->ResolveTextureIfNeeded(); 
+
+                    if (rt->IsInUse()) 
                     {
-                        ResolveRenderTexture2D(rt); 
-                        rt->SetNeedResolve(false); 
+                        // Logger::Debug("Using backup texture"); 
+                        rt->UpdateBackupTexture(); 
+                        BindTexture2D(i, rt->GetBackupId()); 
                     }
-                    BindTexture2D(i, rt->GetId()); 
+                    else 
+                    {
+                        // Logger::Debug("Using main texture"); 
+                        BindTexture2D(i, rt->GetMainId()); 
+                    }
                 }
                 break; 
             default: 
@@ -357,15 +383,15 @@ void GLGraphicsDevice::PostDraw()
 void GLGraphicsDevice::SetRenderbuffersDirty() 
 {
     auto depth = (GLRenderTexture2D*) depthTarget_; 
-    if (depth && depth->IsMultisampled()) 
+    if (depth) 
     {
-        depth->SetNeedResolve(); 
+        depth->SetRenderedTo(); 
     }
 
     for (int i = 0; i < GetMaxRenderTargetCount(); i++) 
     {
         auto tex = (GLRenderTexture2D*) renderTargets_[i]; 
-        if (tex && tex->IsMultisampled()) tex->SetNeedResolve(); 
+        if (tex) tex->SetRenderedTo(); 
     }
 }
 
@@ -379,13 +405,41 @@ void GLGraphicsDevice::ResolveRenderTexture2D(GLRenderTexture2D* texture)
         GLCALL(glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, texture->GetRenderbufferId())); 
 
         GLCALL(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFBO_)); 
-        GLCALL(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture->GetId(), 0)); 
+        GLCALL(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture->GetMainId(), 0)); 
 
         GLCALL(glBlitFramebuffer(0, 0, texture->GetWidth(), texture->GetHeight(), 0, 0, texture->GetWidth(), texture->GetHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST)); 
 
         // reset framebuffer 
         GLCALL(glBindFramebuffer(GL_FRAMEBUFFER, context_.fbo)); 
     }
+}
+
+void GLGraphicsDevice::CopyToBackupTexture(GLuint src, GLuint dst, int width, int height, bool color)
+{
+    GLCALL(glBindFramebuffer(GL_READ_FRAMEBUFFER, readFBO_)); 
+    if (color) 
+    {
+        GLCALL(glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, src, 0)); 
+    }
+    else 
+    {
+        GLCALL(glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, src, 0)); 
+    }
+
+    GLCALL(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFBO_)); 
+    if (color) 
+    {
+        GLCALL(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dst, 0)); 
+    }
+    else 
+    {
+        GLCALL(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dst, 0)); 
+    }
+
+    GLCALL(glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST)); 
+
+    // reset framebuffer 
+    GLCALL(glBindFramebuffer(GL_FRAMEBUFFER, context_.fbo)); 
 }
 
 void GLGraphicsDevice::SetupFramebuffer() 
@@ -407,12 +461,13 @@ void GLGraphicsDevice::SetupFramebuffer()
                 // TODO change if RenderTextureCube is added 
                 GLRenderTexture2D* tex = (GLRenderTexture2D*) renderTargets_[i]; 
 
-                tex->FlushToGPU(); 
+                tex->Update(); 
+                tex->SetInUse(true); 
 
                 // Logger::Debug(tex->GetId()); 
                 // GLCALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, tex->GetId(), 0)); 
                 drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + i); 
-                colorBuffers.push_back(tex->IsMultisampled() ? tex->GetRenderbufferId() : tex->GetId()); 
+                colorBuffers.push_back(tex->IsMultisampled() ? tex->GetRenderbufferId() : tex->GetMainId()); 
                 isRenderbuffer.push_back(tex->IsMultisampled()); 
             }
         }
@@ -421,9 +476,10 @@ void GLGraphicsDevice::SetupFramebuffer()
         {
             GLRenderTexture2D* tex = (GLRenderTexture2D*) depthTarget_; 
 
-            tex->FlushToGPU(); 
+            tex->Update(); 
+            tex->SetInUse(true); 
 
-            GLuint id = tex->IsMultisampled() ? tex->GetRenderbufferId() : tex->GetId(); 
+            GLuint id = tex->IsMultisampled() ? tex->GetRenderbufferId() : tex->GetMainId(); 
 
             if (context_.fboContents.depthBuffer != id || context_.fboContents.isDepthRenderbuffer != tex->IsMultisampled())  
             {

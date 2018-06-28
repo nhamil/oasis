@@ -17,7 +17,7 @@ void Texture2D::SetMipmapCount(int levels)
 {
     if (levels < 1) levels = 1; 
 
-    if (levels != mipmaps_) 
+    if (mipmaps_ != levels) 
     {
         mipmaps_ = levels; 
         dirtyParams_ = true; 
@@ -40,35 +40,23 @@ void Texture2D::GetData(int startx, int starty, int width, int height, void* out
     }
 }
 
-void Texture2D::Resize(int width, int height) 
+void Texture2D::Resize(TextureFormat format, int width, int height) 
 {
-    if (width != width_ || height != height_) 
-    {
-        width_ = width; 
-        height_ = height; 
+    Texture::Resize(format, width, height); 
 
-        data_.resize(width * height * GetTextureFormatByteCount(format_)); 
-        dirty_ = true; 
-    }
+    data_.resize(width * height * GetTextureFormatByteCount(format_)); 
 }
 
 void Texture2D::SetData(int startx, int starty, int width, int height, const void* in) 
 {
-    dirty_ = true; 
-    
+    dirtyData_ = true; 
+
     char* pixels = (char*) in; 
 
     int pxSize = GetTextureFormatByteCount(format_); 
 
     for (int y = 0; y < height; y++) 
     {
-        // for (int x = 0; x < width; x++) 
-        // {
-        //     data_[(x + startx + (y + starty) * width) * 4 + 0] = pixels[(x + y * width) * 4 + 0]; 
-        //     data_[(x + startx + (y + starty) * width) * 4 + 1] = pixels[(x + y * width) * 4 + 1]; 
-        //     data_[(x + startx + (y + starty) * width) * 4 + 2] = pixels[(x + y * width) * 4 + 2]; 
-        //     data_[(x + startx + (y + starty) * width) * 4 + 3] = pixels[(x + y * width) * 4 + 3]; 
-        // }
         int startIndex = (startx + (y + starty) * width_) * pxSize; 
         int outIndex = y * width * pxSize; 
         int size = width * pxSize; 

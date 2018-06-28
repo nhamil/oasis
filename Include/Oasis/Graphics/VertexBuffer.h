@@ -13,7 +13,7 @@ public:
     VertexBuffer(int startElements, const VertexFormat& format, BufferUsage usage);
     virtual ~VertexBuffer(); 
     
-    void FlushToGPU();
+    void Update();
 
     inline const VertexFormat& GetVertexFormat() const { return format_; }
     inline BufferUsage GetBufferUsage() const { return usage_; } 

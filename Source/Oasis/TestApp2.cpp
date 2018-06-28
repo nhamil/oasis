@@ -194,7 +194,7 @@ void TestApp2::Init()
     texture->SetMipmapCount(10); 
     texture->SetFilter(TextureFilter::TRILINEAR); 
     texture->SetWrapMode(TextureWrapMode::REPEAT); 
-    texture->FlushToGPU(); 
+    texture->Update(); 
 
     VertexFormat format; 
     format.AddAttribute(Attribute::POSITION); 
@@ -214,11 +214,11 @@ void TestApp2::Init()
 
     rectVbo = g->CreateVertexBuffer(4, format); 
     rectVbo->SetData(0, 4, rectVerts); 
-    rectVbo->FlushToGPU(); 
+    rectVbo->Update(); 
 
     rectIbo = g->CreateIndexBuffer(6); 
     rectIbo->SetData(0, 6, rectInds);
-    rectIbo->FlushToGPU(); 
+    rectIbo->Update(); 
 }
 
 void TestApp2::Update(float dt) 
@@ -261,7 +261,7 @@ void TestApp2::Render()
             for (int z = -4; z <= 0; z++) 
             {
                 shader->SetMatrix4("oa_View", Matrix4::Translation({x * 4.0f + 2, y * 4.0f + 2, z * 4 + -8 + 9 * (float) std::sin(angle * 0.5)})); 
-                shader->FlushToGPU(); 
+                shader->Update(); 
 
                 g->DrawIndexed(Primitive::TRIANGLE_LIST, 0, 6 * 6); 
             }
@@ -279,7 +279,7 @@ void TestApp2::Render()
     shader->SetMatrix4("oa_Model", Matrix4::IDENTITY); 
     shader->SetMatrix4("oa_Proj", Matrix4::IDENTITY); 
     shader->SetTextureUnit("u_Texture", 0); 
-    shader->FlushToGPU(); 
+    shader->Update(); 
 
     g->SetTextureUnit(0, colorBuffer); 
     g->SetIndexBuffer(rectIbo); 

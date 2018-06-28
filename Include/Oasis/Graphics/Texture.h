@@ -11,14 +11,15 @@ class Texture2D;
 class OASIS_API Texture : public GraphicsObject 
 {
 public: 
-    Texture(TextureType type, TextureFormat format, int width, int height) : type_(type), format_(format), width_(width), height_(height) {} 
-    virtual ~Texture() {} 
+    Texture(TextureType type, TextureFormat format, int width, int height); 
 
-    virtual void FlushToGPU(); 
+    virtual ~Texture();  
 
-    inline TextureType GetType() const { return type_; } 
+    virtual void Update() = 0; 
 
     Texture2D* GetTexture2D(); 
+
+    inline TextureType GetType() const { return type_; }  
 
     inline TextureFormat GetFormat() const { return format_; } 
 
@@ -34,26 +35,26 @@ public:
 
     inline TextureWrapMode GetWrapModeY() const { return wrapModeY_; } 
 
-    inline void SetFilter(TextureFilter filter) { if (filter_ == filter) return; filter_ = filter; dirtyParams_ = true; } 
+    virtual void Resize(TextureFormat format, int width, int height); 
 
-    inline void SetWrapModeX(TextureWrapMode mode) { if (wrapModeX_ == mode) return; wrapModeX_ = mode; dirtyParams_ = true; } 
+    virtual void SetFilter(TextureFilter filter); 
 
-    inline void SetWrapModeY(TextureWrapMode mode) { if (wrapModeY_ == mode) return; wrapModeY_ = mode; dirtyParams_ = true; } 
+    virtual void SetWrapMode(TextureWrapMode mode); 
 
-    inline void SetWrapMode(TextureWrapMode mode) { SetWrapModeX(mode); SetWrapModeY(mode); } 
+    virtual void SetWrapModeX(TextureWrapMode mode); 
+
+    virtual void SetWrapModeY(TextureWrapMode mode); 
 
 protected: 
-    virtual void UploadToGPU() = 0; 
-
     TextureType type_; 
     TextureFormat format_; 
+    int width_; 
+    int height_; 
     TextureFilter filter_ = TextureFilter::BILINEAR; 
     TextureWrapMode wrapModeX_ = TextureWrapMode::REPEAT; 
     TextureWrapMode wrapModeY_ = TextureWrapMode::REPEAT; 
-    int width_; 
-    int height_; 
-    bool dirty_ = true; 
     bool dirtyParams_ = true; 
+    bool dirtyData_ = true; 
 };
 
 }

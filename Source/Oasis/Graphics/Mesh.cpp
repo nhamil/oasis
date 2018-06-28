@@ -102,7 +102,7 @@ void Mesh::UploadToGPU()
         //cout << "Mesh: upload vertices " << format.GetSize() << endl; 
 
         vertexBuffer_->SetData(0, vertexCount_, &vertices[0]); 
-        vertexBuffer_->FlushToGPU(); 
+        vertexBuffer_->Update(); 
         verticesDirty_ = false; 
     }
 
@@ -121,7 +121,7 @@ void Mesh::UploadToGPU()
             if (!sm.indexBuffer) sm.indexBuffer = Engine::GetGraphicsDevice()->CreateIndexBuffer(indCount); 
             sm.indexBuffer->SetElementCount(indCount); 
             sm.indexBuffer->SetData(0, indCount, &sm.indices[0]); 
-            sm.indexBuffer->FlushToGPU(); 
+            sm.indexBuffer->Update(); 
             sm.dirty = false; 
         }
     }

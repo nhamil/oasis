@@ -13,7 +13,7 @@ IndexBuffer::IndexBuffer(int startElements, BufferUsage usage)
 
 IndexBuffer::~IndexBuffer() {}
 
-void IndexBuffer::FlushToGPU()
+void IndexBuffer::Update()
 {
     if (dirty_) UploadToGPU(); 
 

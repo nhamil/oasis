@@ -17,7 +17,7 @@ Shader::~Shader()
     
 }
 
-void Shader::FlushToGPU() 
+void Shader::Update() 
 {
     UploadToGPU(); 
 }

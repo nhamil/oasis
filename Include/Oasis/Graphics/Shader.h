@@ -49,7 +49,7 @@ public:
     Shader(const std::string& vSource, const std::string& fSource); 
     virtual ~Shader(); 
 
-    void FlushToGPU(); 
+    void Update(); 
 
     inline bool IsValid() const { return valid_; } 
 
