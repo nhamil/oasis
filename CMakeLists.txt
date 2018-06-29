@@ -14,6 +14,7 @@ set(SOURCES
     
     # Core  
     ${OASIS_SOURCE_FOLDER}/Core/Engine.cpp 
+    ${OASIS_SOURCE_FOLDER}/Core/EventManager.cpp 
     ${OASIS_SOURCE_FOLDER}/Core/Display.cpp 
     ${OASIS_SOURCE_FOLDER}/Core/Logger.cpp 
     ${OASIS_SOURCE_FOLDER}/Core/TimerWindows.cpp 
@@ -47,6 +48,12 @@ set(SOURCES
     ${OASIS_SOURCE_FOLDER}/Math/MathUtil.cpp 
     ${OASIS_SOURCE_FOLDER}/Math/Matrix4.cpp 
     ${OASIS_SOURCE_FOLDER}/Math/Quaternion.cpp 
+
+    # Scene 
+    ${OASIS_SOURCE_FOLDER}/Scene/Entity.cpp 
+    ${OASIS_SOURCE_FOLDER}/Scene/EntityManager.cpp 
+    ${OASIS_SOURCE_FOLDER}/Scene/Filter.cpp 
+    ${OASIS_SOURCE_FOLDER}/Scene/Scene.cpp 
 )
 
 # add include directory 

@@ -19,7 +19,7 @@ public:
 
     virtual void Reserve(uint32 count) = 0; 
 
-    virtual uint32 CreateComponent(Component* from) = 0; 
+    virtual uint32 CreateComponent(const Component* from) = 0; 
 
     virtual bool DestroyComponent(uint32 id) = 0; 
 };
@@ -54,7 +54,7 @@ public:
         data_.reserve(count * sizeof (T)); 
     }
 
-    uint32 CreateComponent(Component* from) override 
+    uint32 CreateComponent(const Component* from) override 
     {
         uint32 id = ids_.Get(); 
 
@@ -81,7 +81,7 @@ private:
     std::vector<uint8> data_; 
     IdManager32 ids_; 
 
-    void CreateComponentFromAddress(void* address, Component* from)  
+    void CreateComponentFromAddress(void* address, const Component* from)  
     {
         if (from) 
         {

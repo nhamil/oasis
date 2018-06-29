@@ -1,29 +1,10 @@
 #pragma once 
 
 #include "Oasis/Common.h" 
-#include "Oasis/Scene/ComponentPool.h" 
+#include "Oasis/Scene/EntityManager.h" 
 
 namespace Oasis 
 {
-
-struct OASIS_API EntityId 
-{
-    uint32 id; 
-    uint32 version; 
-
-    bool operator==(const EntityId& other) const { return id == other.id && version == other.version; } 
-    bool operator!=(const EntityId& other) const { return id != other.id || version != other.version; } 
-};
-
-class OASIS_API EntityManager 
-{
-public: 
-    EntityManager(); 
-    ~EntityManager(); 
-
-private: 
-    
-};
 
 class OASIS_API Entity 
 {
@@ -33,9 +14,40 @@ public:
 
     inline EntityManager* GetManager() { return manager_; } 
 
-private: 
-    friend class EntityManager; 
+    inline const EntityId& GetId() const { return id_; } 
 
+    bool IsValid() const; 
+
+    bool Has(ClassId id) const
+    {
+        return manager_->HasComponent(id_, id); 
+    }
+
+    template <class T> 
+    bool Has() const
+    {
+        return manager_->HasComponent<T>(id_); 
+    }
+
+    template <class T> 
+    T* Get() 
+    {
+        return manager_->GetComponent<T>(id_); 
+    }
+
+    template <class T, class ... Args> 
+    T* Attach(Args... args) 
+    {
+        return manager_->AttachComponent<T>(id_, args...); 
+    }
+
+    template <class T> 
+    bool Detach() 
+    {
+        return manager_->DetachComponent<T>(id_); 
+    }
+
+private: 
     EntityManager* manager_; 
     EntityId id_; 
 };

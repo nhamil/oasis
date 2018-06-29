@@ -2,41 +2,41 @@
 
 #include <Oasis/Oasis.h> 
 
-#include <Oasis/Scene/ECS.h> 
-#include <Oasis/Scene/Component.h> 
-#include <Oasis/Scene/ComponentPool.h> 
+#include <Oasis/Core/EventManager.h> 
+#include <Oasis/Scene/Scene.h> 
+#include <Oasis/Scene/System.h> 
 
 using namespace std;
 using namespace Oasis; 
 
-struct Tester 
-{
-    Tester() 
-    {
-        cout << "ctor" << endl; 
-    }
+// struct Tester : public Component
+// {
+//     Tester() 
+//     {
+//         cout << "ctor" << endl; 
+//     }
 
-    Tester(const Tester& other) 
-    {
-        cout << "copy" << endl; 
-    }
+//     Tester(const Tester& other) 
+//     {
+//         cout << "copy" << endl; 
+//     }
 
-    Tester& operator=(const Tester& other) 
-    {
-        cout << "assign" << endl; 
-        return *this; 
-    }
+//     Tester& operator=(const Tester& other) 
+//     {
+//         cout << "assign" << endl; 
+//         return *this; 
+//     }
 
-    ~Tester() 
-    {
-        cout << "dtor" << endl; 
-    }
+//     ~Tester() 
+//     {
+//         cout << "dtor" << endl; 
+//     }
 
-    void Print() 
-    {
-        cout << "Printing test" << endl; 
-    }
-};
+//     void Print() 
+//     {
+//         cout << "Printing test" << endl; 
+//     }
+// };
 
 struct Position : public Component
 {
@@ -53,36 +53,95 @@ struct Position : public Component
     float y = 0; 
 };
 
+struct Velocity : public Component
+{
+    Velocity() = default; 
+    Velocity(const Velocity& other) : dx(other.dx), dy(other.dy) {} 
+    Velocity(float x, float y) : dx(x), dy(y) {} 
+
+    void Print() const
+    {
+        Logger::Info("(", dx, ", ", dy, ")"); 
+    }
+
+    float dx = 0;
+    float dy = 0; 
+};
+
+class MovementSystem : public EntitySystem 
+{
+public: 
+    MovementSystem() 
+    {
+        Include<Position>(); 
+        Include<Velocity>(); 
+    }
+
+    void Update(float dt, uint32 count, Entity* entities) override 
+    {
+        Logger::Debug("Update Movement System (dt = ", dt, ")"); 
+
+        for (uint32 i = 0; i < count; i++) 
+        {
+            Entity& e = entities[i]; 
+            Position* pos = e.Get<Position>(); 
+            Velocity* vel = e.Get<Velocity>(); 
+
+            pos->x += vel->dx * dt; 
+            pos->y += vel->dy * dt; 
+        }
+    }
+};
+
+class TestEvent : public Event {};
+
+class TestEventHandler 
+{
+public: 
+    void HandleTestEvent(TestEvent* event) 
+    {
+        Logger::Info("Handling TestEvent: ", event); 
+    }
+
+    void HandleTestEvent2(TestEvent* event) 
+    {
+        Logger::Info("Handling TestEvent 2: ", event); 
+    }
+};
+
 int main(int argc, char** argv)
 {
-    cout << "Hello, Oasis!" << endl;
+    (void) argc; 
+    (void) argv; 
 
-    cout << "ID for Vector2: " << GetClassId<Vector2>() << endl; 
-    cout << "ID for Vector2: " << GetClassId<Vector3>() << endl; 
-    cout << "ID for Vector2: " << GetClassId<Vector4>() << endl; 
-    cout << "ID for float: " << GetClassId<float>() << endl; 
+    Logger::Info("Hello, Oasis!"); 
 
-    ComponentPool<Position> pool; 
+    EventManager eventManager; 
+    TestEventHandler handler; 
 
-    uint32 a, b, c, d; 
+    eventManager.Subscribe<TestEvent>(&handler, TestEventHandler::HandleTestEvent); 
+    eventManager.Subscribe<TestEvent>(&handler, TestEventHandler::HandleTestEvent2); 
+    eventManager.SendEvent(new TestEvent()); 
 
-    Position tmp; 
+    eventManager.Unsubscribe<TestEvent>(&handler, TestEventHandler::HandleTestEvent2); 
+    eventManager.SendEvent(new TestEvent()); 
 
-    a = pool.CreateComponent(&tmp); 
+    Scene scene; 
+    EntityFilter filter = EntityFilter().Include<Position>(); 
 
-    Logger::Info("Id: ", a); 
+    for (int i = 0; i < 1; i++) 
+    {
+        Entity entity = scene.CreateEntity(); 
 
-    ((Position*) pool.GetComponent(a))->Print(); 
+        Logger::Info("Match: ", filter.Matches(entity)); 
 
-    tmp = { 3, 4 }; 
-    b = pool.CreateComponent(&tmp); 
-    ((Position*) pool.GetComponent(b))->Print(); 
+        entity.Attach<Position>(i, i * 2 + 1); 
+        entity.Get<Position>()->Print(); 
 
-    pool.DestroyComponent(a); 
+        Logger::Info("Match: ", filter.Matches(entity)); 
+    }
 
-    tmp = { 5, 6 }; 
-    a = pool.CreateComponent(&tmp); 
-    ((Position*) pool.GetComponent(a))->Print(); 
+    Logger::Info("Done"); 
 
     return 0;
 }
