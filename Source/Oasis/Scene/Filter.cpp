@@ -75,7 +75,7 @@ bool EntityFilter::MatchesWith(const EntityManager& manager, const EntityId& id,
 {
     for (auto comp : include_) 
     {
-        if (comp == compId || !manager.HasComponent(id, comp)) return false; 
+        if (!(comp == compId || manager.HasComponent(id, comp))) return false; 
     }
 
     for (auto comp : exclude_) 

@@ -39,7 +39,7 @@ public:
         return true; 
     }
 
-    bool IsValid(Id id) 
+    bool IsValid(Id id) const 
     {
         return id >= 0 && id < size_ && released_.find(id) == released_.end(); 
     }

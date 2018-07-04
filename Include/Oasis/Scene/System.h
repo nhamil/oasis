@@ -32,9 +32,9 @@ protected:
 
     virtual void OnRemoved() {} 
 
-    virtual void OnUpdate(EntityManager* entityManager, uint32 count, EntityId* entities, float dt);  
+    virtual void OnUpdate(EntityManager* entityManager, uint32 count, const EntityId* entities, float dt);  
 
-    virtual void OnRender(EntityManager* entityManager, uint32 count, EntityId* entities);  
+    virtual void OnRender(EntityManager* entityManager, uint32 count, const EntityId* entities);  
 
     template <class T> 
     void Include() 
@@ -56,6 +56,7 @@ private:
     int32 priority_ = DEFAULT_PRIORITY; 
     Scene* scene_ = nullptr; 
     EntityFilter filter_; 
+    uint32 filterId_ = 0; 
 }; 
 
 }

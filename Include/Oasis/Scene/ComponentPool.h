@@ -51,7 +51,7 @@ public:
 
     void Reserve(uint32 count) override 
     {
-        data_.reserve(count * sizeof (T)); 
+        data_.resize(count * sizeof (T)); 
     }
 
     uint32 CreateComponent(const Component* from) override 

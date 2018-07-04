@@ -25,7 +25,7 @@ EntityManager* EntitySystem::GetEntityManager()
     else return nullptr; 
 }
 
-void EntitySystem::OnUpdate(EntityManager* entityManager, uint32 count, EntityId* entities, float dt) 
+void EntitySystem::OnUpdate(EntityManager* entityManager, uint32 count, const EntityId* entities, float dt) 
 {
     (void) entityManager; 
     (void) count; 
@@ -33,7 +33,7 @@ void EntitySystem::OnUpdate(EntityManager* entityManager, uint32 count, EntityId
     (void) dt; 
 }
 
-void EntitySystem::OnRender(EntityManager* entityManager, uint32 count, EntityId* entities) 
+void EntitySystem::OnRender(EntityManager* entityManager, uint32 count, const EntityId* entities) 
 {
     (void) entityManager; 
     (void) count; 
@@ -42,26 +42,59 @@ void EntitySystem::OnRender(EntityManager* entityManager, uint32 count, EntityId
 
 void EntitySystem::Update(float dt) 
 {
-    OnUpdate(nullptr, 0, nullptr, dt); 
+    if (scene_) 
+    {
+        EntityManager& em = scene_->GetEntityManager(); 
+        EntityFilterCache& fc = em.GetFilterCache(); 
+        uint32 count; 
+        const EntityId* entities; 
+        fc.GetEntities(filterId_, count, entities); 
+        
+        fc.Lock(); 
+        OnUpdate(&em, count, entities, dt); 
+        fc.Unlock(); 
+    }
 }
 
 void EntitySystem::Render() 
 {
-    OnRender(nullptr, 0, nullptr); 
+    if (scene_) 
+    {
+        EntityManager& em = scene_->GetEntityManager(); 
+        EntityFilterCache& fc = em.GetFilterCache(); 
+        uint32 count; 
+        const EntityId* entities; 
+        fc.GetEntities(filterId_, count, entities); 
+        
+        fc.Lock(); 
+        OnRender(&em, count, entities); 
+        fc.Unlock(); 
+    }
 }
 
 void EntitySystem::SetScene(Scene* scene) 
 {
     if (scene) 
     {
-        if (scene_) OnRemoved(); 
+        if (scene_) 
+        {
+            OnRemoved(); 
+            scene_->GetEntityManager().GetFilterCache().ReleaseFilterId(filterId_); 
+            filterId_ = 0; 
+        }
 
         scene_ = scene; 
+        filterId_ = scene_->GetEntityManager().GetFilterCache().GetFilterId(filter_); 
         OnAdded(); 
     }
     else 
     {
-        if (scene_) OnRemoved(); 
+        if (scene_) 
+        {
+            OnRemoved(); 
+            scene_->GetEntityManager().GetFilterCache().ReleaseFilterId(filterId_); 
+            filterId_ = 0; 
+        }
 
         scene_ = nullptr; 
     }

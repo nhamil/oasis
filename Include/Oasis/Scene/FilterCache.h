@@ -19,7 +19,7 @@ public:
 
     bool ReleaseFilterId(uint32 id); 
 
-    void GetEntities(uint32 filterId, uint32* count, EntityId** entities) const; 
+    void GetEntities(uint32 filterId, uint32& count, const EntityId*& entities) const; 
 
     void Lock(); 
 
@@ -30,9 +30,11 @@ private:
 
     struct Entry 
     {
-        int count = 0; 
+        int count = 1; 
         EntityFilter filter; 
         std::vector<EntityId> entities; 
+
+        Entry(const EntityFilter& filter) : filter(filter) {} 
     };
 
     enum class EntityEventType 

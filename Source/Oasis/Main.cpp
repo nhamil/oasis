@@ -41,12 +41,12 @@ using namespace Oasis;
 struct Position : public Component
 {
     Position() = default; 
-    Position(const Position& other) : x(other.x), y(other.y) {} 
+    Position(const Position& other) = default;  
     Position(float x, float y) : x(x), y(y) {} 
 
     void Print() const
     {
-        Logger::Info("(", x, ", ", y, ")"); 
+        Logger::Info("Pos(", x, ", ", y, ")"); 
     }
 
     float x = 0;
@@ -56,12 +56,12 @@ struct Position : public Component
 struct Velocity : public Component
 {
     Velocity() = default; 
-    Velocity(const Velocity& other) : dx(other.dx), dy(other.dy) {} 
+    Velocity(const Velocity& other) = default; 
     Velocity(float x, float y) : dx(x), dy(y) {} 
 
     void Print() const
     {
-        Logger::Info("(", dx, ", ", dy, ")"); 
+        Logger::Info("Vel(", dx, ", ", dy, ")"); 
     }
 
     float dx = 0;
@@ -77,15 +77,22 @@ public:
         Include<Velocity>(); 
     }
 
-    void OnUpdate(EntityManager* entityManager, uint32 count, EntityId* entities, float dt) override 
+    void OnUpdate(EntityManager* entityManager, uint32 count, const EntityId* entities, float dt) override 
     {
         Logger::Debug("Update Movement System (dt = ", dt, ")"); 
+
+        EntityManager* em = GetEntityManager(); 
 
         for (uint32 i = 0; i < count; i++) 
         {
             EntityId e = entities[i]; 
-            Position* pos = entityManager->GetComponent<Position>(e); 
-            Velocity* vel = entityManager->GetComponent<Velocity>(e); 
+            Position* pos = em->GetComponent<Position>(e); 
+            Velocity* vel = em->GetComponent<Velocity>(e); 
+
+            Logger::Info("ID: ", e.id, " ", e.version); 
+            Logger::Info(pos, " ", vel); 
+            pos->Print(); 
+            vel->Print(); 
 
             pos->x += vel->dx * dt; 
             pos->y += vel->dy * dt; 
@@ -116,13 +123,38 @@ int main(int argc, char** argv)
 
     Logger::Info("Hello, Oasis!"); 
 
-    EntityManager manager; 
-    EntityFilter filter; 
-    filter.Include<Position>(); 
+    Scene scene; 
+    MovementSystem movementSystem; 
 
-    manager.GetFilterCache().GetFilterId(filter); 
+    scene.AddSystem(movementSystem); 
 
-    auto id = manager.CreateEntityId(); 
+    EntityManager& em = scene.GetEntityManager(); 
+
+    for (int i = 0; i < 3; i++) 
+    {
+        auto e = em.CreateEntityId(); 
+        Logger::Info("ID: ", e.id, " ", e.version); 
+        em.AttachComponent<Position>(e, i, i + 1)->Print(); 
+        em.AttachComponent<Velocity>(e, i, 2 * i + 1)->Print();
+        
+        Logger::Info(em.GetComponent<Position>(e), " ", em.GetComponent<Velocity>(e)); 
+    }
+
+    Logger::Info(""); 
+
+    for (int i = 0; i < 3; i++) 
+    {
+        auto e = EntityId(i, 1); 
+        Logger::Info("ID: ", e.id, " ", e.version); 
+        em.GetComponent<Position>(e)->Print(); 
+        em.GetComponent<Velocity>(e)->Print();
+        
+        Logger::Info(em.GetComponent<Position>(e), " ", em.GetComponent<Velocity>(e)); 
+    }
+
+    Logger::Info(""); 
+
+    scene.Update(1); 
 
     Logger::Info("Done"); 
 
