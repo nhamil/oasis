@@ -3,6 +3,7 @@
 #include "Oasis/Common.h" 
 #include "Oasis/Scene/ComponentPool.h" 
 #include "Oasis/Scene/EntityId.h" 
+#include "Oasis/Scene/FilterCache.h" 
 
 namespace Oasis 
 {
@@ -12,6 +13,8 @@ class OASIS_API EntityManager
 public: 
     EntityManager(); 
     ~EntityManager(); 
+
+    inline EntityFilterCache& GetFilterCache() { return filterCache_; } 
 
     EntityId CreateEntityId(); 
     bool DestroyEntityId(const EntityId&); 
@@ -37,8 +40,7 @@ public:
     T* AttachComponent(const EntityId& id, Args... args) 
     {
         CheckComponentPool<T>(); 
-        T tmp(args...); 
-        return (T*) AttachComponent(id, GetClassId<T>(), &tmp); 
+        return (T*) AttachComponent(id, GetClassId<T>(), T(args...)); 
     }
 
     template <class T> 
@@ -84,13 +86,14 @@ private:
 
     Component* GetComponent(const EntityId& id, ClassId compId); 
 
-    Component* AttachComponent(const EntityId& id, ClassId compId, const Component* from); 
+    Component* AttachComponent(const EntityId& id, ClassId compId, const Component& from); 
 
     bool DetachComponent(const EntityId& id, ClassId compId); 
 
     std::vector<EntityEntry> entities_; 
     std::unordered_map<ClassId, ComponentPoolBase*> componentPools_; 
     IdManager32 ids_; 
+    EntityFilterCache filterCache_; 
 }; 
 
 

@@ -6,25 +6,36 @@
 namespace Oasis
 {
 
+class Scene; 
+
 class OASIS_API EntitySystem 
 {
 public: 
-    const int DEFAULT_PRIORITY; 
+    static const int DEFAULT_PRIORITY; 
 
     EntitySystem(int priority); 
     EntitySystem(); 
+    virtual ~EntitySystem(); 
 
     inline Scene* GetScene() { return scene_; } 
 
+    EntityManager* GetEntityManager(); 
+
+    inline int GetPriority() const { return priority_; } 
+
+    void Update(float dt); 
+
+    void Render(); 
+
+protected: 
     virtual void OnAdded() {}  
 
     virtual void OnRemoved() {} 
 
-    virtual void Update(float dt, uint32 count, Entity* entities); 
+    virtual void OnUpdate(EntityManager* entityManager, uint32 count, EntityId* entities, float dt);  
 
-    virtual void Render(uint32 count, Entity* entities); 
+    virtual void OnRender(EntityManager* entityManager, uint32 count, EntityId* entities);  
 
-protected: 
     template <class T> 
     void Include() 
     {

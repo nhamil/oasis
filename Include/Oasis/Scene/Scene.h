@@ -2,7 +2,7 @@
 
 #include "Oasis/Common.h" 
 #include "Oasis/Scene/Component.h" 
-#include "Oasis/Scene/Entity.h" 
+#include "Oasis/Scene/EntityManager.h" 
 
 namespace Oasis
 {
@@ -13,8 +13,7 @@ public:
     Scene(); 
     ~Scene(); 
 
-    Entity CreateEntity(); 
-    bool DestroyEntity(const Entity& entity); 
+    EntityManager& GetEntityManager() { return entityManager_; } 
 
 private: 
     EntityManager entityManager_; 

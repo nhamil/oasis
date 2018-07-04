@@ -3,7 +3,11 @@
 namespace Oasis
 {
 
-EntityManager::EntityManager() {}
+EntityManager::EntityManager() 
+    : filterCache_(this) 
+{
+
+}
 
 EntityManager::~EntityManager() 
 {
@@ -26,7 +30,10 @@ EntityId EntityManager::CreateEntityId()
 
     entities_[id].OnCreate(); 
 
-    return EntityId(id, entities_[id].version); 
+    EntityId eid = EntityId(id, entities_[id].version); 
+    filterCache_.OnCreateEntity(eid); 
+
+    return eid; 
 }
 
 bool EntityManager::DestroyEntityId(const EntityId& id) 
@@ -44,6 +51,7 @@ bool EntityManager::DestroyEntityId(const EntityId& id)
     }
 
     entity.OnDestroy(); 
+    filterCache_.OnDestroyEntity(id); 
     return true; 
 }
 
@@ -92,7 +100,7 @@ Component* EntityManager::GetComponent(const EntityId& id, ClassId compId)
     return pool->GetComponent(poolIndex); 
 }
 
-Component* EntityManager::AttachComponent(const EntityId& id, ClassId compId, const Component* from) 
+Component* EntityManager::AttachComponent(const EntityId& id, ClassId compId, const Component& from) 
 {
     // id in bounds 
     if (!IdInBounds(id.id)) return nullptr; 
@@ -113,14 +121,17 @@ Component* EntityManager::AttachComponent(const EntityId& id, ClassId compId, co
         uint32& poolIndex = entity.components[index].second; 
         pool->DestroyComponent(poolIndex); 
 
-        poolIndex = pool->CreateComponent(from); 
+        poolIndex = pool->CreateComponent(&from); 
 
         return pool->GetComponent(poolIndex); 
     }
     else 
     {
-        uint32 newPoolIndex = pool->CreateComponent(from); 
+        uint32 newPoolIndex = pool->CreateComponent(&from); 
         entity.components.push_back(std::make_pair(compId, newPoolIndex)); 
+
+        // did not already have component, just adding now 
+        filterCache_.OnAddEntityComponent(id, compId); 
 
         return pool->GetComponent(newPoolIndex); 
     }
@@ -149,7 +160,9 @@ bool EntityManager::DetachComponent(const EntityId& id, ClassId compId)
     entity.components[index] = entity.components[entity.components.size() - 1]; 
     entity.components.pop_back(); 
 
-    return false; 
+    filterCache_.OnRemoveEntityComponent(id, compId); 
+
+    return true; 
 }
 
 bool EntityManager::IdInBounds(uint32 id) const 

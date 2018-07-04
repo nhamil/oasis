@@ -77,15 +77,15 @@ public:
         Include<Velocity>(); 
     }
 
-    void Update(float dt, uint32 count, Entity* entities) override 
+    void OnUpdate(EntityManager* entityManager, uint32 count, EntityId* entities, float dt) override 
     {
         Logger::Debug("Update Movement System (dt = ", dt, ")"); 
 
         for (uint32 i = 0; i < count; i++) 
         {
-            Entity& e = entities[i]; 
-            Position* pos = e.Get<Position>(); 
-            Velocity* vel = e.Get<Velocity>(); 
+            EntityId e = entities[i]; 
+            Position* pos = entityManager->GetComponent<Position>(e); 
+            Velocity* vel = entityManager->GetComponent<Velocity>(e); 
 
             pos->x += vel->dx * dt; 
             pos->y += vel->dy * dt; 
@@ -116,30 +116,13 @@ int main(int argc, char** argv)
 
     Logger::Info("Hello, Oasis!"); 
 
-    EventManager eventManager; 
-    TestEventHandler handler; 
+    EntityManager manager; 
+    EntityFilter filter; 
+    filter.Include<Position>(); 
 
-    eventManager.Subscribe<TestEvent>(&handler, TestEventHandler::HandleTestEvent); 
-    eventManager.Subscribe<TestEvent>(&handler, TestEventHandler::HandleTestEvent2); 
-    eventManager.SendEvent(new TestEvent()); 
+    manager.GetFilterCache().GetFilterId(filter); 
 
-    eventManager.Unsubscribe<TestEvent>(&handler, TestEventHandler::HandleTestEvent2); 
-    eventManager.SendEvent(new TestEvent()); 
-
-    Scene scene; 
-    EntityFilter filter = EntityFilter().Include<Position>(); 
-
-    for (int i = 0; i < 1; i++) 
-    {
-        Entity entity = scene.CreateEntity(); 
-
-        Logger::Info("Match: ", filter.Matches(entity)); 
-
-        entity.Attach<Position>(i, i * 2 + 1); 
-        entity.Get<Position>()->Print(); 
-
-        Logger::Info("Match: ", filter.Matches(entity)); 
-    }
+    auto id = manager.CreateEntityId(); 
 
     Logger::Info("Done"); 
 

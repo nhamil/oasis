@@ -53,7 +53,9 @@ set(SOURCES
     ${OASIS_SOURCE_FOLDER}/Scene/Entity.cpp 
     ${OASIS_SOURCE_FOLDER}/Scene/EntityManager.cpp 
     ${OASIS_SOURCE_FOLDER}/Scene/Filter.cpp 
+    ${OASIS_SOURCE_FOLDER}/Scene/FilterCache.cpp 
     ${OASIS_SOURCE_FOLDER}/Scene/Scene.cpp 
+    ${OASIS_SOURCE_FOLDER}/Scene/System.cpp 
 )
 
 # add include directory 
