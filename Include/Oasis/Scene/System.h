@@ -19,8 +19,6 @@ public:
 
     inline Scene* GetScene() { return scene_; } 
 
-    EntityManager* GetEntityManager(); 
-
     inline int GetPriority() const { return priority_; } 
 
     void Update(float dt); 
@@ -32,9 +30,9 @@ protected:
 
     virtual void OnRemoved() {} 
 
-    virtual void OnUpdate(EntityManager* entityManager, uint32 count, const EntityId* entities, float dt);  
+    virtual void OnUpdate(Scene& scene, uint32 count, const EntityId* entities, float dt);  
 
-    virtual void OnRender(EntityManager* entityManager, uint32 count, const EntityId* entities);  
+    virtual void OnRender(Scene& scene, uint32 count, const EntityId* entities);  
 
     template <class T> 
     void Include() 
@@ -49,7 +47,7 @@ protected:
     }
 
 private: 
-    friend class Scene; 
+    friend class EntitySystemManager; 
 
     void SetScene(Scene* scene); 
 

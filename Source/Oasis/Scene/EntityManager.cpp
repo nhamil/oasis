@@ -55,7 +55,7 @@ bool EntityManager::DestroyEntityId(const EntityId& id)
     return true; 
 }
 
-bool EntityManager::IsValidId(const EntityId& id) const 
+bool EntityManager::IsValidEntityId(const EntityId& id) const 
 {
     // id in bounds 
     if (!IdInBounds(id.id)) return false; 

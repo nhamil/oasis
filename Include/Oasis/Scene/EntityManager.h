@@ -19,7 +19,7 @@ public:
     EntityId CreateEntityId(); 
     bool DestroyEntityId(const EntityId&); 
 
-    bool IsValidId(const EntityId& id) const; 
+    bool IsValidEntityId(const EntityId& id) const; 
 
     bool HasComponent(const EntityId& id, ClassId compId) const; 
 
@@ -95,6 +95,5 @@ private:
     IdManager32 ids_; 
     EntityFilterCache filterCache_; 
 }; 
-
 
 }

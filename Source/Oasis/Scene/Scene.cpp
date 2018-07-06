@@ -7,46 +7,43 @@
 namespace Oasis
 {
 
-Scene::Scene() {}
+Scene::Scene() : entityManager_(), systemManager_(*this) {}
 
-Scene::~Scene() {} 
+Scene::~Scene() {}
 
-void Scene::AddSystem(EntitySystem& system) 
+Entity Scene::CreateEntity() 
 {
-    systems_.push_back(&system); 
-    system.SetScene(this); 
-
-    std::sort(systems_.begin(), systems_.end(), [](EntitySystem* a, EntitySystem* b) -> bool { return a->GetPriority() < b->GetPriority(); }); 
+    return Entity(&entityManager_, entityManager_.CreateEntityId()); 
 }
 
-bool Scene::RemoveSystem(EntitySystem& system) 
+Entity Scene::GetEntity(const EntityId& id) 
 {
-    for (auto it = systems_.begin(); it != systems_.end(); ++it) 
-    {
-        if (*it == &system) 
-        {
-            systems_.erase(it); 
-            return true; 
-        }
-    }
+    return Entity(&entityManager_, id); 
+}
 
-    return false; 
+bool Scene::DestroyEntity(const Entity& entity) 
+{
+    return entityManager_.DestroyEntityId(entity.GetId()); 
+}
+
+void Scene::AddSystem(EntitySystem* system, bool autoDelete) 
+{
+    systemManager_.AddSystem(system, autoDelete); 
+}
+
+bool Scene::RemoveSystem(EntitySystem* system) 
+{
+    return systemManager_.RemoveSystem(system); 
 }
 
 void Scene::Update(float dt) 
 {
-    for (auto system : systems_) 
-    {
-        system->Update(dt); 
-    }
+    systemManager_.Update(dt); 
 }
 
 void Scene::Render() 
 {
-    for (auto system : systems_) 
-    {
-        system->Render(); 
-    }
+    systemManager_.Render(); 
 }
 
 }

@@ -77,42 +77,24 @@ public:
         Include<Velocity>(); 
     }
 
-    void OnUpdate(EntityManager* entityManager, uint32 count, const EntityId* entities, float dt) override 
+    void OnUpdate(Scene& scene, uint32 count, const EntityId* entities, float dt) override 
     {
         Logger::Debug("Update Movement System (dt = ", dt, ")"); 
-
-        EntityManager* em = GetEntityManager(); 
+        Logger::Debug("Count: ", count); 
 
         for (uint32 i = 0; i < count; i++) 
         {
-            EntityId e = entities[i]; 
-            Position* pos = em->GetComponent<Position>(e); 
-            Velocity* vel = em->GetComponent<Velocity>(e); 
+            Entity e = scene.GetEntity(entities[i]); 
+            Position* pos = e.Get<Position>(); 
+            Velocity* vel = e.Get<Velocity>(); 
 
-            Logger::Info("ID: ", e.id, " ", e.version); 
-            Logger::Info(pos, " ", vel); 
+            Logger::Info("ID: ", e.GetId().id, " ", e.GetId().version); 
             pos->Print(); 
             vel->Print(); 
 
             pos->x += vel->dx * dt; 
             pos->y += vel->dy * dt; 
         }
-    }
-};
-
-class TestEvent : public Event {};
-
-class TestEventHandler 
-{
-public: 
-    void HandleTestEvent(TestEvent* event) 
-    {
-        Logger::Info("Handling TestEvent: ", event); 
-    }
-
-    void HandleTestEvent2(TestEvent* event) 
-    {
-        Logger::Info("Handling TestEvent 2: ", event); 
     }
 };
 
@@ -124,37 +106,19 @@ int main(int argc, char** argv)
     Logger::Info("Hello, Oasis!"); 
 
     Scene scene; 
-    MovementSystem movementSystem; 
-
-    scene.AddSystem(movementSystem); 
-
-    EntityManager& em = scene.GetEntityManager(); 
+    
+    scene.AddSystem(new MovementSystem()); 
 
     for (int i = 0; i < 3; i++) 
     {
-        auto e = em.CreateEntityId(); 
-        Logger::Info("ID: ", e.id, " ", e.version); 
-        em.AttachComponent<Position>(e, i, i + 1)->Print(); 
-        em.AttachComponent<Velocity>(e, i, 2 * i + 1)->Print();
-        
-        Logger::Info(em.GetComponent<Position>(e), " ", em.GetComponent<Velocity>(e)); 
+        auto e = scene.CreateEntity(); 
+        e.Attach<Position>(i, i + 1); 
+        e.Attach<Velocity>(i, 2 * i + 1); 
     }
 
-    Logger::Info(""); 
-
-    for (int i = 0; i < 3; i++) 
-    {
-        auto e = EntityId(i, 1); 
-        Logger::Info("ID: ", e.id, " ", e.version); 
-        em.GetComponent<Position>(e)->Print(); 
-        em.GetComponent<Velocity>(e)->Print();
-        
-        Logger::Info(em.GetComponent<Position>(e), " ", em.GetComponent<Velocity>(e)); 
-    }
-
-    Logger::Info(""); 
-
-    scene.Update(1); 
+    scene.Update(1.0f / 16.0f); 
+    Logger::Info("New Frame"); 
+    scene.Update(1.0f / 16.0f); 
 
     Logger::Info("Done"); 
 

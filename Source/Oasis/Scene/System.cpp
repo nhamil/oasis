@@ -14,28 +14,19 @@ EntitySystem::EntitySystem(int priority)
 
 EntitySystem::EntitySystem() {}
 
-EntitySystem::~EntitySystem() 
-{
+EntitySystem::~EntitySystem() {}
 
-}
-
-EntityManager* EntitySystem::GetEntityManager() 
+void EntitySystem::OnUpdate(Scene& scene, uint32 count, const EntityId* entities, float dt) 
 {
-    if (scene_) return &scene_->GetEntityManager(); 
-    else return nullptr; 
-}
-
-void EntitySystem::OnUpdate(EntityManager* entityManager, uint32 count, const EntityId* entities, float dt) 
-{
-    (void) entityManager; 
+    (void) scene; 
     (void) count; 
     (void) entities; 
     (void) dt; 
 }
 
-void EntitySystem::OnRender(EntityManager* entityManager, uint32 count, const EntityId* entities) 
+void EntitySystem::OnRender(Scene& scene, uint32 count, const EntityId* entities) 
 {
-    (void) entityManager; 
+    (void) scene; 
     (void) count; 
     (void) entities; 
 }
@@ -51,7 +42,7 @@ void EntitySystem::Update(float dt)
         fc.GetEntities(filterId_, count, entities); 
         
         fc.Lock(); 
-        OnUpdate(&em, count, entities, dt); 
+        OnUpdate(*scene_, count, entities, dt); 
         fc.Unlock(); 
     }
 }
@@ -67,14 +58,14 @@ void EntitySystem::Render()
         fc.GetEntities(filterId_, count, entities); 
         
         fc.Lock(); 
-        OnRender(&em, count, entities); 
+        OnRender(*scene_, count, entities); 
         fc.Unlock(); 
     }
 }
 
-void EntitySystem::SetScene(Scene* scene) 
+void EntitySystem::SetScene(Scene* newScene) 
 {
-    if (scene) 
+    if (newScene) 
     {
         if (scene_) 
         {
@@ -83,7 +74,7 @@ void EntitySystem::SetScene(Scene* scene)
             filterId_ = 0; 
         }
 
-        scene_ = scene; 
+        scene_ = newScene; 
         filterId_ = scene_->GetEntityManager().GetFilterCache().GetFilterId(filter_); 
         OnAdded(); 
     }

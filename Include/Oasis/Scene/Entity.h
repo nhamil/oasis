@@ -18,10 +18,9 @@ public:
 
     bool IsValid() const; 
 
-    bool Has(ClassId id) const
-    {
-        return manager_->HasComponent(id_, id); 
-    }
+    bool Has(ClassId id) const; 
+
+    void Set(EntityManager* manager_, const EntityId& id); 
 
     template <class T> 
     bool Has() const

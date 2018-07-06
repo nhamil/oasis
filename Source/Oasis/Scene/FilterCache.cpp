@@ -81,6 +81,8 @@ void EntityFilterCache::Unlock()
 {
     lock_ = false; 
 
+    // Logger::Debug("Buffered events: ", eventBuffer_.size()); 
+
     for (auto& event : eventBuffer_) 
     {
         switch (event.eventType) 
@@ -107,38 +109,38 @@ void EntityFilterCache::Unlock()
 
 void EntityFilterCache::OnCreateEntity(const EntityId& id) 
 {
-    if (lock_) 
-    {
-        eventBuffer_.push_back({id, EntityEventType::CREATE}); 
-    }
-    else 
-    {
+    // if (lock_) 
+    // {
+    //     eventBuffer_.push_back({id, EntityEventType::CREATE}); 
+    // }
+    // else 
+    // {
         OnCreateEntityNoLock(id); 
-    }
+    // }
 }
 
 void EntityFilterCache::OnDestroyEntity(const EntityId& id) 
 {
-    if (lock_) 
-    {
-        eventBuffer_.push_back({id, EntityEventType::DESTROY}); 
-    }
-    else 
-    {
+    // if (lock_) 
+    // {
+    //     eventBuffer_.push_back({id, EntityEventType::DESTROY}); 
+    // }
+    // else 
+    // {
         OnDestroyEntityNoLock(id); 
-    }
+    // }
 }
 
 void EntityFilterCache::OnAddEntityComponent(const EntityId& id, ClassId compId) 
 {
-    if (lock_) 
-    {
-        eventBuffer_.push_back({id, EntityEventType::ADD_COMPONENT, compId}); 
-    }
-    else 
-    {
+    // if (lock_) 
+    // {
+    //     eventBuffer_.push_back({id, EntityEventType::ADD_COMPONENT, compId}); 
+    // }
+    // else 
+    // {
         OnAddEntityComponentNoLock(id, compId); 
-    }
+    // }
 }
 
 void EntityFilterCache::OnRemoveEntityComponent(const EntityId& id, ClassId compId) 
