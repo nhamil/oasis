@@ -25,12 +25,19 @@
 
 #include "Oasis/Math/MathUtil.h" 
 
+#include "Oasis/Scene/Component.h" 
+#include "Oasis/Scene/Entity.h" 
+#include "Oasis/Scene/Scene.h" 
+#include "Oasis/Scene/System.h" 
+
 #include "Oasis/Util/ClassId.h" 
 #include "Oasis/Util/IdManager.h" 
 
 #ifndef OASIS_MAIN 
     #define OASIS_MAIN(AppName) \
         int main(int argc, char** argv) { \
+            (void) argc; \
+            (void) argv; \
             return Engine::Start(new AppName); \
         }
 #endif 

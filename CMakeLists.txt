@@ -10,7 +10,11 @@ add_definitions(-DOASIS_EXPORT=1)
 # add sources 
 set(SOURCES
     # Oasis 
-    ${OASIS_SOURCE_FOLDER}/Main.cpp 
+    Source/Sample/Sample.cpp 
+
+    Source/Sample/MeshRenderSystem.cpp 
+    Source/Sample/MeshUtil.cpp 
+    Source/Sample/MovementSystem.cpp 
     
     # Core  
     ${OASIS_SOURCE_FOLDER}/Core/Engine.cpp 
