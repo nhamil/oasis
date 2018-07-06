@@ -16,6 +16,25 @@ public:
     void Exit() override; 
 };
 
+class Tester : public ReferenceCounted 
+{
+public: 
+    Tester() 
+    {
+        Logger::Debug("ctor"); 
+    }
+
+    ~Tester() 
+    {
+        Logger::Debug("dtor"); 
+    }
+
+    void Print() 
+    {
+        Logger::Debug("RefCount: ", GetRefCount(), ", WeakRefCount: ", GetWeakRefCount()); 
+    }
+};
+
 void SampleApp::Init() 
 {
     Scene* scene = Engine::GetSceneManager()->CreateAndSetScene("SampleScene"); 
