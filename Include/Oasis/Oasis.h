@@ -28,6 +28,7 @@
 #include "Oasis/Scene/Component.h" 
 #include "Oasis/Scene/Entity.h" 
 #include "Oasis/Scene/Scene.h" 
+#include "Oasis/Scene/SceneManager.h" 
 #include "Oasis/Scene/System.h" 
 
 #include "Oasis/Util/ClassId.h" 

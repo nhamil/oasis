@@ -9,6 +9,7 @@ namespace Oasis
 class Application; 
 class Display; 
 class GraphicsDevice; 
+class SceneManager; 
 
 class OASIS_API Engine
 {
@@ -16,6 +17,7 @@ public:
     inline static Display* GetDisplay() { return display_; } 
     inline static GraphicsDevice* GetGraphicsDevice() { return graphics_; } 
     inline static Application* GetApplication() { return app_; } 
+    inline static SceneManager* GetSceneManager() { return sceneManager_; } 
 
     static int Start(Application* app); 
     static void Stop(); 
@@ -38,6 +40,7 @@ private:
     static Display* display_; 
     static GraphicsDevice* graphics_; 
     static Application* app_; 
+    static SceneManager* sceneManager_; 
     
     // engine variables 
     static float fps_; 

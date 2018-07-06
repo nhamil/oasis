@@ -10,15 +10,20 @@ namespace Oasis
 {
 
 class EntitySystem; 
+class SceneManager; 
 
 class OASIS_API Scene 
 {
 public: 
-    Scene(); 
+    Scene(SceneManager& sceneManager, const std::string& name, int index); 
     ~Scene(); 
 
     EntityManager& GetEntityManager() { return entityManager_; } 
     EntitySystemManager& GetSystemManager() { return systemManager_; } 
+
+    SceneManager& GetSceneManager() { return sceneManager_; } 
+    int GetIndex() const { return sceneIndex_; } 
+    const std::string& GetName() const { return sceneName_; } 
 
     Entity CreateEntity(); 
     Entity GetEntity(const EntityId& id); 
@@ -33,6 +38,9 @@ public:
 private: 
     EntityManager entityManager_; 
     EntitySystemManager systemManager_; 
+    SceneManager& sceneManager_; 
+    std::string sceneName_; 
+    int sceneIndex_; 
 };
 
 }

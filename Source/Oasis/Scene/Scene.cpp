@@ -1,5 +1,6 @@
 #include "Oasis/Scene/Scene.h" 
 
+#include "Oasis/Scene/SceneManager.h" 
 #include "Oasis/Scene/System.h" 
 
 #include <algorithm> 
@@ -7,7 +8,7 @@
 namespace Oasis
 {
 
-Scene::Scene() : entityManager_(), systemManager_(*this) {}
+Scene::Scene(SceneManager& manager, const std::string& name, int index) : entityManager_(), systemManager_(*this), sceneManager_(manager), sceneName_(name), sceneIndex_(index) {}
 
 Scene::~Scene() {}
 

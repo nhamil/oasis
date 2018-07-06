@@ -4,6 +4,8 @@
 #include "Oasis/Core/Display.h" 
 #include "Oasis/Core/Timer.h" 
 #include "Oasis/Graphics/GL/GLGraphicsDevice.h" 
+#include "Oasis/Scene/Scene.h" 
+#include "Oasis/Scene/SceneManager.h" 
 
 using namespace std;
 
@@ -18,6 +20,7 @@ Config Engine::config_;
 
 Display* Engine::display_ = nullptr; 
 GraphicsDevice* Engine::graphics_ = nullptr; 
+SceneManager* Engine::sceneManager_ = nullptr; 
 
 int Engine::Start(Application* app)
 {
@@ -43,6 +46,7 @@ int Engine::Start(Application* app)
 
     display_ = new Display(); 
     graphics_ = new GLGraphicsDevice(); 
+    sceneManager_ = new SceneManager(); 
 
     return GameLoop();
 }
@@ -101,6 +105,7 @@ int Engine::GameLoop()
 
             PreUpdate(dt);
             app_->Update(dt);
+            if (sceneManager_->GetActiveScene()) sceneManager_->GetActiveScene()->Update(dt); 
             PostUpdate(dt);
 
             delay -= skipTicks; 
@@ -113,6 +118,7 @@ int Engine::GameLoop()
         {
             PreRender();
             app_->Render();
+            if (sceneManager_->GetActiveScene()) sceneManager_->GetActiveScene()->Render(); 
             PostRender();
 
             frameDelay -= skipFrames; 
@@ -146,6 +152,9 @@ int Engine::GameLoop()
 
     delete graphics_; 
     graphics_ = nullptr; 
+
+    delete sceneManager_; 
+    sceneManager_ = nullptr; 
 
     app_ = nullptr; 
 

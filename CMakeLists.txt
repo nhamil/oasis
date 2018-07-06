@@ -59,6 +59,7 @@ set(SOURCES
     ${OASIS_SOURCE_FOLDER}/Scene/Filter.cpp 
     ${OASIS_SOURCE_FOLDER}/Scene/FilterCache.cpp 
     ${OASIS_SOURCE_FOLDER}/Scene/Scene.cpp 
+    ${OASIS_SOURCE_FOLDER}/Scene/SceneManager.cpp 
     ${OASIS_SOURCE_FOLDER}/Scene/System.cpp 
     ${OASIS_SOURCE_FOLDER}/Scene/SystemManager.cpp 
 )

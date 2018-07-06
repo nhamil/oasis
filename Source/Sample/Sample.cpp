@@ -14,20 +14,20 @@ public:
     void Update(float dt) override; 
     void Render() override; 
     void Exit() override; 
-
-    Scene scene; 
 };
 
 void SampleApp::Init() 
 {
-    scene.AddSystem(new MovementSystem()); 
-    scene.AddSystem(new MeshRenderSystem()); 
+    Scene* scene = Engine::GetSceneManager()->CreateAndSetScene("SampleScene"); 
+
+    scene->AddSystem(new MovementSystem()); 
+    scene->AddSystem(new MeshRenderSystem()); 
 
     for (int z = -10; z <= 2; z++) 
     for (int y = -2; y <= 2; y++) 
     for (int x = -3; x <= 3; x++) 
     {
-        Entity e = scene.CreateEntity(); 
+        Entity e = scene->CreateEntity(); 
 
         Transform* transform = e.Attach<Transform>(); 
         transform->position = Vector3(x, y, z - 3); 
@@ -45,12 +45,12 @@ void SampleApp::Init()
 
 void SampleApp::Update(float dt) 
 {
-    scene.Update(dt); 
+
 }
 
 void SampleApp::Render() 
 {
-    scene.Render(); 
+
 }
 
 void SampleApp::Exit() 
