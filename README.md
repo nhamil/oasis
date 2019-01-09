@@ -1,6 +1,6 @@
 # Oasis Engine
 
-Open source game engine written in C++ and Java 
+Open source game engine written in C++ 
 
 ## License 
 
