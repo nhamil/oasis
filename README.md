@@ -24,7 +24,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 * Run CMake and Make 
   * Other makefile generators may work as well, but MinGW has been tested 
 ```
-mkdir Build 
 cd Build 
 cmake -G "MinGW Makefiles" .. 
 mingw32-make
@@ -38,7 +37,6 @@ sudo apt install cmake libsdl2-dev libglew-dev
 ```
 * Run CMake and Make 
 ```
-mkdir Build
 cd Build
 cmake .. 
 make 
